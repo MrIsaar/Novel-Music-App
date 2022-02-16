@@ -13,8 +13,8 @@ var Engine = Matter.Engine,
 
 var balls = [];
 var slots = [];
-var height = 1000;
-var width = 1000;
+var height = 800;
+var width = 1200;
 
 
 var options = { restitution: 1, friction: 0 };
@@ -50,20 +50,25 @@ var funnel = [Bodies.rectangle(0, fhight, width - 20, fthick, { isStatic: true, 
 
 for (let i = 0; i < maxBalls[0]; i++) {
     for (let j = 0; j < maxBalls[1]; j++) {
-        let xpos = ((j % 2) * (500 / maxBalls[0])) + i * (1000 / maxBalls[0]);
+        let xpos = ((j % 2) * (width / (2 * maxBalls[0]))) + i * (width / maxBalls[0]);
         let ypos = j * 2 * radius;
-        let heightOff = Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * (width / 2))
+        let heightOff = Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * (width / 2));
         if (ypos < -Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * (xpos - width / 2)) + heightOff + 2 * radius) // y > |m * x + b|
             balls.push(Bodies.circle(xpos, ypos, radius, options));
     }
 }
 
 
-let maxSlots = 20;
+let maxSlots = width/(3*radius + 30);
+let layers = (height / 50);
 for (let i = 0; i < maxSlots; i++) {
-    slots.push(Bodies.rectangle(10 + i * (1000 / maxSlots), height - 10, 15, 450, { isStatic: 1 }));
-    for (let j = 0; j < 9; j++) {
-        slots.push(Bodies.rectangle(10 + (25 * (j % 2)) + i * (1000 / maxSlots), height - 240 - (j * 50), 10, 10, { isStatic: true, angle: 3.14 / 4 }));
+    slots.push(Bodies.rectangle(10 + i * (width / maxSlots), height - 10, 15, height * (45/100), { isStatic: 1 }));
+    for (let j = 0; j < layers; j++) {
+        let ypos = height - (height * (24 / 100)) - (j * 50);
+        let xpos = 10 + (25 * (j % 2)) + i * (width / maxSlots);
+        let heightOff = Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * ((width) / 2));
+        if (ypos > -Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * (xpos - width / 2)) + heightOff + height/15) // y > |m * x + b|
+             slots.push(Bodies.rectangle(xpos,ypos, 10, 10, { isStatic: true, angle: 3.14 / 4 }));
     }
     /*slots.push(Bodies.rectangle(25 + i * (1000 / maxSlots), 400, 15, 15, { isStatic: true, angle: 3.14 / 4 }));
     slots.push(Bodies.rectangle(0 + i * (1000 / maxSlots), 350, 15, 15, { isStatic: true, angle: 3.14 / 4 }));
