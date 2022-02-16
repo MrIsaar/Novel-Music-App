@@ -16,6 +16,12 @@ var slots = [];
 var height = 1000;
 var width = 1000;
 
+
+var options = { restitution: 1, friction: 0 };
+var radius = 6;
+var maxBalls = [height/(2.5 * radius), 150/radius];
+
+
 // create an engine
 var engine = Engine.create();
 
@@ -30,24 +36,34 @@ var render = Render.create({
 });
 
 // create two boxes and a ground
-let maxBalls = [40 , 7];
-for (let i = 0; i < maxBalls[0]; i++) {
-    for (let j = 0; j < maxBalls[1]; j++) {
-        balls.push(Bodies.circle(((j % 2) * (500 / maxBalls[0])) + i * (1000/maxBalls[0]), j * 20, 10, { restitution: 0.9  , friction: 0.001}));
-    }
-}
+
+
 /*var boxA = Bodies.rectangle(400, 200, 80, 80);
 var boxB = Bodies.rectangle(450, 50, 80, 80);*/
-var ground = Bodies.rectangle(width/2, height, width, 50, { isStatic: true });
-var funnel = [Bodies.rectangle(0, 100, width - 20, 10, { isStatic: true, angle: 3.14 / 10, friction: 0 }), Bodies.rectangle(width, 100, width - 20, 10, { isStatic: true, angle: -3.14 / 10, friction: 0})];
+var ground = Bodies.rectangle(width / 2, height, width, 50, { isStatic: true });
+var walls = [Bodies.rectangle(0, height / 2, 20, height, { isStatic: true }), Bodies.rectangle(width, height / 2, 20, height, { isStatic: true })];
+
+let fangle = (3.14 / 6); let fhight = 50; let fthick = 15
+var funnel = [Bodies.rectangle(0, fhight, width - 20, fthick, { isStatic: true, angle: fangle, friction: 0 }), Bodies.rectangle(width, fhight, width - 20, fthick, { isStatic: true, angle: -fangle, friction: 0 })];
 
 //var midBox = Bodies.rectangle(400, 500, 60, 60, { isStatic: true, angle: 3.14 / 4 });
 
+for (let i = 0; i < maxBalls[0]; i++) {
+    for (let j = 0; j < maxBalls[1]; j++) {
+        let xpos = ((j % 2) * (500 / maxBalls[0])) + i * (1000 / maxBalls[0]);
+        let ypos = j * 2 * radius;
+        let heightOff = Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * (width / 2))
+        if (ypos < -Math.abs(((width / 2) * Math.tan(fangle)) / (width / 2) * (xpos - width / 2)) + heightOff + 2 * radius) // y > |m * x + b|
+            balls.push(Bodies.circle(xpos, ypos, radius, options));
+    }
+}
+
+
 let maxSlots = 20;
 for (let i = 0; i < maxSlots; i++) {
-    slots.push(Bodies.rectangle(0 + i * (1000 / maxSlots), height - 10, 15, 350, { isStatic: 1 }));
-    for (let j = 0; j < 11; j++) {
-        slots.push(Bodies.rectangle((25 * (j % 2)) + i * (1000 / maxSlots), height - 190 - (j * 50), 10, 10, { isStatic: true, angle: 3.14 / 4 }));
+    slots.push(Bodies.rectangle(10 + i * (1000 / maxSlots), height - 10, 15, 450, { isStatic: 1 }));
+    for (let j = 0; j < 9; j++) {
+        slots.push(Bodies.rectangle(10 + (25 * (j % 2)) + i * (1000 / maxSlots), height - 240 - (j * 50), 10, 10, { isStatic: true, angle: 3.14 / 4 }));
     }
     /*slots.push(Bodies.rectangle(25 + i * (1000 / maxSlots), 400, 15, 15, { isStatic: true, angle: 3.14 / 4 }));
     slots.push(Bodies.rectangle(0 + i * (1000 / maxSlots), 350, 15, 15, { isStatic: true, angle: 3.14 / 4 }));
@@ -58,9 +74,11 @@ for (let i = 0; i < maxSlots; i++) {
 
 // add all of the bodies to the world
 Composite.add(engine.world, [ground]);
+Composite.add(engine.world, walls);
 Composite.add(engine.world, funnel);
 Composite.add(engine.world, balls);
 Composite.add(engine.world, slots);
+
 
 // run the renderer
 Render.run(render);
