@@ -21,7 +21,7 @@ export class Sequencer extends Component {
             this._matrix.push(row);
         }
 
-        Tone.start();
+        //Tone.start();
         this.instruments = [];
         for (let i = 0; i < this.state.rows; i++) {
             this.instruments.push(new Tone.Synth());
@@ -29,7 +29,7 @@ export class Sequencer extends Component {
         }
         this.notes = ['C4', 'G3', 'E3', 'C3'];
         this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.cols), '8n');
-        this._sequencer.start(0);
+        //this._sequencer.start(0);
         Tone.Transport.start();
     }
 
@@ -49,16 +49,22 @@ export class Sequencer extends Component {
                 this.instruments[i].triggerAttackRelease(this.notes[i], '8n', time);
             }
         }
+
+
     }
 
-    checkChanged(row, col) {
+    _startSequence() {
+        Tone.start();
+        this._sequencer.start(0);
+    }
+
+    _stopSequence() {
+        this._sequencer.stop(0);
+    }
+
+    checkChanged(event, row, col) {
         console.log(`Check (${row}, ${col}) changed`);
-        //if (this._matrix[row][col]) {
-        //    this._matrix[row][col] = false;
-        //} else {
-        //    this._matrix[row][col] = true;
-        //}
-        this._matrix[row][col] = !this._matrix[row][col];
+        this._matrix[row][col] = event.target.checked;
     }
 
     render() {
@@ -73,7 +79,8 @@ export class Sequencer extends Component {
         return (
             <div>
                 <h1>Sequencer</h1>
-                <button onClick={() => Tone.start()}> Play </button>
+                <button onClick={this._startSequence.bind(this)}>Play</button>
+                <button onClick={this._stopSequence.bind(this)}>Pause</button>
                 <div>{buttons}</div>
             </div>
         );

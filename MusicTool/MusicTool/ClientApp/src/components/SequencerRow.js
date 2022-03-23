@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+//import Checkbox from '@mui/material/Checkbox';
+//import $ from 'jquery';
+import Checkbox from '@mui/material/Checkbox';
 
 
 export class SequencerRow extends Component {
@@ -13,7 +16,7 @@ export class SequencerRow extends Component {
     render() {
         let row = [];
         for (let i = 0; i < this.state.cols; i++) {
-            row.push(<input type="checkbox" onClick={() => this.props.callback(this.props.row, i)}/>);
+            row.push(<Checkbox onChange={(e) => this.props.callback(e, this.props.row, i)}/>);
         }
 
 
