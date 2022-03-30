@@ -21,6 +21,7 @@ export class Selection {
 
     /**
      *  Given x y coordinates of mouse event determines transaltion or rotation
+     *  sets mode to "translate" or "rotate" 
      *  clicking out side of thresholds will return false
      *  otherwise true
      * @param {any} x
@@ -52,10 +53,19 @@ export class Selection {
         return true;
     }
 
+
+    /**
+     *  resets selction mode to none 
+     */
     cleanMode() {
         this.mode = 0;
     }
 
+    /**
+     * updates selected objects position to provided x,y
+     * @param {any} x position
+     * @param {any} y position
+     */
     updateBodyPosition(x, y) {
         let dx = x - this.selected.body.position.x;
         let dy = y - this.selected.body.position.y;

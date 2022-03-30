@@ -9,7 +9,7 @@ export class Cannon {
      * 
      * @param {any} pos    {x, y}
      * @param {any} angle angle in radians
-     * @param {any} power defaul 20
+     * @param {any} power default 20 how fast marbles will be shot
      * @param {any} fireOn default -1, if -1 then always fires
      * @param {any} marbleColor HTML recognized color, random is default
      * @param {any} marbleSize default 20
@@ -25,22 +25,30 @@ export class Cannon {
         this.marbleColor = marbleColor;
 
     }
+
+
+    /**
+     *  Returns matter.js body of this cannon 
+     */
     getBody() {
         return this.body;
     }
 
     /**
-     *     firelayer must match fireOn value or if fireOn is -1 will fire
+     *     firelayer must match fireOn value for cannon
+     *     if fire layer is -1 it will always fire
+     *     fireOn of -1 will always fire regardless of fireLayer
      * 
      * return ball with current pos, angle, and power of shot 
+     * returns null if not fired
      * 
      */
-    fireMarble(fireLayer) {
+    fireMarble(fireLayer=-1) {
         if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
-            return;   // do not fire
+            return null;   // do not fire
         }
-        // choose color of marble
 
+        // choose random color of marble
         var randomColor = Math.floor(Math.random() * 16777215).toString(16);
         let color = "#" + randomColor;
         let rand = Math.random();
@@ -49,7 +57,7 @@ export class Cannon {
             color = this.marbleColor;
         }
 
-        //var ball = Matter.Bodies.circle(this.pos.x, this.pos.y,20);
+        //create ball
         var ball = Matter.Bodies.circle(
             this.pos.x,
             this.pos.y,
@@ -63,6 +71,7 @@ export class Cannon {
                 },
                 collisionFilter: { group: -1 }
             });
+        //set velocity
         let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
         Matter.Body.setVelocity(ball, dv)
         return ball;

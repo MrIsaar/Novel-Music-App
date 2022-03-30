@@ -18,20 +18,34 @@ const height = 600;
 
 
 export class Scene extends React.Component {
+
+    /**
+     * create Scene object
+     * @param {any} props
+     */
     constructor(props) {
         super(props);
         this.state = {};
         Tone.start();
     }
 
-    deleteObject() {
+    /**
+     * removes object from known cannon, ball, or instrument lists
+     * returns true if object deleted
+     *         false if object not found
+     */
+    deleteObject(object) {
         //remove with delete
         //remove with backspace
         //remove by drag out of bounds
     }
 
-
+    /**
+     * initiates Matter.js engine and event handlers
+     * 
+     */
     componentDidMount() {
+        //Start engine
         Tone.start();
         var Engine = Matter.Engine,
             Render = Matter.Render,
@@ -39,7 +53,6 @@ export class Scene extends React.Component {
             Bodies = Matter.Bodies,
             Mouse = Matter.Mouse,
             MouseConstraint = Matter.MouseConstraint;
-
         var engine = Engine.create({
             // positionIterations: 20
         });
@@ -55,20 +68,8 @@ export class Scene extends React.Component {
 
             }
         });
-
-        var ballA = Bodies.circle(210, 100, 30, { restitution: 0.5 });
-        var ballB = Bodies.circle(110, 50, 30, { restitution: 0.5 });
-        World.add(engine.world, [
-            // walls
-            Bodies.rectangle(width / 2, 0, width, 50, { isStatic: true }),
-            Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
-            Bodies.rectangle(width / 2, height / 2, 50, height, { isStatic: true }),
-            Bodies.rectangle(0, height/2, 50, height, { isStatic: true })
-        ]);
-
-        World.add(engine.world, [ballA, ballB]);
-
-        // add mouse control
+        Engine.run(engine);
+        Render.run(render);
         var mouse = Mouse.create(render.canvas),
             mouseConstraint = MouseConstraint.create(engine, {
                 mouse: mouse,
@@ -80,35 +81,13 @@ export class Scene extends React.Component {
                     collisionFilter: { group: 0, category: 0, mask: 0 }
                 }
             });
-
         World.add(engine.world, mouseConstraint);
 
-        // add red "Drum"
-        drums.push(Bodies.rectangle(width * (0.9), height*0.33, 20, 100, {
-            isStatic: true, 
-            render: {
-                fillStyle: "red"
-            }
-        }))
-        drums.push(Bodies.rectangle(width * (0.9), height * 0.66, 20, 100, {
-            isStatic: true,
-            render: {
-                fillStyle: "red"
-            }
-        }))
-        World.add(engine.world, drums)
 
-        let position = { x: width * (0.7), y: height * 0.3 };
-        let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
-        cannons.push(cannon);
-        position = { x: width * (0.2), y: height * 0.3 };
-        cannon = new Cannon(position,1)//<Cannon pos={position} body={null} />;
-        cannons.push(cannon);
-        for (let i = 0; i < cannons.length; i++) {
-            World.add(engine.world, cannons[i].getBody());
-        }
 
-        // handle when any collision occurs
+        /**
+         *      Handle Collision Interactions
+         */
        Matter.Events.on(engine, "collisionStart",
            function (event) {
                for (let i = 0; i < event.pairs.length; i++) {
@@ -121,10 +100,19 @@ export class Scene extends React.Component {
                 
             }
         );
-
+        /**
+         *      Mouse down handling
+         *      
+         *      normal click - Select mode
+         *      shift click  - Fire marbles from all cannons  - to be removed with sequencer
+         *      Alt click    - Create Cannon at location - to be removed with drag and drop
+         *      
+         */
         Matter.Events.on(mouseConstraint, "mousedown",
             function (event) {
                 let position = { x: event.mouse.position.x, y: event.mouse.position.y }
+
+                // shift mode - Fire Cannons - to be removed
                 if (event.mouse.sourceEvents.mousedown.shiftKey) {
                     //var ball = Matter.Bodies.circle(position.x, position.y, 20);
                     /* World.add(engine.world, [ball]);*/
@@ -138,6 +126,8 @@ export class Scene extends React.Component {
                         selection = null;
                     }
                 }
+
+                // alt mode - to be removed with drag and drop
                 else if (event.mouse.sourceEvents.mousedown.altKey) {
                     Tone.start();
                     let position = { x: event.mouse.position.x, y: event.mouse.position.y }
@@ -151,7 +141,10 @@ export class Scene extends React.Component {
                         selection = null;
                     }
                 }
+
+                // normal click - select object under mouse
                 else {
+                    // new select object - create new function for this
                     if (selection == null) {
 
                         let currCannon = null;
@@ -167,9 +160,10 @@ export class Scene extends React.Component {
                         }
 
                     }
+                    // update object depending on selection mode
                     else {
                         if (!selection.handleSelection(position.x, position.y)) {
-                            if (selection != null) {
+                            if (selection != null) { // deselect
                                 Matter.Composite.remove(engine.world, selection.bodies)
                                 selection = null;
                             }
@@ -187,17 +181,15 @@ export class Scene extends React.Component {
                             }
                         }
                     }
-
-
-
-
-
-
-
                 }
             }
         );
 
+
+        /**
+         *  Handle mouse movement 
+         *  updates selected body if clicking
+         */
         Matter.Events.on(mouseConstraint, "mousemove",
             function (event) {
                 let position = { x: event.mouse.position.x, y: event.mouse.position.y }
@@ -206,6 +198,10 @@ export class Scene extends React.Component {
                 }
             });
 
+        /**
+         * Handle mouse up
+         * sets selection mode to none
+         */
         Matter.Events.on(mouseConstraint, "mouseup",
             function (event) {
                 let position = { x: event.mouse.position.x, y: event.mouse.position.y }
@@ -214,12 +210,64 @@ export class Scene extends React.Component {
                 }
             });
 
-        Engine.run(engine);
 
-        Render.run(render);
+
+
+
+
+        //START Scene Object initialization
+
+
+        // add walls
+        World.add(engine.world, [
+            // walls
+            Bodies.rectangle(width / 2, 0, width, 50, { isStatic: true }),
+            Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
+            Bodies.rectangle(width / 2, height / 2, 50, height, { isStatic: true }),
+            Bodies.rectangle(0, height / 2, 50, height, { isStatic: true })
+        ]);
+        // add red "Drums"
+        drums.push(Bodies.rectangle(width * (0.9), height * 0.33, 20, 100, {
+            isStatic: true,
+            render: {
+                fillStyle: "red"
+            }
+        }))
+        drums.push(Bodies.rectangle(width * (0.9), height * 0.66, 20, 100, {
+            isStatic: true,
+            render: {
+                fillStyle: "red"
+            }
+        }))
+        World.add(engine.world, drums)
+        // create initial cannons
+        let position = { x: width * (0.7), y: height * 0.3 };
+        let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
+        cannons.push(cannon);
+        position = { x: width * (0.2), y: height * 0.3 };
+        cannon = new Cannon(position, 1)//<Cannon pos={position} body={null} />;
+        cannons.push(cannon);
+        for (let i = 0; i < cannons.length; i++) {
+            World.add(engine.world, cannons[i].getBody());
+        }
+        // create inital marbles
+        var ballA = Bodies.circle(210, 100, 30, { restitution: 0.8 });
+        var ballB = Bodies.circle(110, 50, 30, { restitution: 0.8 });
+        World.add(engine.world, [ballA, ballB]);
+
+        //END Scene Object initialization
+
+        
     }
 
-    fireBalls() {
+
+
+    /**
+     * Fires balls on fire layer
+     * fire layer -1 fires all cannons
+     * @param {any} fireLayer default -1
+     */
+    fireBalls(fireLayer=-1) {
         for (let i = 0; i < cannons.length; i++) {
             let ball = cannons[i].fireMarble(-1);
             balls.push(ball);
@@ -231,7 +279,9 @@ export class Scene extends React.Component {
         }
     }
 
-
+    /**
+     * Render React HTML and Links Sequencer to scene
+     */
     render() {
         
         sounds.push(<div>
