@@ -1,0 +1,21 @@
+﻿.sequencer-note {
+    flex: 0 0 32;
+    height: 49px;
+    width: 32px;
+    border: 1px solid black;
+    box-sizing: border-box;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 4px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+    .sequencer-note.on {
+        background-color: darkgray;
+        transition: background-color 120ms 0 ease;
+    }
+
+    .sequencer-note.playing {
+        background-color: #37e147;
+    }

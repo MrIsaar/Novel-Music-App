@@ -1,0 +1,20 @@
+﻿.sequencer-track {
+    display: flex;
+    flex-direction: row;
+}
+
+.track_title {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 1.1rem;
+    padding: 5px;
+    width: 120px;
+}
+
+.track_notes {
+    display: flex;
+}

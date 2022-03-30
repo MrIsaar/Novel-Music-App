@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as Tone from 'tone';
-import { SequencerRow } from './SequencerRow';
+import { SequencerTrack } from './SequencerTrack';
 
 
 export class Sequencer extends Component {
@@ -8,28 +8,22 @@ export class Sequencer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cols: 16,
-            rows: 4
+            numSteps: props.numSteps,
+            numTracks: props.numTracks
         }
 
+        this.callbacks = props.callbacks;
+
         this._matrix = [];
-        for (let i = 0; i < this.state.rows; i++) {
+        for (let i = 0; i < this.state.numTracks; i++) {
             let row = [];
-            for (let j = 0; j < this.state.cols; j++) {
+            for (let j = 0; j < this.state.numSteps; j++) {
                 row.push(false);
             }
             this._matrix.push(row);
         }
 
-        //Tone.start();
-        this.instruments = [];
-        for (let i = 0; i < this.state.rows; i++) {
-            this.instruments.push(new Tone.Synth());
-            this.instruments[i].toDestination();
-        }
-        this.notes = ['C4', 'G3', 'E3', 'C3'];
-        this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.cols), '8n');
-        //this._sequencer.start(0);
+        this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.numSteps), '8n');
         Tone.Transport.start();
     }
 
@@ -42,16 +36,23 @@ export class Sequencer extends Component {
     }
 
     _tick(time, idx) {
-        console.log(`time: ${time}, idx: ${idx}`)
-        let step = idx % this.state.cols;
-        for (let i = 0; i < this.state.rows; i++) {
-            if (this._matrix[i][step]) {
-                this.instruments[i].triggerAttackRelease(this.notes[i], '8n', time);
+        console.log(`time: ${time}, step: ${idx}`)
+        let step = idx % this.state.numSteps;
+        for (let track = 0; track < this.state.numTracks; track++) {
+            if (this._matrix[track][step]) {
+                this.callbacks[track]();
             }
         }
-
-
     }
+
+    toggleNote(track, step) {
+        this._matrix[track][step] = !this._matrix[track][step];
+        if (this._matrix[track][step]) {
+            this.callbacks[track]();
+        }
+    }
+
+    
 
     _startSequence() {
         Tone.start();
@@ -62,26 +63,28 @@ export class Sequencer extends Component {
         this._sequencer.stop(0);
     }
 
-    checkChanged(event, row, col) {
-        console.log(`Check (${row}, ${col}) changed`);
-        this._matrix[row][col] = event.target.checked;
-    }
 
     render() {
 
-        let buttons = [];
-        for (let i = 0; i < this.state.rows; i++) {
-            buttons.push(<div>
-                <SequencerRow row={i} callback={this.checkChanged.bind(this)}></SequencerRow>
-            </div>);
-        }
+        let tracks = [...Array(this.state.numTracks)].map((_, i) => {
+            return (
+                <SequencerTrack
+                    key={i}
+                    channelID={i}
+                    currentStepID={0}
+                    title={"Track " + i}
+                    noteCount={this.state.numSteps}
+                    onNotes={this._matrix[i]}
+                    toggleNote={this.toggleNote.bind(this)}
+                />
+            )
+        })
 
         return (
             <div>
-                <h1>Sequencer</h1>
                 <button onClick={this._startSequence.bind(this)}>Play</button>
                 <button onClick={this._stopSequence.bind(this)}>Pause</button>
-                <div>{buttons}</div>
+                <div>{tracks}</div>
             </div>
         );
 
