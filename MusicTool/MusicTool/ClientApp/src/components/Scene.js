@@ -6,9 +6,11 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
+import * as PIXI from "pixi.js";
 
 var cannons = [];
 var balls = [];
+const backgroundObjects = [];
 var selection = null;
 var drums = [];
 var sounds = [];
@@ -57,20 +59,32 @@ export class Scene extends React.Component {
             // positionIterations: 20
         });
         this.engine = engine;
-        var render = Render.create({
-            element: this.refs.scene,
-            engine: engine,
-            options: {
-                width: width,
-                height: height,
-                wireframes: false,
-                background: 'lightblue'
 
-            }
+        let app = new PIXI.Application({
+            width: width,
+            height: height,
+            backgroundColor: 0xadd8e6,
+            antialias: true
         });
-        Engine.run(engine);
-        Render.run(render);
-        var mouse = Mouse.create(render.canvas),
+        document.querySelector("#scene").appendChild(app.view);
+        //objects.forEach(o => app.stage.addChild(o));
+
+        const balls = [
+            Bodies.circle(210, 100, 30, { restitution: 0.5 }),
+            Bodies.circle(110, 50, 30, { restitution: 0.5 })
+        ];
+        const walls = [
+            Bodies.rectangle(200, 0, 600, 50, { isStatic: true }),
+            Bodies.rectangle(200, 600, 600, 50, { isStatic: true }),
+            Bodies.rectangle(260, 300, 50, 600, { isStatic: true }),
+            Bodies.rectangle(0, 300, 50, 600, { isStatic: true })
+        ];
+
+        World.add(engine.world, balls);
+        World.add(engine.world, walls);
+
+        // add mouse control
+        var mouse = Mouse.create(app.view),
             mouseConstraint = MouseConstraint.create(engine, {
                 mouse: mouse,
                 constraint: {
@@ -258,6 +272,7 @@ export class Scene extends React.Component {
         //END Scene Object initialization
 
         
+        Engine.run(engine);
     }
 
 
@@ -297,7 +312,7 @@ export class Scene extends React.Component {
             <div>
                 <div>{sounds}</div>
                 <button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button>
-                <div ref="scene" />
+                <div id="scene" />
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
                 <Sequencer
