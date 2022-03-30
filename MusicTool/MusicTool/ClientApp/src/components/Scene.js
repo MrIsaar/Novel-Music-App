@@ -5,6 +5,7 @@ import Cannon from "./Cannon"
 import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
+import { Sequencer } from './Sequencer';
 
 var cannons = [];
 var balls = [];
@@ -236,6 +237,12 @@ export class Scene extends React.Component {
         sounds.push(<div>
             <ToneExample />
         </div>);
+
+        let callbacks = [this.fireBalls.bind(this)];
+
+            
+            
+            
         return (
             <div>
                 <div>{sounds}</div>
@@ -243,6 +250,11 @@ export class Scene extends React.Component {
                 <div ref="scene" />
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
+                <Sequencer
+                    numSteps={16}
+                    numTracks={1}
+                    callbacks={callbacks}
+                />
             </div>
         );
     }
