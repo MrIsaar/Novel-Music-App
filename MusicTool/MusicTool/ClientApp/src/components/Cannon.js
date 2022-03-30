@@ -14,9 +14,9 @@ export class Cannon {
      * @param {any} marbleColor HTML recognized color, random is default
      * @param {any} marbleSize default 20
      */
-    constructor(pos, angle = 0, power = 30, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
+    constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
         this.shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
-        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.fireOn = fireOn;
         this.pos = pos;
         this.angle = angle;

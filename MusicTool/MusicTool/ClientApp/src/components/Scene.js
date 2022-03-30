@@ -12,6 +12,8 @@ var selection = null;
 var drums = [];
 var sounds = [];
 var synth = new Tone.Synth().toDestination();
+const width = 800;
+const height = 600;
 
 
 export class Scene extends React.Component {
@@ -40,13 +42,13 @@ export class Scene extends React.Component {
         var engine = Engine.create({
             // positionIterations: 20
         });
-
+        this.engine = engine;
         var render = Render.create({
             element: this.refs.scene,
             engine: engine,
             options: {
-                width: 1000,
-                height: 600,
+                width: width,
+                height: height,
                 wireframes: false,
                 background: 'lightblue'
 
@@ -57,10 +59,10 @@ export class Scene extends React.Component {
         var ballB = Bodies.circle(110, 50, 30, { restitution: 0.5 });
         World.add(engine.world, [
             // walls
-            Bodies.rectangle(500, 0, 1000, 50, { isStatic: true }),
-            Bodies.rectangle(500, 600, 1000, 50, { isStatic: true }),
-            Bodies.rectangle(500, 300, 50, 600, { isStatic: true }),
-            Bodies.rectangle(0, 300, 50, 600, { isStatic: true })
+            Bodies.rectangle(width / 2, 0, width, 50, { isStatic: true }),
+            Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
+            Bodies.rectangle(width / 2, height / 2, 50, height, { isStatic: true }),
+            Bodies.rectangle(0, height/2, 50, height, { isStatic: true })
         ]);
 
         World.add(engine.world, [ballA, ballB]);
@@ -81,19 +83,29 @@ export class Scene extends React.Component {
         World.add(engine.world, mouseConstraint);
 
         // add red "Drum"
-        drums.push(Bodies.rectangle(850, 200, 20, 100, {
+        drums.push(Bodies.rectangle(width * (0.9), height*0.33, 20, 100, {
             isStatic: true, 
             render: {
                 fillStyle: "red"
             }
         }))
-        drums.push(Bodies.rectangle(850, 400, 20, 100, {
+        drums.push(Bodies.rectangle(width * (0.9), height * 0.66, 20, 100, {
             isStatic: true,
             render: {
                 fillStyle: "red"
             }
         }))
         World.add(engine.world, drums)
+
+        let position = { x: width * (0.7), y: height * 0.3 };
+        let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
+        cannons.push(cannon);
+        position = { x: width * (0.2), y: height * 0.3 };
+        cannon = new Cannon(position,1)//<Cannon pos={position} body={null} />;
+        cannons.push(cannon);
+        for (let i = 0; i < cannons.length; i++) {
+            World.add(engine.world, cannons[i].getBody());
+        }
 
         // handle when any collision occurs
        Matter.Events.on(engine, "collisionStart",
@@ -206,13 +218,25 @@ export class Scene extends React.Component {
         Render.run(render);
     }
 
+    fireBalls() {
+        for (let i = 0; i < cannons.length; i++) {
+            let ball = cannons[i].fireMarble(-1);
+            balls.push(ball);
+            Matter.World.add(this.engine.world, [ball]);
+        }
+        if (selection != null) {
+            Matter.Composite.remove(this.engine.world, selection.bodies)
+            selection = null;
+        }
+    }
+
 
     render() {
         
         sounds.push(<div>
             <ToneExample />
         </div>);
-        return (<div><div>{ sounds }</div><div ref="scene" /><p>alt click to create a cannon, shift click to fire.<br /> click to select cannons to move or rotate</p></div>);
+        return (<div><div>{sounds}</div><button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button><div ref="scene" /><p>alt click to create a cannon, shift click to fire.<br /> click to select cannons to move or rotate</p></div>);
     }
 }
 export default Scene;
