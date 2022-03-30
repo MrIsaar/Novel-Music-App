@@ -6,11 +6,11 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
+import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
 var cannons = [];
 var balls = [];
-const backgroundObjects = [];
 var selection = null;
 var drums = [];
 var sounds = [];
@@ -67,21 +67,23 @@ export class Scene extends React.Component {
             antialias: true
         });
         document.querySelector("#scene").appendChild(app.view);
-        //objects.forEach(o => app.stage.addChild(o));
 
         const balls = [
-            Bodies.circle(210, 100, 30, { restitution: 0.5 }),
-            Bodies.circle(110, 50, 30, { restitution: 0.5 })
+            new Circle(210, 100, 30, { restitution: 0.5 }),
+            new Circle(110, 50, 30, { restitution: 0.5 })
         ];
         const walls = [
-            Bodies.rectangle(200, 0, 600, 50, { isStatic: true }),
-            Bodies.rectangle(200, 600, 600, 50, { isStatic: true }),
-            Bodies.rectangle(260, 300, 50, 600, { isStatic: true }),
-            Bodies.rectangle(0, 300, 50, 600, { isStatic: true })
+            new Rect(200, 0, 600, 50, { isStatic: true }),
+            new Rect(200, 600, 600, 50, { isStatic: true }),
+            new Rect(260, 300, 50, 600, { isStatic: true }),
+            new Rect(0, 300, 50, 600, { isStatic: true })
         ];
 
-        World.add(engine.world, balls);
-        World.add(engine.world, walls);
+        World.add(engine.world, Array.from(balls, o => o.body));
+        World.add(engine.world, Array.from(walls, o => o.body));
+
+        this.backgroundObjects = [].concat(balls, walls);
+        this.backgroundObjects.forEach(o => app.stage.addChild(o));
 
         // add mouse control
         var mouse = Mouse.create(app.view),
@@ -273,6 +275,9 @@ export class Scene extends React.Component {
 
         
         Engine.run(engine);
+        app.ticker.add((delta) => {
+            this.backgroundObjects.forEach(o => o.draw())
+        });
     }
 
 
