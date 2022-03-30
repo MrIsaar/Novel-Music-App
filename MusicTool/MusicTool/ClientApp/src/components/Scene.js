@@ -66,7 +66,7 @@ export class Scene extends React.Component {
             backgroundColor: 0xadd8e6,
             antialias: true
         });
-        document.querySelector("#scene").appendChild(app.view);
+        let addChild = this.app.stage.addChild.bind(this.app.stage);
 
         const balls = [
             new Circle(210, 100, 30, { restitution: 0.5 }),
@@ -83,10 +83,10 @@ export class Scene extends React.Component {
         World.add(engine.world, Array.from(walls, o => o.body));
 
         this.backgroundObjects = [].concat(balls, walls);
-        this.backgroundObjects.forEach(o => app.stage.addChild(o));
+        this.backgroundObjects.forEach(o => addChild(o));
 
         // add mouse control
-        var mouse = Mouse.create(app.view),
+        var mouse = Mouse.create(this.app.view),
             mouseConstraint = MouseConstraint.create(engine, {
                 mouse: mouse,
                 constraint: {
@@ -135,7 +135,8 @@ export class Scene extends React.Component {
                     for (let i = 0; i < cannons.length; i++) {
                         let ball = cannons[i].fireMarble(-1);
                         balls.push(ball);
-                        World.add(engine.world, [ball]);
+                        addChild(ball);
+                        World.add(engine.world, [ball.body]);
                     }
                     if (selection != null) {
                         Matter.Composite.remove(engine.world, selection.bodies)
@@ -150,6 +151,7 @@ export class Scene extends React.Component {
 
                     let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
                     cannons.push(cannon);
+                    addChild(cannon);
                     World.add(engine.world, cannon.getBody());
                     //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
                     if (selection != null) {
@@ -275,8 +277,11 @@ export class Scene extends React.Component {
 
         
         Engine.run(engine);
-        app.ticker.add((delta) => {
-            this.backgroundObjects.forEach(o => o.draw())
+        document.querySelector("#scene").appendChild(this.app.view);
+        this.app.ticker.add((delta) => {
+            this.backgroundObjects.forEach(o => o.draw());
+            cannons.forEach(c => c.draw());
+            balls.forEach(b => b.draw());
         });
     }
 
