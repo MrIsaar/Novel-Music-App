@@ -28,7 +28,7 @@ export class Selection {
      */
     handleSelection(x, y) {
         let point = { x: x, y: y };
-        
+
         let distance = Math.sqrt(Math.pow(this.translationThreshold.position.x - point.x, 2) + Math.pow(this.translationThreshold.position.y - point.y, 2));
         if (this.mode == 0) {
             //if (Matter.Bounds.contains(this.translationThreshold.bounds, point)) {
@@ -37,7 +37,7 @@ export class Selection {
             }
             //else if (Matter.Bounds.contains(this.rotationThreshold.bounds, point)) {
             else if (distance <= this.rotationThreshold.circleRadius) {
-            this.mode = "rotate";
+                this.mode = "rotate";
             }
         }
         if (this.mode == "translate") {
@@ -86,7 +86,7 @@ export class Selection {
         if (dx < 0) {
             angle = 3.1415 + angle
         }
-        
+
         Matter.Body.setAngle(this.selected.body, angle)
         this.selected.angle = this.selected.body.angle;
         console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);

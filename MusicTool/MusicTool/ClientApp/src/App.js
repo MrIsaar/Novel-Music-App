@@ -7,6 +7,7 @@ import { Counter } from './components/Counter';
 import { Scene } from './components/Scene';
 import { Cannon } from './components/Cannon';
 import { ToneExample } from './components/ToneSetup'
+import { Selection } from './components/Selection'
 
 import './custom.css'
 
@@ -21,7 +22,8 @@ export default class App extends Component {
                 <Route path='/fetch-data' component={FetchData} />
                 <Route path='/scene' component={Scene} />
                 <Route path='/cannon' component={Cannon} />
-                <Route path='/tonesetup' component={ToneExample}/>
+                <Route path='/tonesetup' component={ToneExample} />
+                <Route path='/selection' component={Selection} />
             </Layout>
         );
     }

@@ -6,18 +6,25 @@ export class ToneExample extends Component {
 
     constructor(props) {
         super(props);
-
+        
+        Tone.start();
         Tone.start();
         this.synth = new Tone.Synth();
+        Tone.start();
+        Tone.start();
+        Tone.start();
+        Tone.start();
+        this.state = { synth: this.synth };
     }
 
     PlayNote() {
-        this.triggerAttackRelease('C4', '8n', 0);
+        console.log("woof");
+        this.synth.triggerAttackRelease('C4', '8n', 0);
     }
 
 
     render() {
-
+        
         return (
             <div>
                 <h1>ToneDemo</h1>
@@ -26,3 +33,4 @@ export class ToneExample extends Component {
 
     }
 }
+export default ToneExample
