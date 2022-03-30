@@ -98,7 +98,7 @@ export class Selection {
         }
 
         Matter.Body.setAngle(this.selected.body, angle)
-        this.selected.angle = this.selected.body.angle;
+        this.selected.rotation = this.selected.body.angle;
         console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);
     }
 

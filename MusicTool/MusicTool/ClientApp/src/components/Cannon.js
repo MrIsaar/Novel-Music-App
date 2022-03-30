@@ -1,8 +1,10 @@
 ﻿import React from "react";
 import ReactDOM from "react-dom";
+import * as PIXI from "pixi.js";
+import { Circle } from "./ShapePrimitives";
 import Matter from "matter-js";
 
-export class Cannon {
+ export class Cannon extends PIXI.Graphics{
 
     /**
      * creates a cannon at specified position with angle.
@@ -14,12 +16,13 @@ export class Cannon {
      * @param {any} marbleColor HTML recognized color, random is default
      * @param {any} marbleSize default 20
      */
-    constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
+     constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
+        super();
         this.shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
         this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.fireOn = fireOn;
         this.pos = pos;
-        this.angle = angle;
+        this.rotation = angle;
         this.power = power;
         this.marbleSize = marbleSize;
         this.marbleColor = marbleColor;
@@ -57,25 +60,34 @@ export class Cannon {
             color = this.marbleColor;
         }
 
-        //create ball
-        var ball = Matter.Bodies.circle(
-            this.pos.x,
-            this.pos.y,
-            this.marbleSize,
-            {
-                mass: 10,
-                restitution: 1,
-                friction: 0.005,
-                render: {
-                    fillStyle: color
-                },
-                collisionFilter: { group: -1 }
-            });
+         //create ball
+         var ball = new Circle(
+             this.pos.x,
+             this.pos.y,
+             this.marbleSize,
+             {
+                 mass: 10,
+                 restitution: 1,
+                 friction: 0.005,
+                 render: {
+                     fillStyle: color
+                 },
+                 collisionFilter: { group: -1 }
+             });
         //set velocity
-        let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
-        Matter.Body.setVelocity(ball, dv)
-        return ball;
+         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
+         Matter.Body.setVelocity(ball.body, dv)
+         return ball;
 
-    }
+     }
+
+     draw() {
+         this.clear();
+         this.x = this.pos.x;
+         this.y = this.pos.y;
+         this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle));
+         this.drawPolygon(this.shape);
+         this.endFill();
+     }
 }
 export default Cannon;
