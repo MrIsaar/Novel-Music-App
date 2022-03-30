@@ -12,7 +12,8 @@ export const SequencerNote = ({
 
     const noteClassNames = classNames('sequencer-note', {
         'on': isNoteOn,
-        'playing': isNoteOn && isNoteOnCurrentStep
+        'playing': isNoteOn && isNoteOnCurrentStep,
+        'skipped': (!isNoteOn) && isNoteOnCurrentStep
     })
 
     const noteClicked = e => {

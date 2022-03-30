@@ -16,6 +16,10 @@
         transition: background-color 120ms 0 ease;
     }
 
+    .sequencer-note.skipped {
+        background-color: lightgray;
+    }
+    
     .sequencer-note.playing {
         background-color: #37e147;
     }

@@ -9,7 +9,8 @@ export class Sequencer extends Component {
         super(props);
         this.state = {
             numSteps: props.numSteps,
-            numTracks: props.numTracks
+            numTracks: props.numTracks,
+            currentStepID: 0
         }
 
         this.callbacks = props.callbacks;
@@ -43,6 +44,8 @@ export class Sequencer extends Component {
                 this.callbacks[track]();
             }
         }
+        this.setState({ currentStepID: step });
+        //this.forceUpdate();
     }
 
     toggleNote(track, step) {
@@ -56,11 +59,16 @@ export class Sequencer extends Component {
 
     _startSequence() {
         Tone.start();
-        this._sequencer.start(0);
+        if (this._sequencer.state !== 'started') {
+            this._sequencer.start(0);
+        }
+        Tone.Transport.start();
     }
 
     _stopSequence() {
-        this._sequencer.stop(0);
+        //Tone.Transport.stop();
+        Tone.Transport.pause();
+        //this._sequencer.stop(0);
     }
 
 
@@ -71,7 +79,7 @@ export class Sequencer extends Component {
                 <SequencerTrack
                     key={i}
                     channelID={i}
-                    currentStepID={0}
+                    currentStepID={this.state.currentStepID}
                     title={"Track " + i}
                     noteCount={this.state.numSteps}
                     onNotes={this._matrix[i]}
