@@ -60,30 +60,13 @@ export class Scene extends React.Component {
         });
         this.engine = engine;
 
-        let app = new PIXI.Application({
+        this.app = new PIXI.Application({
             width: width,
             height: height,
             backgroundColor: 0xadd8e6,
             antialias: true
         });
-        let addChild = this.app.stage.addChild.bind(this.app.stage);
-
-        const balls = [
-            new Circle(210, 100, 30, { restitution: 0.5 }),
-            new Circle(110, 50, 30, { restitution: 0.5 })
-        ];
-        const walls = [
-            new Rect(200, 0, 600, 50, { isStatic: true }),
-            new Rect(200, 600, 600, 50, { isStatic: true }),
-            new Rect(260, 300, 50, 600, { isStatic: true }),
-            new Rect(0, 300, 50, 600, { isStatic: true })
-        ];
-
-        World.add(engine.world, Array.from(balls, o => o.body));
-        World.add(engine.world, Array.from(walls, o => o.body));
-
-        this.backgroundObjects = [].concat(balls, walls);
-        this.backgroundObjects.forEach(o => addChild(o));
+        this.addChild = this.app.stage.addChild.bind(this.app.stage);
 
         // add mouse control
         var mouse = Mouse.create(this.app.view),
@@ -135,7 +118,7 @@ export class Scene extends React.Component {
                     for (let i = 0; i < cannons.length; i++) {
                         let ball = cannons[i].fireMarble(-1);
                         balls.push(ball);
-                        addChild(ball);
+                        this.addChild(ball);
                         World.add(engine.world, [ball.body]);
                     }
                     if (selection != null) {
@@ -151,7 +134,7 @@ export class Scene extends React.Component {
 
                     let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
                     cannons.push(cannon);
-                    addChild(cannon);
+                    this.addChild(cannon);
                     World.add(engine.world, cannon.getBody());
                     //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
                     if (selection != null) {
@@ -235,29 +218,31 @@ export class Scene extends React.Component {
 
         //START Scene Object initialization
 
-
-        // add walls
-        World.add(engine.world, [
-            // walls
-            Bodies.rectangle(width / 2, 0, width, 50, { isStatic: true }),
-            Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
-            Bodies.rectangle(width / 2, height / 2, 50, height, { isStatic: true }),
-            Bodies.rectangle(0, height / 2, 50, height, { isStatic: true })
-        ]);
-        // add red "Drums"
-        drums.push(Bodies.rectangle(width * (0.9), height * 0.33, 20, 100, {
+        // create inital marbles
+        const balls = [
+            new Circle(210, 100, 30, { restitution: 0.8 }),
+            new Circle(110, 50, 30, { restitution: 0.8 })
+        ];
+        // create walls
+        const walls = [
+            new Rect(width / 2, 0, width, 50, { isStatic: true }),
+            new Rect(width / 2, height, width, 50, { isStatic: true }),
+            new Rect(width / 2, height / 2, 50, height, { isStatic: true }),
+            new Rect(0, height / 2, 50, height, { isStatic: true })
+        ];
+        // create red "Drums"
+        drums.push(new Rect(width * (0.9), height * 0.33, 20, 100, {
             isStatic: true,
             render: {
                 fillStyle: "red"
             }
-        }))
-        drums.push(Bodies.rectangle(width * (0.9), height * 0.66, 20, 100, {
+        }));
+        drums.push(new Rect(width * (0.9), height * 0.66, 20, 100, {
             isStatic: true,
             render: {
                 fillStyle: "red"
             }
-        }))
-        World.add(engine.world, drums)
+        }));
         // create initial cannons
         let position = { x: width * (0.7), y: height * 0.3 };
         let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
@@ -265,16 +250,18 @@ export class Scene extends React.Component {
         position = { x: width * (0.2), y: height * 0.3 };
         cannon = new Cannon(position, 1)//<Cannon pos={position} body={null} />;
         cannons.push(cannon);
-        for (let i = 0; i < cannons.length; i++) {
-            World.add(engine.world, cannons[i].getBody());
-        }
-        // create inital marbles
-        var ballA = Bodies.circle(210, 100, 30, { restitution: 0.8 });
-        var ballB = Bodies.circle(110, 50, 30, { restitution: 0.8 });
-        World.add(engine.world, [ballA, ballB]);
+
+        this.backgroundObjects = [].concat(balls, walls);
+        
+        World.add(engine.world, Array.from(this.backgroundObjects, o => o.body));
+        World.add(engine.world, Array.from(drums, d => d.body));
+        World.add(engine.world, Array.from(cannons, c => c.getBody));
+        
+        this.backgroundObjects.forEach(o => this.addChild(o));
+        drums.forEach(d => this.addChild(d));
+        cannons.forEach(c => this.addChild(c));
 
         //END Scene Object initialization
-
         
         Engine.run(engine);
         document.querySelector("#scene").appendChild(this.app.view);
@@ -285,8 +272,6 @@ export class Scene extends React.Component {
         });
     }
 
-
-
     /**
      * Fires balls on fire layer
      * fire layer -1 fires all cannons
@@ -296,7 +281,8 @@ export class Scene extends React.Component {
         for (let i = 0; i < cannons.length; i++) {
             let ball = cannons[i].fireMarble(-1);
             balls.push(ball);
-            Matter.World.add(this.engine.world, [ball]);
+            Matter.World.add(this.engine.world, [ball.body]);
+            this.addChild(ball);
         }
         if (selection != null) {
             Matter.Composite.remove(this.engine.world, selection.bodies)
@@ -308,16 +294,12 @@ export class Scene extends React.Component {
      * Render React HTML and Links Sequencer to scene
      */
     render() {
-        
         sounds.push(<div>
             <ToneExample />
         </div>);
 
         let callbacks = [this.fireBalls.bind(this)];
 
-            
-            
-            
         return (
             <div>
                 <div>{sounds}</div>
