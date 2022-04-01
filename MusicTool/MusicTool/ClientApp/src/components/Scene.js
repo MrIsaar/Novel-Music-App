@@ -42,13 +42,13 @@ export class Scene extends React.Component {
      * 
      */
     componentDidMount() {
-        //Start engine
+        // Create engine
         Tone.start();
         this.engine = Engine.create({
             // positionIterations: 20
         });
 
-        // Start renderer
+        // Create renderer
         this.app = new PIXI.Application({
             width: width,
             height: height,
@@ -113,12 +113,14 @@ export class Scene extends React.Component {
 
         this.backgroundObjects = [].concat(marbles, walls);
 
+        // Add initialized objects to scene
         this.backgroundObjects.forEach(o => this.addObject(o));
         drums.forEach(d => this.addObject(d));
         cannons.forEach(c => this.addObject(c));
 
         //END Scene Object initialization
 
+        // Start engine & renderer
         Engine.run(this.engine);
         document.querySelector("#scene").appendChild(this.app.view);
         this.app.ticker.add((delta) => {
@@ -181,8 +183,6 @@ export class Scene extends React.Component {
 
         // shift mode - Fire Cannons - to be removed
         if (event.mouse.sourceEvents.mousedown.shiftKey) {
-            //var ball = Matter.Bodies.circle(position.x, position.y, 20);
-            /* World.add(this.engine.world, [ball]);*/
             for (let i = 0; i < cannons.length; i++) {
                 let ball = cannons[i].fireMarble(-1);
                 balls.push(ball);
@@ -197,8 +197,6 @@ export class Scene extends React.Component {
         // alt mode - to be removed with drag and drop
         else if (event.mouse.sourceEvents.mousedown.altKey) {
             Tone.start();
-            let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-
             let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
             cannons.push(cannon);
             this.addObject(cannon);
@@ -212,7 +210,6 @@ export class Scene extends React.Component {
         else {
             // new select object - create new function for this
             if (selection == null) {
-
                 let currCannon = null;
                 for (let i = 0; i < cannons.length; i++) {
                     if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
@@ -224,7 +221,6 @@ export class Scene extends React.Component {
                     selection = new Selection(currCannon);
                     World.add(this.engine.world, selection.bodies);
                 }
-
             }
             // update object depending on selection mode
             else {
