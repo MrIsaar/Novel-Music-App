@@ -127,6 +127,9 @@ export class Scene extends React.Component {
             this.backgroundObjects.forEach(o => o.draw());
             cannons.forEach(c => c.draw());
             balls.forEach(b => b.draw());
+            drums.forEach(d => d.draw());
+            if (selection !== null)
+                selection.draw();
         });
     }
 
@@ -189,7 +192,7 @@ export class Scene extends React.Component {
                 this.addObject(ball);
             }
             if (selection != null) {
-                Matter.Composite.remove(this.engine.world, selection.bodies)
+                selection.destroy({ children: true });
                 selection = null;
             }
         }
@@ -201,7 +204,7 @@ export class Scene extends React.Component {
             cannons.push(cannon);
             this.addObject(cannon);
             if (selection != null) {
-                Matter.Composite.remove(this.engine.world, selection.bodies)
+                selection.destroy({ children: true });
                 selection = null;
             }
         }
@@ -219,14 +222,14 @@ export class Scene extends React.Component {
                 }
                 if (currCannon != null) {
                     selection = new Selection(currCannon);
-                    World.add(this.engine.world, selection.bodies);
+                    this.app.stage.addChild(selection);
                 }
             }
             // update object depending on selection mode
             else {
                 if (!selection.handleSelection(position.x, position.y)) {
                     if (selection != null) { // deselect
-                        Matter.Composite.remove(this.engine.world, selection.bodies)
+                        selection.destroy({ children: true });
                         selection = null;
                     }
                     //Check if another cannon should be selected
@@ -239,7 +242,7 @@ export class Scene extends React.Component {
                     }
                     if (currCannon != null) {
                         selection = new Selection(currCannon);
-                        World.add(this.engine.world, selection.bodies);
+                        this.app.stage.addChild(selection);
                     }
                 }
             }
