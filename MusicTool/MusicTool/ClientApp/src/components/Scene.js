@@ -29,17 +29,7 @@ export class Scene extends React.Component {
         super(props);
         this.state = {};
         Tone.start();
-    }
-
-    /**
-     * removes object from known cannon, ball, or instrument lists
-     * returns true if object deleted
-     *         false if object not found
-     */
-    deleteObject(object) {
-        //remove with delete
-        //remove with backspace
-        //remove by drag out of bounds
+        this.addObject = this.addObject.bind(this);
     }
 
     /**
@@ -60,13 +50,13 @@ export class Scene extends React.Component {
         });
         this.engine = engine;
 
+        // Start renderer
         this.app = new PIXI.Application({
             width: width,
             height: height,
             backgroundColor: 0xadd8e6,
             antialias: true
         });
-        this.addChild = this.app.stage.addChild.bind(this.app.stage);
 
         // add mouse control
         var mouse = Mouse.create(this.app.view),
@@ -99,6 +89,7 @@ export class Scene extends React.Component {
                 
             }
         );
+        let addObject = this.addObject;
         /**
          *      Mouse down handling
          *      
@@ -118,8 +109,7 @@ export class Scene extends React.Component {
                     for (let i = 0; i < cannons.length; i++) {
                         let ball = cannons[i].fireMarble(-1);
                         balls.push(ball);
-                        this.addChild(ball);
-                        World.add(engine.world, [ball.body]);
+                        addObject(ball);
                     }
                     if (selection != null) {
                         Matter.Composite.remove(engine.world, selection.bodies)
@@ -134,9 +124,7 @@ export class Scene extends React.Component {
 
                     let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
                     cannons.push(cannon);
-                    this.addChild(cannon);
-                    World.add(engine.world, cannon.getBody());
-                    //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
+                    addObject(cannon);
                     if (selection != null) {
                         Matter.Composite.remove(engine.world, selection.bodies)
                         selection = null;
@@ -253,13 +241,9 @@ export class Scene extends React.Component {
 
         this.backgroundObjects = [].concat(balls, walls);
         
-        World.add(engine.world, Array.from(this.backgroundObjects, o => o.body));
-        World.add(engine.world, Array.from(drums, d => d.body));
-        World.add(engine.world, Array.from(cannons, c => c.getBody));
-        
-        this.backgroundObjects.forEach(o => this.addChild(o));
-        drums.forEach(d => this.addChild(d));
-        cannons.forEach(c => this.addChild(c));
+        this.backgroundObjects.forEach(o => this.addObject(o));
+        drums.forEach(d => this.addObject(d));
+        cannons.forEach(c => this.addObject(c));
 
         //END Scene Object initialization
         
@@ -270,24 +254,6 @@ export class Scene extends React.Component {
             cannons.forEach(c => c.draw());
             balls.forEach(b => b.draw());
         });
-    }
-
-    /**
-     * Fires balls on fire layer
-     * fire layer -1 fires all cannons
-     * @param {any} fireLayer default -1
-     */
-    fireBalls(fireLayer=-1) {
-        for (let i = 0; i < cannons.length; i++) {
-            let ball = cannons[i].fireMarble(-1);
-            balls.push(ball);
-            Matter.World.add(this.engine.world, [ball.body]);
-            this.addChild(ball);
-        }
-        if (selection != null) {
-            Matter.Composite.remove(this.engine.world, selection.bodies)
-            selection = null;
-        }
     }
 
     /**
@@ -314,6 +280,39 @@ export class Scene extends React.Component {
                 />
             </div>
         );
+    }
+
+    /**
+     * Fires balls on fire layer
+     * fire layer -1 fires all cannons
+     * @param {any} fireLayer default -1
+     */
+    fireBalls(fireLayer = -1) {
+        for (let i = 0; i < cannons.length; i++) {
+            let ball = cannons[i].fireMarble(-1);
+            balls.push(ball);
+            this.addObject(ball);
+        }
+        if (selection != null) {
+            Matter.Composite.remove(this.engine.world, selection.bodies)
+            selection = null;
+        }
+    }
+
+    addObject(object) {
+        Matter.World.add(this.engine.world, [object.body]);
+        this.app.stage.addChild(object);
+    }
+
+    /**
+     * removes object from known cannon, ball, or instrument lists
+     * returns true if object deleted
+     *         false if object not found
+     */
+    deleteObject(object) {
+        //remove with delete
+        //remove with backspace
+        //remove by drag out of bounds
     }
 }
 export default Scene;
