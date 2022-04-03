@@ -10,6 +10,7 @@ import { ToneExample } from './components/ToneSetup'
 import { Selection } from './components/Selection'
 import { SequencerDemo } from './components/SequencerDemo';
 import { PalletDemo } from './components/PalletDemo';
+import Overlay from 'react-bootstrap/Overlay';
 
 import './custom.css'
 

@@ -57,7 +57,7 @@ export default class Picture extends Component{
                     ref={drag}
                     style={{ border: isDragging ? "5px solid pink" : "0px" }}
                     src={path}
-                    width="150px"
+                    width="50px"
                     alt="IMG"
                     />
             </DivDrop>

@@ -1,10 +1,24 @@
 ﻿import Picture from "./Picture";
 import { Component, useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
+import { Scene } from "./Scene";
+import Overlay from 'react-bootstrap/Overlay';
 
 
 let imageClickPos = {};
 let oldIndex = -1;
+
+const findParent = (element, idName) => {
+    if (!element) {
+        return null;
+    }
+    //|| element.id === idName
+    if (element.constructor.name ==='HTMLCanvasElement' ) {
+        return element;
+    }
+    //console.log('element.parent:', element.parentElement)
+    return findParent(element.parentElement, idName)
+}
 
 // Drop picture hook
 const DivDrop = (props) => {
@@ -14,9 +28,14 @@ const DivDrop = (props) => {
                 // drop position on this window
                 const { offsetX: x, offsetY: y } = window.event;
                 // Handle image overlaps
-                if (window.event.target.id !== 'Board') {
-                    return;
-                }
+             console.log('target', window.event.target.constructor.name);
+             if (window.event.target.id !== 'Board') {
+                 const fp = findParent(window.event.target, '_Scene');
+                 
+                 if (!fp) {
+                     return;
+                 }
+             }
                 // Add this image to board
                 props.addImageToBoard(item.id, { x, y })
             },
@@ -99,9 +118,12 @@ export default class DragDrop extends Component {
                 }}
                 onDrop={(e) => {
                 this.setState({drop:e})
-            }}>
+                }}>
 
                 <div id="Board" className="Board" ref={drop}>
+                    <div className="Scene"  >
+                        <Scene/>
+                    </div>
                     {
                         board.map((picture, key) => {
                             const style = {};
@@ -111,8 +133,8 @@ export default class DragDrop extends Component {
                                 style.top = `${y}px`;
                                 style.left = `${x}px`;
                             }
-
-                            return <div key={key} style={ style }>
+                         
+                            return <div key={key} style={style}>
                                 <Picture path={picture.path} id={picture.id} diffMouse={() => {
                                     oldIndex = picture._id;
                                     this.setState({ oldIndex: picture._id })
@@ -121,7 +143,7 @@ export default class DragDrop extends Component {
                         })
                     }
                 </div>
-
+               
                 <div className="Pictures">
                     {
                         PictureList.map((picture, key) => {

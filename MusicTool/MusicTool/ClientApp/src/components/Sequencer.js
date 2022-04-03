@@ -89,10 +89,18 @@ export class Sequencer extends Component {
         })
 
         return (
-            <div>
-                <button onClick={this._startSequence.bind(this)}>Play</button>
-                <button onClick={this._stopSequence.bind(this)}>Pause</button>
-                <div>{tracks}</div>
+            <div className="row">
+                <div className="col-2">
+                    <button onClick={this._startSequence.bind(this)}>Play</button>
+                    <button onClick={this._stopSequence.bind(this)}>Pause</button>
+                </div>
+                <div className="col-auto">
+                    {tracks}
+                </div>
+                
+               
+                
+                <div></div>
             </div>
         );
 
