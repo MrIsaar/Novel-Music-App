@@ -8,7 +8,7 @@ import Overlay from 'react-bootstrap/Overlay';
 let imageClickPos = {};
 let oldIndex = -1;
 
-/*const findParent = (element, idName) => {
+const findParent = (element, idName) => {
     if (!element) {
         return null;
     }
@@ -18,7 +18,7 @@ let oldIndex = -1;
     }
     //console.log('element.parent:', element.parentElement)
     return findParent(element.parentElement, idName)
-}*/
+}
 
 // Drop picture hook
 const DivDrop = (props) => {
@@ -161,6 +161,7 @@ export default class DragDrop extends Component {
                         })
                     }
                 </div>
+
             </DivDrop>
         );
     }
