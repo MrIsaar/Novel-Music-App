@@ -95,7 +95,22 @@ export class Scene extends React.Component {
                     for (let j = 0; j < drums.length; j++)
                         if (event.pairs[i].bodyA == drums[j] || event.pairs[i].bodyB == drums[j]) {
                             console.log("*Meep*");
-                            synth.triggerAttackRelease('C4', '8n');
+                            switch (j) {
+                                case 0:
+                                    synth.triggerAttackRelease('B3', '8n');
+                                    break;
+                                case 1:
+                                    synth.triggerAttackRelease('C4', '8n');
+                                    break;
+                                case 2:
+                                    synth.triggerAttackRelease('D4', '8n');
+                                    break;
+                                case 3:
+                                    synth.triggerAttackRelease('E4', '8n');
+                                    break;
+                                default:
+                                    synth.triggerAttackRelease('G4', '8n');
+                            }   
                         }
                 }
 
