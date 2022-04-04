@@ -97,16 +97,16 @@ export class Scene extends React.Component {
                             console.log("*Meep*");
                             switch (j) {
                                 case 0:
-                                    synth.triggerAttackRelease('B3', '8n');
+                                    synth.triggerAttackRelease('E3', '8n');
                                     break;
                                 case 1:
-                                    synth.triggerAttackRelease('C4', '8n');
-                                    break;
-                                case 2:
                                     synth.triggerAttackRelease('D4', '8n');
                                     break;
+                                case 2:
+                                    synth.triggerAttackRelease('C4', '8n');
+                                    break;
                                 case 3:
-                                    synth.triggerAttackRelease('E4', '8n');
+                                    synth.triggerAttackRelease('B4', '8n');
                                     break;
                                 default:
                                     synth.triggerAttackRelease('G4', '8n');
