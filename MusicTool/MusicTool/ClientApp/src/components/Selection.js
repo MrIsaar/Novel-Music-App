@@ -1,21 +1,23 @@
 ﻿import Matter from "matter-js";
+import { Rect, Circle } from "./ShapePrimitives";
+import * as PIXI from "pixi.js";
 
 
-
-export class Selection {
+export class Selection extends PIXI.Graphics {
     /**
      * 
      * @param {any} selected object such as cannon or instrument with selected.body, selected.pos, selected.angle
      */
     constructor(selected, size = 100) {
+        super();
         this.selected = selected
         this.size = size;
         if (size < 40) { size = 40 }
-        this.horizontal = Matter.Bodies.rectangle(selected.pos.x, selected.pos.y, size, 5, { render: { fillStyle: 'blue', opacity: 0.3 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.vertical = Matter.Bodies.rectangle(selected.pos.x, selected.pos.y, 5, size, { render: { fillStyle: 'blue', opacity: 0.3 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.translationThreshold = Matter.Bodies.circle(selected.pos.x, selected.pos.y, size - (0.4 * size), { render: { fillStyle: 'blue', opacity: 0.05 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.rotationThreshold = Matter.Bodies.circle(selected.pos.x, selected.pos.y, size, { render: { fillStyle: 'blue', opacity: 0.05 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.bodies = [this.horizontal, this.vertical, this.translationThreshold, this.rotationThreshold];
+        this.horizontal = new Rect(selected.pos.x, selected.pos.y, size, 5, { render: { fillStyle: 'blue', opacity: 0.3 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.vertical = new Rect(selected.pos.x, selected.pos.y, 5, size, { render: { fillStyle: 'blue', opacity: 0.3 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.translationThreshold = new Circle(selected.pos.x, selected.pos.y, size - (0.4 * size), { render: { fillStyle: 'blue', opacity: 0.05 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.rotationThreshold = new Circle(selected.pos.x, selected.pos.y, size, { render: { fillStyle: 'blue', opacity: 0.05 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.addChild(this.horizontal, this.vertical, this.translationThreshold, this.rotationThreshold);
         this.mode = 0;
     }
 
@@ -30,14 +32,14 @@ export class Selection {
     handleSelection(x, y) {
         let point = { x: x, y: y };
 
-        let distance = Math.sqrt(Math.pow(this.translationThreshold.position.x - point.x, 2) + Math.pow(this.translationThreshold.position.y - point.y, 2));
+        let distance = Math.sqrt(Math.pow(this.translationThreshold.body.position.x - point.x, 2) + Math.pow(this.translationThreshold.body.position.y - point.y, 2));
         if (this.mode == 0) {
             //if (Matter.Bounds.contains(this.translationThreshold.bounds, point)) {
-            if (distance <= this.translationThreshold.circleRadius) {
+            if (distance <= this.translationThreshold.body.circleRadius) {
                 this.mode = "translate";
             }
             //else if (Matter.Bounds.contains(this.rotationThreshold.bounds, point)) {
-            else if (distance <= this.rotationThreshold.circleRadius) {
+            else if (distance <= this.rotationThreshold.body.circleRadius) {
                 this.mode = "rotate";
             }
         }
@@ -71,10 +73,10 @@ export class Selection {
         let dy = y - this.selected.body.position.y;
         let dp = { x: dx, y: dy }
         Matter.Body.translate(this.selected.body, dp)
-        Matter.Body.translate(this.horizontal, dp)
-        Matter.Body.translate(this.vertical, dp)
-        Matter.Body.translate(this.translationThreshold, dp)
-        Matter.Body.translate(this.rotationThreshold, dp)
+        Matter.Body.translate(this.horizontal.body, dp)
+        Matter.Body.translate(this.vertical.body, dp)
+        Matter.Body.translate(this.translationThreshold.body, dp)
+        Matter.Body.translate(this.rotationThreshold.body, dp)
 
         this.selected.pos = this.selected.body.position;
 
@@ -98,8 +100,12 @@ export class Selection {
         }
 
         Matter.Body.setAngle(this.selected.body, angle)
-        this.selected.angle = this.selected.body.angle;
+        this.selected.rotation = this.selected.body.angle;
         console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);
+    }
+
+    draw() {
+        this.children.forEach(child => child.draw());
     }
 
 }

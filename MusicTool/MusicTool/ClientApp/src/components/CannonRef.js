@@ -26,6 +26,12 @@ function createCannon(x, y, ax, ay, size = 40) {
     return body
 }
 
+function updateBodyPosition(body, dx, dy) {
+    let dp = { x: dx, y: dy }
+    Matter.Body.translate(body, dp)
+
+}
+
 /***
  * updates angle and scales cannon relative to center of body
  */
