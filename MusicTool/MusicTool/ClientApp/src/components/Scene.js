@@ -117,8 +117,8 @@ export class Scene extends React.Component {
             ],
             "collisionFilter": {
                 "group": 0,
-                "category": 0,
-                "mask": 0
+                "category": 0xFFFFFFFF,
+                "mask": 0xFFFFFFFF
             },
             "sound": [
                 {
@@ -148,8 +148,11 @@ export class Scene extends React.Component {
                             let sound = drums[j].getSound()
                             synth.triggerAttackRelease(sound.note, sound.length);
                             if (debugLoad) {
-                                drums[j].loadObject(savedObject);
                                 debugLoad = false;
+                                let oldBody = drums[j].loadObject(savedObject);
+                                
+                                Matter.Composite.remove(engine.world, oldBody);
+                                Matter.World.add(engine.world, drums[j].body);
                             }
                         }
                 }

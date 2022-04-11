@@ -91,7 +91,7 @@ export class MTObj {
         var previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
         this.pos = savedJSON.pos;
         this.angle = savedJSON.angle;
         this.image = savedJSON.image;
