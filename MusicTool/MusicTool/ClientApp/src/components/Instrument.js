@@ -81,6 +81,52 @@ export class Instrument extends MTObj {
 
 
     /**
+     *     firelayer must match fireOn value for cannon
+     *     if fire layer is -1 it will always fire
+     *     fireOn of -1 will always fire regardless of fireLayer
+     * 
+     * return ball with current pos, angle, and power of shot 
+     * returns null if not fired
+     * 
+     */
+    fireMarble(fireLayer = -1) {
+        if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
+            return null;   // do not fire
+        }
+
+        // choose random color of marble
+        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
+        let color = "#" + randomColor;
+        let rand = Math.random();
+        if (rand > 0.6) { color = 'orange' }
+        if (this.marbleColor != "rand") {
+            color = this.marbleColor;
+        }
+
+        //create ball
+        var ball = Matter.Bodies.circle(
+            this.pos.x,
+            this.pos.y,
+            this.marbleSize,
+            {
+                mass: 10,
+                restitution: 1,
+                friction: 0.005,
+                render: {
+                    fillStyle: color
+                },
+                collisionFilter: { group: -1 }
+            });
+        //set velocity
+        let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
+        Matter.Body.setVelocity(ball, dv)
+        return ball;
+
+    }
+
+
+
+    /**
      *  returns a simplified version  JSON object of this object that can be saved
      *  loaded with the loadObject function
      *  
@@ -109,14 +155,14 @@ export class Instrument extends MTObj {
             throw 'this is not a saved Instrument';
         }
         this.MTObjType = 'Instrument';
-
-        //this.collisionFilter = savedJSON.collisionFilter;
-        //this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        let previousBody = this.body;
+        this.shape = savedJSON.shape;
+        this.collisionFilter = savedJSON.collisionFilter;
+        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
         this.updateAngle(savedJSON.angle);
         this.updatePosition(savedJSON.pos);
         this.changeCollisionFilter(savedJSON.collisionFilter);
-        this.changeShape(savedJSON.shape);
-
+        
         this.image = savedJSON.image;
         
         this.sound = savedJSON.sound;
@@ -127,7 +173,7 @@ export class Instrument extends MTObj {
             this.noteNumber = 0;
         }
         
-        return true;
+        return previousBody;
 
     }
 }

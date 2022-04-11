@@ -19,7 +19,6 @@ export class MTObj {
         this.image = image;
         this.MTObjType = 'MTObj';
         this.collisionFilter = { group: 0, category: 0, mask: 0 }
-
     }
 
     /**
@@ -61,14 +60,10 @@ export class MTObj {
      */
     changeCollisionFilter(collisionFilter) {
         this.body.collisionFilter = collisionFilter;
-        
+
         this.collisionFilter = collisionFilter
     }
-    changeShape(shape) {
-        this.shape = shape;
-        //this.body.vertices = shape;  not this way
 
-    }
     /**
      *  returns a simplified version  JSON object of this object that can be saved
      *  loaded with the loadObject function
@@ -88,23 +83,20 @@ export class MTObj {
 
     /**
      *  instatiate object based on saved version of this object from saveObject
-     *  
      * @param {any} savedJSON
      */
     loadObject(savedJSON) {
 
         this.MTObjType = 'MTObj';
-        this.updateAngle(savedJSON.angle);
-        this.updatePosition(savedJSON.pos);
-        this.changeCollisionFilter(savedJSON.collisionFilter);
-        this.changeShape(savedJSON.shape);
-
-        //this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
-
+        var previousBody = this.body;
+        this.shape = savedJSON.shape;
+        this.collisionFilter = savedJSON.collisionFilter;
+        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.pos = savedJSON.pos;
+        this.angle = savedJSON.angle;
         this.image = savedJSON.image;
         
-        
-        return true;
+        return previousBody;
 
     }
 }
