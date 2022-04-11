@@ -6,6 +6,7 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
+import Instrument from './Instrument';
 
 var cannons = [];
 var balls = [];
@@ -15,6 +16,9 @@ var sounds = [];
 var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
+var debugLoad = true;
+var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
+
 
 
 export class Scene extends React.Component {
@@ -84,7 +88,53 @@ export class Scene extends React.Component {
             });
         World.add(engine.world, mouseConstraint);
 
-
+        
+        let savedObject = {
+            "MTObjType": "Instrument",
+            "pos": {
+                "x": 300,
+                "y": 250
+            },
+            "angle": 0,
+            "image": "./PalletImages/1.png",
+            "shape": [
+                {
+                    "x": -25,
+                    "y": -10
+                },
+                {
+                    "x": 25,
+                    "y": -10
+                },
+                {
+                    "x": 20,
+                    "y": 10
+                },
+                {
+                    "x": -20,
+                    "y": 10
+                }
+            ],
+            "collisionFilter": {
+                "group": 0,
+                "category": 0,
+                "mask": 0
+            },
+            "sound": [
+                {
+                    "note": "A3",
+                    "length": "8n"
+                },
+                {
+                    "note": "B3",
+                    "length": "8n"
+                },
+                {
+                    "note": "C4",
+                    "length": "8n"
+                }
+            ]
+        };
 
         /**
          *      Handle Collision Interactions
@@ -93,24 +143,14 @@ export class Scene extends React.Component {
             function (event) {
                 for (let i = 0; i < event.pairs.length; i++) {
                     for (let j = 0; j < drums.length; j++)
-                        if (event.pairs[i].bodyA == drums[j] || event.pairs[i].bodyB == drums[j]) {
+                        if (event.pairs[i].bodyA == drums[j].body || event.pairs[i].bodyB == drums[j].body) {
                             console.log("*Meep*");
-                            switch (j) {
-                                case 0:
-                                    synth.triggerAttackRelease('E4', '8n');
-                                    break;
-                                case 1:
-                                    synth.triggerAttackRelease('D4', '8n');
-                                    break;
-                                case 2:
-                                    synth.triggerAttackRelease('C4', '8n');
-                                    break;
-                                case 3:
-                                    synth.triggerAttackRelease('B3', '8n');
-                                    break;
-                                default:
-                                    synth.triggerAttackRelease('G4', '8n');
-                            }   
+                            let sound = drums[j].getSound()
+                            synth.triggerAttackRelease(sound.note, sound.length);
+                            if (debugLoad) {
+                                drums[j].loadObject(savedObject);
+                                debugLoad = false;
+                            }
                         }
                 }
 
@@ -257,16 +297,27 @@ export class Scene extends React.Component {
             position = { x: width * (0.2), y: height * (0.2 * i) };
             cannon = new Cannon(position, 0, 20, i);
             cannons.push(cannon);
-            drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
+            
+        }
+        for (let i = 1; i < 5; i++) {
+            /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
                 isStatic: true,
                 render: {
                     fillStyle: "red"
                 }
-            }))
+            }))*/
+            position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
+            let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
+            drums.push(drum);
+            World.add(engine.world, drum.body);
+
         }
-
-        World.add(engine.world, drums)
-
+        position = { x: width * (0.1), y: height * (0.2) + 50 };
+        let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
+        drums.push(drum);
+        World.add(engine.world, drum.body);
+        //   flip top cannon to this  angle:2.9158123171809476, dx:-173.4000015258789, dy:39.8125
+        //   tune 0-0- ---- 00-- ----
 
 
         for (let i = 0; i < cannons.length; i++) {
