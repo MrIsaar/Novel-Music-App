@@ -91,31 +91,76 @@ export class Scene extends React.Component {
         World.add(this.engine.world, mouseConstraint);
 
         
-        
+        let savedObject = {
+            "MTObjType": "Instrument",
+            "pos": {
+                "x": 300,
+                "y": 250
+            },
+            "angle": 0,
+            "image": "./PalletImages/1.png",
+            "shape": [
+                {
+                    "x": -25,
+                    "y": -10
+                },
+                {
+                    "x": 25,
+                    "y": -10
+                },
+                {
+                    "x": 20,
+                    "y": 10
+                },
+                {
+                    "x": -20,
+                    "y": 10
+                }
+            ],
+            "collisionFilter": {
+                "group": 0,
+                "category": 0xFFFFFFFF,
+                "mask": 0xFFFFFFFF
+            },
+            "sound": [
+                {
+                    "note": "A3",
+                    "length": "8n"
+                },
+                {
+                    "note": "B3",
+                    "length": "8n"
+                },
+                {
+                    "note": "C4",
+                    "length": "8n"
+                }
+            ]
+        };
 
         /**
          *      Handle Collision Interactions
          */
-        // Matter.Events.on(engine, "collisionStart",
-        //     function (event) {
-        //         for (let i = 0; i < event.pairs.length; i++) {
-        //             for (let j = 0; j < drums.length; j++)
-        //                 if (event.pairs[i].bodyA == drums[j].body || event.pairs[i].bodyB == drums[j].body) {
-        //                     console.log("*Meep*");
-        //                     let sound = drums[j].getSound()
-        //                     synth.triggerAttackRelease(sound.note, sound.length);
-        //                     if (debugLoad) {
-        //                         debugLoad = false;
-        //                         let oldBody = drums[j].loadObject(savedObject);
+        Matter.Events.on(engine, "collisionStart",
+            function (event) {
+                for (let i = 0; i < event.pairs.length; i++) {
+                    for (let j = 0; j < drums.length; j++)
+                        if (event.pairs[i].bodyA == drums[j].body || event.pairs[i].bodyB == drums[j].body) {
+                            console.log("*Meep*");
+                            let sound = drums[j].getSound()
+                            synth.triggerAttackRelease(sound.note, sound.length);
+                            if (debugLoad) {
+                                debugLoad = false;
+                                let oldBody = drums[j].loadObject(savedObject);
                                 
-        //                         Matter.Composite.remove(engine.world, oldBody);
-        //                         Matter.World.add(engine.world, drums[j].body);
-        //                     }
-        //                 }
-        //         }
+                                Matter.Composite.remove(engine.world, oldBody);
+                                Matter.World.add(engine.world, drums[j].body);
+                            }
+                        }
+                }
 
-        //     }
-        // );
+            }
+        );
         /**
          *      Mouse down handling
          *      
@@ -124,82 +169,82 @@ export class Scene extends React.Component {
          *      Alt click    - Create Cannon at location - to be removed with drag and drop
          *      
          */
-        // Matter.Events.on(mouseConstraint, "mousedown",
-        //     function (event) {
-        //         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
+        Matter.Events.on(mouseConstraint, "mousedown",
+            function (event) {
+                let position = { x: event.mouse.position.x, y: event.mouse.position.y }
 
-        //         // shift mode - Fire Cannons - to be removed
-        //         if (event.mouse.sourceEvents.mousedown.shiftKey) {
-        //             //var ball = Matter.Bodies.circle(position.x, position.y, 20);
-        //             /* World.add(engine.world, [ball]);*/
-        //             for (let i = 0; i < cannons.length; i++) {
-        //                 let ball = cannons[i].fireMarble(-1);
-        //                 balls.push(ball);
-        //                 World.add(engine.world, [ball]);
-        //             }
-        //             if (selection != null) {
-        //                 Matter.Composite.remove(engine.world, selection.bodies)
-        //                 selection = null;
-        //             }
-        //         }
+                // shift mode - Fire Cannons - to be removed
+                if (event.mouse.sourceEvents.mousedown.shiftKey) {
+                    //var ball = Matter.Bodies.circle(position.x, position.y, 20);
+                    /* World.add(engine.world, [ball]);*/
+                    for (let i = 0; i < cannons.length; i++) {
+                        let ball = cannons[i].fireMarble(-1);
+                        balls.push(ball);
+                        World.add(engine.world, [ball]);
+                    }
+                    if (selection != null) {
+                        Matter.Composite.remove(engine.world, selection.bodies)
+                        selection = null;
+                    }
+                }
 
-        //         // alt mode - to be removed with drag and drop
-        //         else if (event.mouse.sourceEvents.mousedown.altKey) {
-        //             Tone.start();
-        //             let position = { x: event.mouse.position.x, y: event.mouse.position.y }
+                // alt mode - to be removed with drag and drop
+                else if (event.mouse.sourceEvents.mousedown.altKey) {
+                    Tone.start();
+                    let position = { x: event.mouse.position.x, y: event.mouse.position.y }
 
-        //             let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
-        //             cannons.push(cannon);
-        //             World.add(engine.world, cannon.getBody());
-        //             //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
-        //             if (selection != null) {
-        //                 Matter.Composite.remove(engine.world, selection.bodies)
-        //                 selection = null;
-        //             }
-        //         }
+                    let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
+                    cannons.push(cannon);
+                    World.add(engine.world, cannon.getBody());
+                    //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
+                    if (selection != null) {
+                        Matter.Composite.remove(engine.world, selection.bodies)
+                        selection = null;
+                    }
+                }
 
-        //         // normal click - select object under mouse
-        //         else {
-        //             // new select object - create new function for this
-        //             if (selection == null) {
+                // normal click - select object under mouse
+                else {
+                    // new select object - create new function for this
+                    if (selection == null) {
 
-        //                 let currCannon = null;
-        //                 for (let i = 0; i < cannons.length; i++) {
-        //                     if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-        //                         currCannon = cannons[i];
-        //                         break;
-        //                     }
-        //                 }
-        //                 if (currCannon != null) {
-        //                     selection = new Selection(currCannon);
-        //                     World.add(engine.world, selection.bodies);
-        //                 }
+                        let currCannon = null;
+                        for (let i = 0; i < cannons.length; i++) {
+                            if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
+                                currCannon = cannons[i];
+                                break;
+                            }
+                        }
+                        if (currCannon != null) {
+                            selection = new Selection(currCannon);
+                            World.add(engine.world, selection.bodies);
+                        }
 
-        //             }
-        //             // update object depending on selection mode
-        //             else {
-        //                 if (!selection.handleSelection(position.x, position.y)) {
-        //                     if (selection != null) { // deselect
-        //                         Matter.Composite.remove(engine.world, selection.bodies)
-        //                         selection = null;
-        //                     }
-        //                     //Check if another cannon should be selected
-        //                     let currCannon = null;
-        //                     for (let i = 0; i < cannons.length; i++) {
-        //                         if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-        //                             currCannon = cannons[i];
-        //                             break;
-        //                         }
-        //                     }
-        //                     if (currCannon != null) {
-        //                         selection = new Selection(currCannon);
-        //                         World.add(engine.world, selection.bodies);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // );
+                    }
+                    // update object depending on selection mode
+                    else {
+                        if (!selection.handleSelection(position.x, position.y)) {
+                            if (selection != null) { // deselect
+                                Matter.Composite.remove(engine.world, selection.bodies)
+                                selection = null;
+                            }
+                            //Check if another cannon should be selected
+                            let currCannon = null;
+                            for (let i = 0; i < cannons.length; i++) {
+                                if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
+                                    currCannon = cannons[i];
+                                    break;
+                                }
+                            }
+                            if (currCannon != null) {
+                                selection = new Selection(currCannon);
+                                World.add(engine.world, selection.bodies);
+                            }
+                        }
+                    }
+                }
+            }
+        );
 
 
         /**
@@ -279,10 +324,10 @@ export class Scene extends React.Component {
             Matter.World.add(this.engine.world, drum.body);
 
         }
-        //position = { x: width * (0.1), y: height * (0.2) + 50 };
-        //let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
-        //drums.push(drum);
-        //Matter.World.add(this.engine.world, drum.body);
+        position = { x: width * (0.1), y: height * (0.2) + 50 };
+        let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
+        drums.push(drum);
+        World.add(engine.world, drum.body);
         //   flip top cannon to this  angle:2.9158123171809476, dx:-173.4000015258789, dy:39.8125
         //   tune 0-0- ---- 00-- ----
 
