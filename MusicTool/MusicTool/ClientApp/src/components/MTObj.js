@@ -75,7 +75,7 @@ export class MTObj extends PIXI.Graphics{
      */
     changeCollisionFilter(collisionFilter) {
         this.body.collisionFilter = collisionFilter;
-        
+
         this.collisionFilter = collisionFilter
     }
 
