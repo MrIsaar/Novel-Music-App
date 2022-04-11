@@ -164,7 +164,7 @@ export class Instrument extends MTObj {
         this.updateAngle(savedJSON.angle);
         this.updatePosition(savedJSON.pos);
         this.changeCollisionFilter(savedJSON.collisionFilter);
-        
+
         this.image = savedJSON.image;
         
         this.sound = savedJSON.sound;
