@@ -93,6 +93,7 @@ export class Scene extends React.Component {
         
         let savedObject = {
             "MTObjType": "Instrument",
+            "MTObjVersion": "0.9.0",
             "pos": {
                 "x": 300,
                 "y": 250
