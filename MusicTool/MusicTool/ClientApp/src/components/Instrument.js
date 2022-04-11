@@ -19,6 +19,7 @@ export class Instrument extends MTObj {
         this.body.collisionFilter = collisionFilter;
         this.sound = sound;
         
+        
         if (this.sound[0] == undefined) {
             this.noteNumber = -1;
         }
@@ -134,6 +135,7 @@ export class Instrument extends MTObj {
     saveObject() {
         return {
             MTObjType: 'Instrument',
+            MTObjVersion: this.MTObjVersion,
             pos: this.pos,
             angle: this.angle,
             image: this.image,

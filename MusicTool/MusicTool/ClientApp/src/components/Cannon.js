@@ -15,7 +15,7 @@ export class Cannon extends MTObj {
      * @param {any} marbleSize default 20
      * @param {any} marbleCollisionFilter default is all
      */
-    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: 0, category: -1, mask: -1 }, image = null) {
+    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: 0, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
         let shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
         super(pos, angle, shape, image);
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
@@ -24,6 +24,7 @@ export class Cannon extends MTObj {
         this.marbleSize = marbleSize;
         this.marbleColor = marbleColor;
         this.MTObjType = 'Cannon';
+        
         this.marbleCollisionFilter = marbleCollisionFilter;
       
     }
@@ -78,7 +79,7 @@ export class Cannon extends MTObj {
                 render: {
                     fillStyle: color
                 },
-                collisionFilter: { group: -1 }
+                collisionFilter: this.collisionFilter
             });
         //set velocity
         let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
@@ -98,6 +99,7 @@ export class Cannon extends MTObj {
     saveObject() {
         return {
             MTObjType: 'Cannon',
+            MTObjVersion: this.MTObjVersion,
             pos: this.pos,
             angle: this.angle,
             image: this.image,
@@ -122,6 +124,7 @@ export class Cannon extends MTObj {
             throw 'this is not a saved Cannon';
         }
         this.MTObjType = 'Cannon';
+        this.MTObjVersion = savedJSON.MTObjVersion;
         let previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;

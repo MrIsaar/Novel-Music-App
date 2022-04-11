@@ -18,6 +18,7 @@ export class MTObj {
         this.angle = angle;
         this.image = image;
         this.MTObjType = 'MTObj';
+        this.MTObjVersion = '1.0.0';
         this.collisionFilter = { group: 0, category: 0, mask: 0 }
     }
 
@@ -72,6 +73,7 @@ export class MTObj {
     saveObject() {
         return {
             MTObjType: 'MTObj',
+            MTObjVersion: this.MTObjVersion,
             pos: this.pos,
             angle: this.angle,
             image: this.image,
