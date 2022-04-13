@@ -15,8 +15,8 @@ var selection = null;
 var drums = [];
 var sounds = [];
 var synth = new Tone.Synth().toDestination();
-const width = 800;
-const height = 600;
+const width = 1000;
+const height = 500;
 
 
 export class Scene extends React.Component {
@@ -120,6 +120,8 @@ export class Scene extends React.Component {
 
         //END Scene Object initialization
 
+        sounds.push(<div> <ToneExample /> </div>);
+
         // Start engine & renderer
         Engine.run(this.engine);
         document.querySelector("#scene").appendChild(this.app.view);
@@ -137,17 +139,18 @@ export class Scene extends React.Component {
      * Render React HTML and Links Sequencer to scene
      */
     render() {
-        sounds.push(<div>
-            <ToneExample />
-        </div>);
-
         let callbacks = [this.fireBalls];
-
+       
         return (
-            <div>
-                <div>{sounds}</div>
-                <button onClick={this.fireBalls}>---------FIRE---------</button>
-                <div id="scene" />
+            <div id="_Scene" >
+                <div ref="scene" id="scene" />
+                <div className="row">
+                    <div className="col-3"><ToneExample /> </div>
+                    <div className="col-3">
+                        <button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button>
+                    </div>
+                   
+                </div>
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
                 <Sequencer
