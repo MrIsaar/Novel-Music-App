@@ -46,6 +46,7 @@ export class Sequencer extends Component {
 
             }
 
+        this.callbacks = props.callbacks;
 
             for (let i = 0; i < this.state.numTracks; i++) {
                 let row = [];
