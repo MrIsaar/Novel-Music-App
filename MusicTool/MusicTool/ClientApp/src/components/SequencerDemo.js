@@ -24,7 +24,8 @@ export class SequencerDemo extends Component {
     }
 
     playNote(trackID) {
-        this.instruments[trackID].triggerAttackRelease(this.notes[trackID], '8n');
+        let note = trackID % this.notes.length;
+        this.instruments[note].triggerAttackRelease(this.notes[note], '8n');
     }
 
     

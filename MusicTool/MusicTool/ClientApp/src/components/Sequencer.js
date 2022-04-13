@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import * as Tone from 'tone';
 import { SequencerTrack } from './SequencerTrack';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import Button from '@mui/material/Button';
+import AddBox from '@mui/icons-material/AddBox';
+
 
 
 export class Sequencer extends Component {
@@ -11,13 +15,16 @@ export class Sequencer extends Component {
             numSteps: props.numSteps,
             numTracks: props.numTracks,
             currentStepID: 0,
-            lifetimeNumTracks: 0
+            lifetimeNumTracks: props.numTracks
         }
 
         this.callback = props.callback;
 
         this._noteMatrix = [];
         this._trackIDs = [];
+        this._trackNames = [];
+
+        
         for (let i = 0; i < this.state.numTracks; i++) {
             let row = [];
             for (let j = 0; j < this.state.numSteps; j++) {
@@ -25,6 +32,7 @@ export class Sequencer extends Component {
             }
             this._noteMatrix.push(row);
             this._trackIDs.push(i);
+            this._trackNames.push("Track " + i);
         }
 
         this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.numSteps), '8n');
@@ -59,15 +67,24 @@ export class Sequencer extends Component {
     _removeTrack(trackID) {
         let newMatrix = [];
         let newTrackIDs = [];
-        for (let i = 0; i < this.state.numTracks; i++) {
-            if (i != trackID) { // dont copy the track to be removed
-                newMatrix.push(this._noteMatrix[i]);
-                newTrackIDs.push(this._trackIDs[i]);
-            }
-        }
+        let newTrackNames = [];
 
-        this._noteMatrix = newMatrix;
-        this._trackIDs = newTrackIDs;
+        let trackIndex = this._trackIDs.indexOf(trackID);
+        this._noteMatrix.splice(trackIndex, 1);
+        this._trackIDs.splice(trackIndex, 1);
+        this._trackNames.splice(trackIndex, 1);
+        
+        //for (let i = 0; i < this.state.numTracks; i++) {
+        //    if (this._trackIDs[i] != trackID) { // dont copy the track to be removed
+        //        newMatrix.push(this._noteMatrix[i]);
+        //        newTrackIDs.push(this._trackIDs[i]);
+        //        newTrackNames.push(this._trackNames[i]);
+        //    }
+        //}
+
+        //this._noteMatrix = newMatrix;
+        //this._trackIDs = newTrackIDs;
+        //this._trackNames = newTrackNames;
 
         this.setState({numTracks: this.state.numTracks - 1});
     }
@@ -81,6 +98,7 @@ export class Sequencer extends Component {
         let row = [...Array(this.state.numSteps)].map((_, i) => { return false; });
         this._noteMatrix.push(row);
         this._trackIDs.push(this.state.lifetimeNumTracks + 1);
+        this._trackNames.push("Track " + this.state.lifetimeNumTracks);
         this.setState({
             lifetimeNumTracks: this.state.lifetimeNumTracks + 1,
             numTracks: this.state.numTracks + 1
@@ -88,10 +106,13 @@ export class Sequencer extends Component {
 
     }
 
-    toggleNote(track, step) {
-        this._noteMatrix[track][step] = !this._noteMatrix[track][step];
-        if (this._noteMatrix[track][step]) {
-            this.callback[track]();
+    addTrack = this._addTrack.bind(this);
+
+    toggleNote(trackID, step) {
+        let trackIdx = this._trackIDs.indexOf(trackID);
+        this._noteMatrix[trackIdx][step] = !this._noteMatrix[trackIdx][step];
+        if (this._noteMatrix[trackIdx][step]) {
+            this.callback(trackID);
         }
     }
 
@@ -120,7 +141,7 @@ export class Sequencer extends Component {
                     key={i}
                     trackID={id}
                     currentStepID={this.state.currentStepID}
-                    title={"Track " + id}
+                    title={this._trackNames[i]}
                     noteCount={this.state.numSteps}
                     onNotes={this._noteMatrix[i]}
                     toggleNote={this.toggleNote.bind(this)}
@@ -138,6 +159,9 @@ export class Sequencer extends Component {
                 <div className="col-auto">
                     {tracks}
                 </div>
+                <Button endIcon={<AddBoxIcon />} onClick={this.addTrack}>
+                    Add Track
+                </Button>
                 
                
                 
