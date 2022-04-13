@@ -10,18 +10,21 @@ export class Sequencer extends Component {
         this.state = {
             numSteps: props.numSteps,
             numTracks: props.numTracks,
-            currentStepID: 0
+            currentStepID: 0,
+            lifetimeNumTracks: 0
         }
 
-        this.callbacks = props.callbacks;
+        this.callback = props.callback;
 
-        this._matrix = [];
+        this._noteMatrix = [];
+        this._trackIDs = [];
         for (let i = 0; i < this.state.numTracks; i++) {
             let row = [];
             for (let j = 0; j < this.state.numSteps; j++) {
                 row.push(false);
             }
-            this._matrix.push(row);
+            this._noteMatrix.push(row);
+            this._trackIDs.push(i);
         }
 
         this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.numSteps), '8n');
@@ -40,18 +43,55 @@ export class Sequencer extends Component {
         console.log(`time: ${time}, step: ${idx}`)
         let step = idx % this.state.numSteps;
         for (let track = 0; track < this.state.numTracks; track++) {
-            if (this._matrix[track][step]) {
-                this.callbacks[track]();
+            if (this._noteMatrix[track][step]) {
+                this.callback(this._trackIDs[track]);
             }
         }
         this.setState({ currentStepID: step });
         //this.forceUpdate();
     }
 
+    /**
+     * Removes the specified track from the component and from the internal note matrix.
+     * Simply copies note matrix and track IDs. This should be called infrequently so efficiency is not important.
+     * @param {any} trackID
+     */
+    _removeTrack(trackID) {
+        let newMatrix = [];
+        let newTrackIDs = [];
+        for (let i = 0; i < this.state.numTracks; i++) {
+            if (i != trackID) { // dont copy the track to be removed
+                newMatrix.push(this._noteMatrix[i]);
+                newTrackIDs.push(this._trackIDs[i]);
+            }
+        }
+
+        this._noteMatrix = newMatrix;
+        this._trackIDs = newTrackIDs;
+
+        this.setState({numTracks: this.state.numTracks - 1});
+    }
+
+    removeTrack = this._removeTrack.bind(this);
+
+    /**
+     * Adds a single track. The new track will have a blank row in the note matrix and the next highest available trackID.
+     */
+    _addTrack() {
+        let row = [...Array(this.state.numSteps)].map((_, i) => { return false; });
+        this._noteMatrix.push(row);
+        this._trackIDs.push(this.state.lifetimeNumTracks + 1);
+        this.setState({
+            lifetimeNumTracks: this.state.lifetimeNumTracks + 1,
+            numTracks: this.state.numTracks + 1
+        });
+
+    }
+
     toggleNote(track, step) {
-        this._matrix[track][step] = !this._matrix[track][step];
-        if (this._matrix[track][step]) {
-            this.callbacks[track]();
+        this._noteMatrix[track][step] = !this._noteMatrix[track][step];
+        if (this._noteMatrix[track][step]) {
+            this.callback[track]();
         }
     }
 
@@ -74,16 +114,17 @@ export class Sequencer extends Component {
 
     render() {
 
-        let tracks = [...Array(this.state.numTracks)].map((_, i) => {
+        let tracks = this._trackIDs.map((id, i) => {
             return (
                 <SequencerTrack
                     key={i}
-                    channelID={i}
+                    trackID={id}
                     currentStepID={this.state.currentStepID}
-                    title={"Track " + i}
+                    title={"Track " + id}
                     noteCount={this.state.numSteps}
-                    onNotes={this._matrix[i]}
+                    onNotes={this._noteMatrix[i]}
                     toggleNote={this.toggleNote.bind(this)}
+                    removeTrack={this.removeTrack}
                 />
             )
         })
