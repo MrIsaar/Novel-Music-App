@@ -47,7 +47,7 @@ import Matter from "matter-js";
      * 
      */
     fireMarble(fireLayer=-1) {
-        if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
+        if (fireLayer !== -1 && this.fireOn !== -1 && fireLayer !== this.fireOn) {
             return null;   // do not fire
         }
 
@@ -56,7 +56,7 @@ import Matter from "matter-js";
         let color = "#" + randomColor;
         let rand = Math.random();
         if (rand > 0.6) { color = 'orange' }
-        if (this.marbleColor != "rand") {
+        if (this.marbleColor !== "rand") {
             color = this.marbleColor;
         }
 

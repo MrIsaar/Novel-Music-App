@@ -168,7 +168,7 @@ export class Scene extends React.Component {
     onCollision(event) {
         for (let i = 0; i < event.pairs.length; i++) {
             for (let j = 0; j < drums.length; j++)
-                if (event.pairs[i].bodyA == drums[j].body || event.pairs[i].bodyB == drums[j].body) {
+                if (event.pairs[i].bodyA === drums[j].body || event.pairs[i].bodyB === drums[j].body) {
                     console.log("*Meep*");
                     synth.triggerAttackRelease('C4', '8n');
                 }
