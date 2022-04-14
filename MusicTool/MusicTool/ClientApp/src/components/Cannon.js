@@ -78,7 +78,7 @@ import Ball from "./Ball";
         let color = "#" + randomColor;
         let rand = Math.random();
         if (rand > 0.6) { color = 'orange' }
-        if (this.marbleColor != "rand") {
+        if (this.marbleColor !== "rand") {
             color = this.marbleColor;
         }
 

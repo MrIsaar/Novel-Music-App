@@ -33,7 +33,7 @@ export class Selection extends PIXI.Graphics {
         let point = { x: x, y: y };
 
         let distance = Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
-        if (this.mode == 0) {
+        if (this.mode === 0) {
             //if (Matter.Bounds.contains(this.translationThreshold.bounds, point)) {
             if (distance <= this.translationThreshold) {
                 this.mode = "translate";
@@ -43,10 +43,10 @@ export class Selection extends PIXI.Graphics {
                 this.mode = "rotate";
             }
         }
-        if (this.mode == "translate") {
+        if (this.mode === "translate") {
             this.updateBodyPosition(x, y)
         }
-        else if (this.mode == "rotate") {
+        else if (this.mode === "rotate") {
             this.updateBodyAngle(x, y)
         }
         else {
