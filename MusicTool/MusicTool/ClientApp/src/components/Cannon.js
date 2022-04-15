@@ -2,6 +2,7 @@
 import { Circle } from "./ShapePrimitives";
 import Matter from "matter-js";
 
+// Cannon rendering constants
 const CANNON_COLOR = 0xff0000;
 const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
 
@@ -81,6 +82,9 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
 
      }
 
+     /**
+     * Draw this object on the stage
+     */
      draw() {
          this.clear();
          this.beginFill(CANNON_COLOR);
