@@ -2,6 +2,9 @@
 import { Circle } from "./ShapePrimitives";
 import Matter from "matter-js";
 
+const CANNON_COLOR = 0xff0000;
+const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
+
  export class Cannon extends PIXI.Graphics{
 
     /**
@@ -16,10 +19,9 @@ import Matter from "matter-js";
      */
      constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
         super();
-        this.shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
-        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, CANNON_SHAPE, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.fireOn = fireOn;
-        this.pos = pos;
+        this.position = pos;
         this.rotation = angle;
         this.power = power;
         this.marbleSize = marbleSize;
@@ -60,8 +62,8 @@ import Matter from "matter-js";
 
          //create ball
          var ball = new Circle(
-             this.pos.x,
-             this.pos.y,
+             this.position.x,
+             this.position.y,
              this.marbleSize,
              {
                  mass: 10,
@@ -81,10 +83,8 @@ import Matter from "matter-js";
 
      draw() {
          this.clear();
-         this.x = this.pos.x;
-         this.y = this.pos.y;
-         this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle));
-         this.drawPolygon(this.shape);
+         this.beginFill(CANNON_COLOR);
+         this.drawPolygon(CANNON_SHAPE);
          this.endFill();
      }
 }
