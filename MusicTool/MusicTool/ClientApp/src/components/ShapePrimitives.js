@@ -10,6 +10,9 @@ export class Rect extends PIXI.Graphics {
         this.body = Bodies.rectangle(x, y, width, height, options);
     }
 
+    /**
+     * Draw this object on the stage
+     */
     draw() {
         this.clear();
         this.x = this.body.position.x;
@@ -30,6 +33,9 @@ export class Circle extends PIXI.Graphics {
         this.body = Bodies.circle(x, y, r, options);
     }
 
+    /**
+     * Draw this object on the stage
+     */
     draw() {
         this.clear();
         this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle), this.body.render.opacity);
