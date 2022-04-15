@@ -15,7 +15,7 @@ export class Cannon extends MTObj {
      * @param {any} marbleSize default 20
      * @param {any} marbleCollisionFilter default is all
      */
-    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: 0, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
+    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
         let shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
         super(pos, angle, shape, image);
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
@@ -79,7 +79,7 @@ export class Cannon extends MTObj {
                 render: {
                     fillStyle: color
                 },
-                collisionFilter: this.collisionFilter
+                collisionFilter: this.marbleCollisionFilter
             });
         //set velocity
         let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
