@@ -1,7 +1,8 @@
 ﻿import Matter from "matter-js";
 import * as PIXI from "pixi.js";
 
-const COLOR = 0x0000ff; // Blue
+// Selection rendering constants
+const COLOR = 0x0000ff;
 const CROSSBAR_ALPHA = 0.3;
 const THRESHOLD_ALPHA = 0.05;
 const CROSSBAR_WIDTH = 5;
@@ -100,6 +101,9 @@ export class Selection extends PIXI.Graphics {
         console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);
     }
 
+    /**
+     * Draw this object on the stage
+     */
     draw() {
         this.clear();
 
