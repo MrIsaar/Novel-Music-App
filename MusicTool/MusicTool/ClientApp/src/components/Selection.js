@@ -1,7 +1,11 @@
 ﻿import Matter from "matter-js";
-import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
+// Selection rendering constants
+const COLOR = 0x0000ff;
+const CROSSBAR_ALPHA = 0.3;
+const THRESHOLD_ALPHA = 0.05;
+const CROSSBAR_WIDTH = 5;
 
 export class Selection extends PIXI.Graphics {
     /**
@@ -11,13 +15,10 @@ export class Selection extends PIXI.Graphics {
     constructor(selected, size = 100) {
         super();
         this.selected = selected
-        this.size = size;
-        if (size < 40) { size = 40 }
-        this.horizontal = new Rect(selected.pos.x, selected.pos.y, size, 5, { render: { fillStyle: 'blue', opacity: 0.3 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.vertical = new Rect(selected.pos.x, selected.pos.y, 5, size, { render: { fillStyle: 'blue', opacity: 0.3 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.translationThreshold = new Circle(selected.pos.x, selected.pos.y, size - (0.4 * size), { render: { fillStyle: 'blue', opacity: 0.05 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.rotationThreshold = new Circle(selected.pos.x, selected.pos.y, size, { render: { fillStyle: 'blue', opacity: 0.05 }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.addChild(this.horizontal, this.vertical, this.translationThreshold, this.rotationThreshold);
+        this.position = this.selected.position;
+        this.size = size < 40 ? 40 : size;
+        this.translationThreshold = this.size * 0.6;
+        this.rotationThreshold = this.size;
         this.mode = 0;
     }
 
@@ -32,21 +33,21 @@ export class Selection extends PIXI.Graphics {
     handleSelection(x, y) {
         let point = { x: x, y: y };
 
-        let distance = Math.sqrt(Math.pow(this.translationThreshold.body.position.x - point.x, 2) + Math.pow(this.translationThreshold.body.position.y - point.y, 2));
-        if (this.mode == 0) {
+        let distance = Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
+        if (this.mode === 0) {
             //if (Matter.Bounds.contains(this.translationThreshold.bounds, point)) {
-            if (distance <= this.translationThreshold.body.circleRadius) {
+            if (distance <= this.translationThreshold) {
                 this.mode = "translate";
             }
             //else if (Matter.Bounds.contains(this.rotationThreshold.bounds, point)) {
-            else if (distance <= this.rotationThreshold.body.circleRadius) {
+            else if (distance <= this.rotationThreshold) {
                 this.mode = "rotate";
             }
         }
-        if (this.mode == "translate") {
+        if (this.mode === "translate") {
             this.updateBodyPosition(x, y)
         }
-        else if (this.mode == "rotate") {
+        else if (this.mode === "rotate") {
             this.updateBodyAngle(x, y)
         }
         else {
@@ -54,7 +55,6 @@ export class Selection extends PIXI.Graphics {
         }
         return true;
     }
-
 
     /**
      *  resets selction mode to none 
@@ -72,14 +72,11 @@ export class Selection extends PIXI.Graphics {
         let dx = x - this.selected.body.position.x;
         let dy = y - this.selected.body.position.y;
         let dp = { x: dx, y: dy }
+
         Matter.Body.translate(this.selected.body, dp)
-        Matter.Body.translate(this.horizontal.body, dp)
-        Matter.Body.translate(this.vertical.body, dp)
-        Matter.Body.translate(this.translationThreshold.body, dp)
-        Matter.Body.translate(this.rotationThreshold.body, dp)
+        this.selected.position = this.selected.body.position;
 
-        this.selected.pos = this.selected.body.position;
-
+        this.position = this.selected.position;
     }
     /***
     * updates angle and scales cannon relative to center of body
@@ -104,8 +101,21 @@ export class Selection extends PIXI.Graphics {
         console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);
     }
 
+    /**
+     * Draw this object on the stage
+     */
     draw() {
-        this.children.forEach(child => child.draw());
+        this.clear();
+
+        this.beginFill(COLOR, CROSSBAR_ALPHA);
+        this.drawRect(-this.size / 2, -CROSSBAR_WIDTH / 2, this.size, CROSSBAR_WIDTH);
+        this.drawRect(-CROSSBAR_WIDTH / 2, -this.size / 2, CROSSBAR_WIDTH, this.size);
+        this.endFill();
+
+        this.beginFill(COLOR, THRESHOLD_ALPHA);
+        this.drawCircle(0, 0, this.translationThreshold);
+        this.drawCircle(0, 0, this.rotationThreshold);
+        this.endFill();
     }
 
 }
