@@ -9,6 +9,7 @@ import { Cannon } from './components/Cannon';
 import { ToneExample } from './components/ToneSetup'
 import { Selection } from './components/Selection'
 import { SequencerDemo } from './components/SequencerDemo';
+import { DBTest } from './components/DBTest';
 
 import './custom.css'
 
@@ -24,6 +25,7 @@ export default class App extends Component {
               <Route path='/sequencer-demo' component={SequencerDemo} />
               <Route path='/cannon' component={Cannon} />
               <Route path='/scene' component={Scene} />
+              <Route path='/db-test' component={DBTest} />
       </Layout>
     );
   }

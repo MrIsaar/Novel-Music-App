@@ -3,13 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using MusicTool.Areas.Identity.Data;
 using MusicTool.Data;
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("MusicToolContextConnection");;
+var identityConnectionString = builder.Configuration.GetConnectionString("MusicToolIdentityContextConnection");;
 
-builder.Services.AddDbContext<MusicToolContext>(options =>
-    options.UseSqlServer(connectionString));;
+builder.Services.AddDbContext<MusicToolIdentityContext>(options =>
+    options.UseSqlServer(identityConnectionString));;
 
 builder.Services.AddDefaultIdentity<MusicToolUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<MusicToolContext>();;
+    .AddEntityFrameworkStores<MusicToolIdentityContext>();
+
+var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection"); ;
+
+builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseSqlServer(applicationConnectionString)); ;
 
 // Add services to the container.
 
@@ -36,34 +41,34 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html"); ;
 app.UseAuthentication();;
 
-await CreateDbIfNotExistsAsync(app);
+//await CreateDbIfNotExistsAsync(app);
 
 app.Run();
 
 
-static async Task CreateDbIfNotExistsAsync(IHost host)
-{
-    using (var scope = host.Services.CreateScope())
-    {
-        var services = host.Services;
-        try
-        {
-            var musicToolDB = services.GetRequiredService<MusicToolContext>();
+//static async Task CreateDbIfNotExistsAsync(IHost host)
+//{
+//    using (var scope = host.Services.CreateScope())
+//    {
+//        var services = host.Services;
+//        try
+//        {
+//            var musicToolDB = services.GetRequiredService<MusicToolContext>();
 
-            //UserManager<MusicToolUser> um = services.GetRequiredService<UserManager<MusicToolUser>>();
-            //RoleManager<IdentityRole> rm = services.GetRequiredService<RoleManager<IdentityRole>>();
+//            //UserManager<MusicToolUser> um = services.GetRequiredService<UserManager<MusicToolUser>>();
+//            //RoleManager<IdentityRole> rm = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            //await SeedUsersRolesDB.InitializeAsync(rolesDB, um, rm);
-            musicToolDB.Database.EnsureCreated();
+//            //await SeedUsersRolesDB.InitializeAsync(rolesDB, um, rm);
+//            musicToolDB.Database.EnsureCreated();
 
 
-            var TADB = services.GetRequiredService<MusicToolContext>();
-            //TA_DB_Initializer.Initialize(TADB, rolesDB);
-        }
-        catch (Exception ex)
-        {
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred creating the DB.");
-        }
-    }
-}
+//            var TADB = services.GetRequiredService<MusicToolContext>();
+//            //TA_DB_Initializer.Initialize(TADB, rolesDB);
+//        }
+//        catch (Exception ex)
+//        {
+//            var logger = services.GetRequiredService<ILogger<Program>>();
+//            logger.LogError(ex, "An error occurred creating the DB.");
+//        }
+//    }
+//}
