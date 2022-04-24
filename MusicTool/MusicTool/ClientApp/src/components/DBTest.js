@@ -9,25 +9,25 @@ export class DBTest extends Component {
             project: "",
             projectID: 1
         };
+        
+        this._getProject = this.getProject.bind(this);
+
     }
 
-    componentDidMount() {
-        this.getProject();
-    }
 
     
     render() {
         return (
             <div className="db-test">
                 <h1>DB Test</h1>
-                <textarea value={this.state.projectID} onChange={v => this.setState({ projectID: v })}></textarea>
-                <button onClick={this.getProject}>Get Project</button>
+                <textarea onChange={v => this.setState({ projectID: parseInt(v.target.value) })}></textarea>
+                <button onClick={this._getProject}>Get Project</button>
                 <div>{this.state.project}</div>
             </div>
         )
     }
 
-    getProject(id) {
+    getProject() {
         fetch('/projects/' + this.state.projectID)
             .then(res => res.json())
             .then(data => {
