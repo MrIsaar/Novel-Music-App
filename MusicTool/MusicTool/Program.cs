@@ -14,7 +14,10 @@ builder.Services.AddDefaultIdentity<MusicToolUser>(options => options.SignIn.Req
 var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection"); ;
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseSqlServer(applicationConnectionString)); ;
+    options.UseSqlServer(applicationConnectionString));
+
+
+
 
 // Add services to the container.
 

@@ -1,13 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MusicTool.Areas.Application.Data;
 using MusicTool.Areas.Identity.Data;
 
 namespace MusicTool.Data;
 
 public class ApplicationContext : DbContext
 {
-    public DbSet<Project>? Projects { get; set; }
+    public DbSet<Creation> Creation { get; set; }
+    public DbSet<Areas.Application.Data.Object> Object { get; set; }
+
+    public DbSet<Sequencer> Sequencer { get; set; }
+    public DbSet<Access> Access { get; set; }
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options)
     : base(options)
