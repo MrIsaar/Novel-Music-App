@@ -16,7 +16,11 @@ namespace MusicTool
     {
         public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return reader.GetString();
+            using (var jsonDoc = JsonDocument.ParseValue(ref reader))
+            {
+                string s =  jsonDoc.RootElement.GetRawText();
+                return s;
+            }
         }
 
         public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)

@@ -42,10 +42,6 @@ namespace MusicTool.Controllers
                 return NotFound();
             }
 
-            var objs = from c in _context.Creation
-                      where c.CreationID == id
-                      select c.CreationObject;
-
             return creation;
         }
 
