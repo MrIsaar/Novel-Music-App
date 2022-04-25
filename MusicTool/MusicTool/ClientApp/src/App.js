@@ -9,6 +9,8 @@ import { Cannon } from './components/Cannon';
 import { ToneExample } from './components/ToneSetup'
 import { Selection } from './components/Selection'
 import { SequencerDemo } from './components/SequencerDemo';
+import { PalletDemo } from './components/PalletDemo';
+import Overlay from 'react-bootstrap/Overlay';
 import { DBTest } from './components/DBTest';
 
 import './custom.css'
@@ -26,6 +28,7 @@ export default class App extends Component {
               <Route path='/cannon' component={Cannon} />
               <Route path='/scene' component={Scene} />
               <Route path='/db-test' component={DBTest} />
+              <Route path='/PalletDemo' component={PalletDemo} />
       </Layout>
     );
   }
