@@ -47,20 +47,20 @@ namespace MusicTool.Migrations.Application
                 });
 
             migrationBuilder.CreateTable(
-                name: "Object",
+                name: "CreationObject",
                 columns: table => new
                 {
-                    ObjectID = table.Column<int>(type: "int", nullable: false)
+                    CreationObjectID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Json = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Json = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreationID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Object", x => x.ObjectID);
+                    table.PrimaryKey("PK_CreationObject", x => x.CreationObjectID);
                     table.ForeignKey(
-                        name: "FK_Object_Creation_CreationID",
+                        name: "FK_CreationObject_Creation_CreationID",
                         column: x => x.CreationID,
                         principalTable: "Creation",
                         principalColumn: "CreationID",
@@ -93,14 +93,15 @@ namespace MusicTool.Migrations.Application
                 column: "CreationID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Object_CreationID",
-                table: "Object",
+                name: "IX_CreationObject_CreationID",
+                table: "CreationObject",
                 column: "CreationID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sequencer_CreationID",
                 table: "Sequencer",
-                column: "CreationID");
+                column: "CreationID",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -109,7 +110,7 @@ namespace MusicTool.Migrations.Application
                 name: "Access");
 
             migrationBuilder.DropTable(
-                name: "Object");
+                name: "CreationObject");
 
             migrationBuilder.DropTable(
                 name: "Sequencer");

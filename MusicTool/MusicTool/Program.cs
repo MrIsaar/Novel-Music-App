@@ -44,10 +44,32 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html"); ;
 app.UseAuthentication();;
 
-//await CreateDbIfNotExistsAsync(app);
+await CreateDbIfNotExistsAsync(app);
+
 
 app.Run();
 
+static async Task CreateDbIfNotExistsAsync(WebApplication app)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<ApplicationContext>();
+    
+            await context.Database.EnsureCreatedAsync();
+            ApplicationContext.Seed(context);
+            
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred creating the DB.");
+        }
+    }
+        //var context = app.Services.GetRequiredService<ApplicationContext>();
+}
 
 //static async Task CreateDbIfNotExistsAsync(IHost host)
 //{

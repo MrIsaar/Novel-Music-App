@@ -12,7 +12,7 @@ using MusicTool.Data;
 namespace MusicTool.Migrations.Application
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220424203332_CreateApplicationDB")]
+    [Migration("20220424234807_CreateApplicationDB")]
     partial class CreateApplicationDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,30 +74,29 @@ namespace MusicTool.Migrations.Application
                     b.ToTable("Creation");
                 });
 
-            modelBuilder.Entity("MusicTool.Areas.Application.Data.Object", b =>
+            modelBuilder.Entity("MusicTool.Areas.Application.Data.CreationObject", b =>
                 {
-                    b.Property<int>("ObjectID")
+                    b.Property<int>("CreationObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ObjectID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CreationObjectID"), 1L, 1);
 
                     b.Property<int>("CreationID")
                         .HasColumnType("int");
 
                     b.Property<string>("Json")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ObjectID");
+                    b.HasKey("CreationObjectID");
 
                     b.HasIndex("CreationID");
 
-                    b.ToTable("Object");
+                    b.ToTable("CreationObject");
                 });
 
             modelBuilder.Entity("MusicTool.Areas.Application.Data.Sequencer", b =>
@@ -116,7 +115,8 @@ namespace MusicTool.Migrations.Application
 
                     b.HasKey("SequencerID");
 
-                    b.HasIndex("CreationID");
+                    b.HasIndex("CreationID")
+                        .IsUnique();
 
                     b.ToTable("Sequencer");
                 });
@@ -132,31 +132,30 @@ namespace MusicTool.Migrations.Application
                     b.Navigation("Creation");
                 });
 
-            modelBuilder.Entity("MusicTool.Areas.Application.Data.Object", b =>
+            modelBuilder.Entity("MusicTool.Areas.Application.Data.CreationObject", b =>
                 {
-                    b.HasOne("MusicTool.Areas.Application.Data.Creation", "Creation")
-                        .WithMany("Object")
+                    b.HasOne("MusicTool.Areas.Application.Data.Creation", null)
+                        .WithMany("CreationObject")
                         .HasForeignKey("CreationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Creation");
                 });
 
             modelBuilder.Entity("MusicTool.Areas.Application.Data.Sequencer", b =>
                 {
-                    b.HasOne("MusicTool.Areas.Application.Data.Creation", "Creation")
-                        .WithMany()
-                        .HasForeignKey("CreationID")
+                    b.HasOne("MusicTool.Areas.Application.Data.Creation", null)
+                        .WithOne("Sequencer")
+                        .HasForeignKey("MusicTool.Areas.Application.Data.Sequencer", "CreationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Creation");
                 });
 
             modelBuilder.Entity("MusicTool.Areas.Application.Data.Creation", b =>
                 {
-                    b.Navigation("Object");
+                    b.Navigation("CreationObject");
+
+                    b.Navigation("Sequencer")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
