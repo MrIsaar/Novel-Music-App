@@ -26,7 +26,7 @@ export default class App extends Component {
             <Route path='/fetch-data' component={FetchData} />
               <Route path='/sequencer-demo' component={SequencerDemo} />
               <Route path='/cannon' component={Cannon} />
-              <Route path='/scene' component={Scene} />
+              <Route path='/scene/:creationID' component={Scene} />
               <Route path='/db-test' component={DBTest} />
               <Route path='/PalletDemo' component={PalletDemo} />
       </Layout>
