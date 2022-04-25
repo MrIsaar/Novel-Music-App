@@ -30,5 +30,14 @@ namespace MusicTool.Areas.Application.Data
 
     }
 
+    public class CreationSummaryDto
+    {
+        public int CreationID { get; set; }
+        public string? Name { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime LastEditDate { get; set; }
+        public int CreationObjectCount { get; set; }
+    }
+
 }
 

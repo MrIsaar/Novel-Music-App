@@ -29,6 +29,24 @@ namespace MusicTool.Controllers
             return await _context.Creation.ToListAsync();
         }
 
+        [HttpGet("summaries")]
+        public async Task<ActionResult<IEnumerable<CreationSummaryDto>>> GetCreationSummaries()
+        {
+            var creations = from c in _context.Creation
+                            select new CreationSummaryDto()
+                            {
+                                CreationDate = c.CreationDate,
+                                CreationID = c.CreationID,
+                                LastEditDate = c.LastEditDate,
+                                Name = c.Name,
+                                CreationObjectCount = c.CreationObject.Count()
+                            };
+
+            return await creations.ToListAsync();
+        }
+
+        
+
         // GET: api/Creations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Creation>> GetCreation(int id)
