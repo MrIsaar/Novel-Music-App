@@ -35,6 +35,10 @@ export class Scene extends React.Component {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.fireBalls = this.fireBalls.bind(this);
+
+        let { creationID } = this.props.match.params;
+        this.creationID = creationID;
+
     }
 
     /**
@@ -42,6 +46,9 @@ export class Scene extends React.Component {
      * 
      */
     componentDidMount() {
+        if (this.creationID) {
+            this.loadCreation();
+        }
         // Create engine
         Tone.start();
         this.engine = Engine.create({
@@ -305,6 +312,15 @@ export class Scene extends React.Component {
         //remove with delete
         //remove with backspace
         //remove by drag out of bounds
+    }
+
+    loadCreation() {
+        fetch('/api/Creations/' + this.creationID)
+            .then(data => {
+                console.log("creation data: ", data);
+                // setState() here with the loaded data
+            })
+            .catch(err => console.log(err));
     }
 }
 export default Scene;

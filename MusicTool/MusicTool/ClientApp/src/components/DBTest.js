@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { Link } from 'react-router-dom';
 
 export class DBTest extends Component {
 
@@ -48,11 +49,13 @@ export class DBTest extends Component {
                         <TableBody>
                             {this.state.creations.map((row) => (
                                 <TableRow
-                                    key={row.name}
+                                    key={row.creationID}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {row.name}
+                                        <Link tag={Link} className="text-dark" to={"/scene/"+row.creationID}>
+                                            {row.name}
+                                        </Link>
                                     </TableCell>
                                     <TableCell align="right">{row.creationID}</TableCell>
                                     <TableCell align="right">{row.creationDate}</TableCell>
