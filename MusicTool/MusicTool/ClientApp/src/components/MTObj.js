@@ -1,7 +1,7 @@
-﻿
+﻿import * as PIXI from "pixi.js";
 import Matter from "matter-js";
 
-export class MTObj {
+export class MTObj extends PIXI.Graphics{
 
     /**
      * creates a cannon at specified position with angle.
@@ -12,6 +12,7 @@ export class MTObj {
 
      */
     constructor(pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null) {
+        super()
         this.shape = shape;
         this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.pos = pos;
@@ -20,6 +21,19 @@ export class MTObj {
         this.MTObjType = 'MTObj';
         this.MTObjVersion = '1.0.0';
         this.collisionFilter = { group: 0, category: 0, mask: 0 }
+    }
+
+    /**
+     * 
+     *  Draw shape
+     */
+    draw() {
+        this.clear();
+        this.x = this.pos.x;
+        this.y = this.pos.y;
+        this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle));
+        this.drawPolygon(this.shape);
+        this.endFill();
     }
 
     /**
