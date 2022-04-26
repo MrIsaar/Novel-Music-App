@@ -302,7 +302,7 @@ export class Scene extends React.Component {
         Engine.run(this.engine);
         document.querySelector("#scene").appendChild(this.app.view);
         this.app.ticker.add((delta) => {
-            this.backgroundObjects.forEach(o => o.draw());
+            //this.backgroundObjects.forEach(o => o.draw());
             cannons.forEach(c => c.draw());
             balls.forEach(b => b.draw());
             drums.forEach(d => d.draw());
@@ -404,15 +404,19 @@ export class Scene extends React.Component {
         else {
             // new select object - create new function for this
             if (selection == null) {
-                let currCannon = null;
+                let currSelection = null;
                 for (let i = 0; i < cannons.length; i++) {
                     if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-                        currCannon = cannons[i];
+                        currSelection = cannons[i];
+                        break;
+                    }
+                    if (Matter.Bounds.contains(drums[i].body.bounds, position)) {
+                        currSelection = drums[i];
                         break;
                     }
                 }
-                if (currCannon != null) {
-                    selection = new Selection(currCannon);
+                if (currSelection != null) {
+                    selection = new Selection(currSelection);
                     this.app.stage.addChild(selection);
                 }
             }
