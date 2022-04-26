@@ -1,43 +1,38 @@
-﻿import React from "react";
-import ReactDOM from "react-dom";
-import * as PIXI from "pixi.js";
-import { Circle } from "./ShapePrimitives";
+﻿
 import Matter from "matter-js";
 import MTObj from "./MTObj";
 
-
- export class Cannon extends MTObj  {
-
+export class Instrument extends MTObj {
 
     /**
-     * creates a cannon at specified position with angle.
      * 
-     * @param {any} pos    {x, y}
-     * @param {any} angle angle in radians
-     * @param {any} power default 20 how fast marbles will be shot
-     * @param {any} fireLayer default -1, if -1 then always fires
-     * @param {any} marbleColor HTML recognized color, random is default
-     * @param {any} marbleSize default 20
-     * @param {any} marbleCollisionFilter default is all
+     * @param {any} pos
+     * @param {any} angle
+     * @param {any} image
+     * @param {any} sound default to C4, if passed a list it will play list in order
      */
+    constructor(pos, angle = 0, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: -1, mask: -1 }) {
 
-    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
-        this.shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
-        super(pos, angle, this.shape, image)
-        
-        // body created in super MTObj
+        super(pos, angle, shape, image);
+        this.MTObjType = 'Instrument';
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.fireOn = fireLayer
-        this.pos = pos;
-        this.rotation = angle;
-
-        this.power = power;
-        this.marbleSize = marbleSize;
-        this.marbleColor = marbleColor;
-        this.MTObjType = 'Cannon';
+        this.body.collisionFilter = collisionFilter;
+        this.sound = sound;
         
-        this.marbleCollisionFilter = marbleCollisionFilter;
-      
+        
+        if (this.sound[0] == undefined) {
+            this.noteNumber = -1;
+        }
+        else {
+            this.noteNumber = 0;
+        }
+        if (image != null) {
+            /*this.body.render.sprite = {
+                texture: image
+            };*/
+        }
+         
+
     }
 
     /**
@@ -54,6 +49,37 @@ import MTObj from "./MTObj";
     getBody() {
         return this.body;
     }
+
+    /**
+     * returns JSON Object of sound with note and length
+     */
+    getSound() {
+        if (this.noteNumber == -1)
+            return this.sound;
+        else {
+            let note = this.sound[this.noteNumber]
+            this.noteNumber = (this.noteNumber + 1) % this.sound.length; // update to next note
+            return note;
+        }
+    }
+
+    /**
+         changes sound when hit
+         can be given a list of sounds 
+         @param {any} sound JSON object with 'note' and 'length'
+     
+     */
+    changeSound(sound) {
+        this.sound = sound;
+        if (this.sound[0] == undefined) {
+            this.noteNumber = -1;
+        }
+        else {
+            this.noteNumber = 0;
+        }
+    }
+
+
 
     /**
      *     firelayer must match fireOn value for cannon
@@ -78,7 +104,6 @@ import MTObj from "./MTObj";
             color = this.marbleColor;
         }
 
-
         //create ball
         var ball = Matter.Bodies.circle(
             this.pos.x,
@@ -91,39 +116,32 @@ import MTObj from "./MTObj";
                 render: {
                     fillStyle: color
                 },
-                collisionFilter: this.marbleCollisionFilter
+                collisionFilter: { group: -1 }
             });
-
         //set velocity
-         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
-         Matter.Body.setVelocity(ball.body, dv)
-         return ball;
+        let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
+        Matter.Body.setVelocity(ball, dv)
+        return ball;
 
-
-     }
-
+    }
 
 
 
     /**
-    *  returns a simplified version  JSON object of this object that can be saved
-    *  loaded with the loadObject function
-    *  
-    */
+     *  returns a simplified version  JSON object of this object that can be saved
+     *  loaded with the loadObject function
+     *  
+     */
     saveObject() {
         return {
-            MTObjType: 'Cannon',
+            MTObjType: 'Instrument',
             MTObjVersion: this.MTObjVersion,
             pos: this.pos,
             angle: this.angle,
             image: this.image,
             shape: this.shape,
             collisionFilter: this.collisionFilter,
-            fireLayer: this.fireOn,
-            power: this.power,
-            marbleSize: this.marbleSize,
-            marbleColor: this.marbleColor,
-            marbleCollisionFilter: this.marbleCollisionFilter
+            sound: this.sound
         }
     }
 
@@ -134,26 +152,31 @@ import MTObj from "./MTObj";
      * @param {any} savedJSON
      */
     loadObject(savedJSON) {
-        if (savedJSON.MTObjType != 'Cannon') {
-            throw 'this is not a saved Cannon';
+        
+        if (savedJSON.MTObjType != 'Instrument') {
+            throw 'this is not a saved Instrument';
         }
-        this.MTObjType = 'Cannon';
-        this.MTObjVersion = savedJSON.MTObjVersion;
+        this.MTObjType = 'Instrument';
         let previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;
         this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
-        this.pos = savedJSON.pos;
-        this.angle = savedJSON.angle;
+        this.updateAngle(savedJSON.angle);
+        this.updatePosition(savedJSON.pos);
+        this.changeCollisionFilter(savedJSON.collisionFilter);
+        
         this.image = savedJSON.image;
-        this.fireOn = savedJSON.fireLayer;
-        this.power = savedJSON.power;
-        this.marbleSize = savedJSON.marbleSize;
-        this.marbleColor = savedJSON.marbleColor;
-        this.marbleCollisionFilter = savedJSON.marbleCollisionFilter;
+        
+        this.sound = savedJSON.sound;
+        if (this.sound[0] == undefined) {
+            this.noteNumber = -1;
+        }
+        else {
+            this.noteNumber = 0;
+        }
         
         return previousBody;
 
     }
 }
-export default Cannon;
+export default Instrument;
