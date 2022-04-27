@@ -12,7 +12,7 @@ import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
 import Instrument from './Instrument';
-import MTObj from './MTObj';
+
 
 
 var cannons = [];
@@ -259,26 +259,55 @@ export class Scene extends React.Component {
         cannons.push(cannon);
         position = { x: width * (0.2), y: height * 0.3 };
         cannon = new Cannon(position, 1)//<Cannon pos={position} body={null} />;*/
+        let halfpi = 3.1415 / 2;
+        if (this.creationID == 2) {
 
 
-        for (let i = 1; i < 5; i++) {
-            position = { x: width * (0.2), y: height * (0.2 * i) };
-            cannon = new Cannon(position, 0, 20, i);
-            cannons.push(cannon);
-            
+            for (let i = 1; i < 5; i++) {
+                position = { x: width * (0.15 * i), y: height * (0.8) };
+                cannon = new Cannon(position, -halfpi, 20, i);
+                cannons.push(cannon);
+
+            }
+            for (let i = 1; i < 5; i++) {
+                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
+                    isStatic: true,
+                    render: {
+                        fillStyle: "red"
+                    }
+                }))*/
+                position = { x: width * (0.15 * i), y: height * (0.2) };
+                let drum = new Instrument(position, 1, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
+                drums.push(drum);
+                Matter.World.add(this.engine.world, drum.body);
+
+            }
+
+
+
         }
-        for (let i = 1; i < 5; i++) {
-            /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                isStatic: true,
-                render: {
-                    fillStyle: "red"
-                }
-            }))*/
-            position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-            let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-            drums.push(drum);
-            Matter.World.add(this.engine.world, drum.body);
+        else {
 
+
+            for (let i = 1; i < 5; i++) {
+                position = { x: width * (0.2), y: height * (0.2 * i) };
+                cannon = new Cannon(position, 0, 20, i);
+                cannons.push(cannon);
+
+            }
+            for (let i = 1; i < 5; i++) {
+                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
+                    isStatic: true,
+                    render: {
+                        fillStyle: "red"
+                    }
+                }))*/
+                position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
+                let drum = new Instrument(position, 0, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
+                drums.push(drum);
+                Matter.World.add(this.engine.world, drum.body);
+
+            }
         }
         //position = { x: width * (0.1), y: height * (0.2) + 50 };
         //let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
@@ -291,6 +320,9 @@ export class Scene extends React.Component {
         for (let i = 0; i < cannons.length; i++) {
             Matter.World.add(this.engine.world, cannons[i].getBody());
         }
+
+
+        
 
 
         // create inital marbles
@@ -568,7 +600,8 @@ export class Scene extends React.Component {
     }
 
     loadCreation() {
-        fetch('/api/Creations/' + this.creationID)
+        //fetch('/api/Creations/' + this.creationID)
+        fetch('/api/Creations/' + 1)
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
@@ -583,6 +616,28 @@ export class Scene extends React.Component {
     }
 }
 export default Scene;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
