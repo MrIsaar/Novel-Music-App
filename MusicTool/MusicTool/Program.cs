@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MusicTool.Areas.Identity.Data;
 using MusicTool.Data;
@@ -11,7 +12,18 @@ builder.Services.AddDbContext<MusicToolIdentityContext>(options =>
 builder.Services.AddDefaultIdentity<MusicToolUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<MusicToolIdentityContext>();
 
-var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection"); ;
+var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection");
+
+
+var dbPassword = builder.Configuration["ApplicationDatabase:Password"];
+
+var strBuilder = new SqlConnectionStringBuilder(
+        builder.Configuration.GetConnectionString("RemoteMusicToolApplicationContextConnection"));
+strBuilder.Password = dbPassword;
+
+applicationConnectionString = strBuilder.ConnectionString;
+
+
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(applicationConnectionString));
