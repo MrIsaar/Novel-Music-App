@@ -18,6 +18,7 @@ var balls = [];
 var selection = null;
 var drums = [];
 var sounds = [];
+var otherObj = [];
 var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
@@ -491,6 +492,43 @@ export class Scene extends React.Component {
     addObject(object) {
         Matter.World.add(this.engine.world, [object.body]);
         this.app.stage.addChild(object);
+    }
+
+    /**
+     * load an MTObj from json saved object into world
+     * @param {any} mtObject music tool object that inherits from MTObj
+     */
+    loadObject(mtObject) {
+        try {
+            var newObject = null;
+            let pos = { x: 0, y: 0 };
+
+            // create temp object to load object into
+            if (mtObject.MTObjType == "MTObj") {
+                newObject = new MTObj(pos);
+                otherObj.push(newObject);
+            } 
+            else if (mtObject.MTObjType == "Cannon") {
+                newObject = new Cannon(pos);
+                cannons.push(newObject);
+            }
+            else if (mtObject.MTObjType == "Instrument") {
+                newObject = new Instrument(pos);
+                drums.push(newObject);
+            }
+            else {
+                console.log("unknown type");
+                return;
+            }
+
+            //load json
+            newObject.loadObject(mtObject);
+            this.addObject(newObject
+            )
+        }
+        catch (exception_var) {
+            console.log("could not load object");
+        }
     }
 
     /**
