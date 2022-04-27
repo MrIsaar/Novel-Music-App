@@ -1,17 +1,20 @@
 import { SequencerNote } from './SequencerNote';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './SequencerTrack.css'
 
 
 
 export const SequencerTrack = ({
-    channelID,
+    trackID,
     currentStepID,
     title,
     noteCount,
     onNotes,
-    toggleNote
+    toggleNote,
+    removeTrack
 }) => {
-
+     
     const notes = [...Array(noteCount)].map((el, i) => {
         const isNoteOn = onNotes[i];
         const isNoteOnCurrentStep = currentStepID === i
@@ -20,7 +23,7 @@ export const SequencerTrack = ({
         return (
             <SequencerNote
                 key={i}
-                channelID={channelID}
+                trackID={trackID}
                 stepID={stepID}
                 isNoteOn={isNoteOn}
                 isNoteOnCurrentStep={isNoteOnCurrentStep}
@@ -35,6 +38,9 @@ export const SequencerTrack = ({
             <main className="track_notes">
                 {notes}
             </main>
+            <IconButton aria-label="delete" color="primary" onClick={() => removeTrack(trackID)}>
+                <DeleteIcon />
+            </IconButton>
         </div>
     )
 }

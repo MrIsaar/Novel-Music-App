@@ -34,7 +34,10 @@ export class Scene extends React.Component {
      */
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            loading: true,
+            sequencerData: {}
+        };
         Tone.start();
 
         this.onCollision = this.onCollision.bind(this);
@@ -42,6 +45,9 @@ export class Scene extends React.Component {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.fireBalls = this.fireBalls.bind(this);
+
+        let { creationID } = this.props.match.params;
+        this.creationID = creationID;
     }
 
     /**
@@ -49,6 +55,10 @@ export class Scene extends React.Component {
      * 
      */
     componentDidMount() {
+        if (this.creationID) {
+            this.loadCreation();
+        }
+        
         // Create engine
         Tone.start();
         this.engine = Engine.create({
@@ -321,7 +331,21 @@ export class Scene extends React.Component {
         
         /*sounds.push(<div>            <ToneExample />        </div>);*/
         //let callbacks = [this.fireBalls.bind(this)];
-        let callbacks = [() => this.fireBalls.bind(this)(1), () => this.fireBalls.bind(this)(2), () => this.fireBalls.bind(this)(3), () => this.fireBalls.bind(this)(4)];
+        let callback = (id) => this.fireBalls.bind(this)(id);
+        //let callback = this.fireBalls;
+
+        let sequencer;
+        if (this.state.loading) {
+            sequencer = <h1>Loading...</h1>;
+        } else {
+            sequencer =
+                <Sequencer
+                    savedState={this.sequencerSavedState}
+                    loading={this.state.loading}
+                    callback={callback}
+                />
+        }
+       
         return (
             <div id="_Scene" >
                 <div ref="scene" id="scene" />
@@ -334,11 +358,7 @@ export class Scene extends React.Component {
                 </div>
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
-                <Sequencer
-                    numSteps={16}
-                    numTracks={4}
-                    callbacks={callbacks}
-                />
+                {sequencer}
             </div>
         );
     }
@@ -540,6 +560,19 @@ export class Scene extends React.Component {
         //remove with delete
         //remove with backspace
         //remove by drag out of bounds
+    }
+
+    loadCreation() {
+        fetch('/api/Creations/' + this.creationID)
+            .then(res => res.json())
+            .then(data => {
+                console.log("creation data: ", data);
+                this.sequencerSavedState = data.sequencer;
+                this.setState({
+                    loading: false,
+                    sequencerData: data.sequencer
+                });
+            });
     }
 }
 export default Scene;
