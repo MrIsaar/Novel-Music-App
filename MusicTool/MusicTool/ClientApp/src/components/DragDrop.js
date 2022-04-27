@@ -89,10 +89,10 @@ export default class DragDrop extends Component {
 
         // modify images show on the board
         if (oldIndex != -1) {
-            // handle images that already exit on board: move to new place and delete old place
+            /*// handle images that already exit on board: move to new place and delete old place
             const findIndex = tmpBoard.findIndex((p) => p._id === oldIndex);
             // get position information of old place
-            const tb = tmpBoard.find((p) => p._id === oldIndex)
+            const tb = tmpBoard.find((p) => p._id === oldIndex)*/
             tb.info = { x, y };
         } else {
             // add new image to board
@@ -134,12 +134,12 @@ export default class DragDrop extends Component {
                                 style.left = `${x}px`;
                             }
                          
-                            return <div key={key} style={style}>
+                            /*return <div key={key} style={style}>
                                 <Picture path={picture.path} id={picture.id} diffMouse={() => {
                                     oldIndex = picture._id;
                                     this.setState({ oldIndex: picture._id })
                                 }} />
-                            </div>;
+                            </div>;*/
                         })
                     }
                 </div>
