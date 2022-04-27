@@ -71,7 +71,7 @@ public class ApplicationContext : DbContext
         {
             Sequencer s = new Sequencer();
             s.CreationID = cID;
-            s.Json = "{\"tracks\": [{\"name\": \"track1\", \"notes\": [true, true, true, false, false, false]}, {\"name\": \"track2\", \"notes\": [true, false, false, false, false, false]}]}";
+            s.Json = "{\"tracks\": [{\"name\": \"track1\", \"id\": 1, \"notes\": [true, true, true, false, false, false]}, {\"name\": \"track2\", \"id\": 2, \"notes\": [true, false, false, false, false, false]}]}";
             context.Sequencer.Add(s);
         }
         if (!context.Access.Any())

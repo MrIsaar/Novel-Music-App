@@ -27,7 +27,10 @@ export class Scene extends React.Component {
      */
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            loading: true,
+            sequencerData: {}
+        };
         Tone.start();
 
         this.onCollision = this.onCollision.bind(this);
@@ -38,7 +41,6 @@ export class Scene extends React.Component {
 
         let { creationID } = this.props.match.params;
         this.creationID = creationID;
-
     }
 
     /**
@@ -49,6 +51,7 @@ export class Scene extends React.Component {
         if (this.creationID) {
             this.loadCreation();
         }
+        
         // Create engine
         Tone.start();
         this.engine = Engine.create({
@@ -146,7 +149,19 @@ export class Scene extends React.Component {
      * Render React HTML and Links Sequencer to scene
      */
     render() {
-        let callbacks = [this.fireBalls];
+        let callback = this.fireBalls;
+
+        let sequencer;
+        if (this.state.loading) {
+            sequencer = <h1>Loading...</h1>;
+        } else {
+            sequencer =
+                <Sequencer
+                    savedState={this.sequencerSavedState}
+                    loading={this.state.loading}
+                    callback={callback}
+                />
+        }
        
         return (
             <div id="_Scene" >
@@ -160,11 +175,7 @@ export class Scene extends React.Component {
                 </div>
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
-                <Sequencer
-                    numSteps={16}
-                    numTracks={1}
-                    callbacks={callbacks}
-                />
+                {sequencer}
             </div>
         );
     }
@@ -316,11 +327,15 @@ export class Scene extends React.Component {
 
     loadCreation() {
         fetch('/api/Creations/' + this.creationID)
+            .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
-                // setState() here with the loaded data
-            })
-            .catch(err => console.log(err));
+                this.sequencerSavedState = data.sequencer;
+                this.setState({
+                    loading: false,
+                    sequencerData: data.sequencer
+                });
+            });
     }
 }
 export default Scene;

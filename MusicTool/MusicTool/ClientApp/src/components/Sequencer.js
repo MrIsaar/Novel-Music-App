@@ -11,29 +11,57 @@ export class Sequencer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            numSteps: props.numSteps,
-            numTracks: props.numTracks,
-            currentStepID: 0,
-            lifetimeNumTracks: props.numTracks
-        }
-
-        this.callback = props.callback;
 
         this._noteMatrix = [];
         this._trackIDs = [];
         this._trackNames = [];
 
-        
-        for (let i = 0; i < this.state.numTracks; i++) {
-            let row = [];
-            for (let j = 0; j < this.state.numSteps; j++) {
-                row.push(false);
+        if (props.savedState) {
+            let save = props.savedState;
+
+            save.json.tracks.map(t => {
+                this._noteMatrix.push(t.notes);
+                this._trackIDs.push(t.id);
+                this._trackNames.push(t.name);
+            })
+
+            let maxID = Math.max(...this._trackIDs);
+
+            this.state = {
+                numSteps: this._noteMatrix[0].length,
+                numTracks: this._noteMatrix.length,
+                currentStepID: 0,
+                lifetimeNumTracks: maxID + 1,
+                loading: props.loading
+
             }
-            this._noteMatrix.push(row);
-            this._trackIDs.push(i);
-            this._trackNames.push("Track " + i);
+        } else {
+
+            this.state = {
+                numSteps: 16,
+                numTracks: 4,
+                currentStepID: 0,
+                lifetimeNumTracks: 4,
+                loading: props.loading
+
+            }
+
+
+            for (let i = 0; i < this.state.numTracks; i++) {
+                let row = [];
+                for (let j = 0; j < this.state.numSteps; j++) {
+                    row.push(false);
+                }
+                this._noteMatrix.push(row);
+                this._trackIDs.push(i);
+                this._trackNames.push("Track " + i);
+            }
         }
+
+        this.callback = props.callback;
+
+
+        
 
         this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.numSteps), '8n');
         Tone.Transport.start();
@@ -134,6 +162,15 @@ export class Sequencer extends Component {
 
 
     render() {
+
+        if (this.props.loading) {
+            return (
+                <div>
+                    <h1>Loading...</h1>
+                </div>
+            );
+        }
+
 
         let tracks = this._trackIDs.map((id, i) => {
             return (
