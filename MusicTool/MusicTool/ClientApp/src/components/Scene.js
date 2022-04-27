@@ -267,10 +267,10 @@ export class Scene extends React.Component {
             Matter.World.add(this.engine.world, drum.body);
 
         }
-        position = { x: width * (0.1), y: height * (0.2) + 50 };
-        let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
-        drums.push(drum);
-        Matter.World.add(this.engine.world, drum.body);
+        //position = { x: width * (0.1), y: height * (0.2) + 50 };
+        //let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
+        //drums.push(drum);
+        //Matter.World.add(this.engine.world, drum.body);
         //   flip top cannon to this  angle:2.9158123171809476, dx:-173.4000015258789, dy:39.8125
         //   tune 0-0- ---- 00-- ----
 
@@ -473,10 +473,11 @@ export class Scene extends React.Component {
      */
     fireBalls(fireLayer = -1) {
         for (let i = 0; i < cannons.length; i++) {
-            let ball = cannons[i].fireMarble(-1);
+            let ball = cannons[i].fireMarble(fireLayer);
             if (ball == null)
                 continue;
             balls.push(ball);
+            
             this.addObject(ball);
         }
         if (selection != null) {

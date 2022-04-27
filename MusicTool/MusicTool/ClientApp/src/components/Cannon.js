@@ -4,6 +4,7 @@ import * as PIXI from "pixi.js";
 import { Circle } from "./ShapePrimitives";
 import Matter from "matter-js";
 import MTObj from "./MTObj";
+import Ball from "./Ball";
 
 
  export class Cannon extends MTObj  {
@@ -83,7 +84,7 @@ import MTObj from "./MTObj";
 
 
         //create ball
-        var ball = Matter.Bodies.circle(
+       /* var ball = Matter.Bodies.circle(
             this.pos.x,
             this.pos.y,
             this.marbleSize,
@@ -95,10 +96,12 @@ import MTObj from "./MTObj";
                     fillStyle: color
                 },
                 collisionFilter: this.marbleCollisionFilter
-            });
+            });*/
+        var ball = new Ball(this.pos, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
 
         //set velocity
-         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
+        let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
+        console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
          Matter.Body.setVelocity(ball.body, dv)
          return ball;
 
