@@ -11,6 +11,7 @@ import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
 import Instrument from './Instrument';
+import MTObj from './MTObj';
 
 
 var cannons = [];
@@ -25,7 +26,7 @@ const height = 500;
 var debugLoad = true;
 var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
 let savedObject = { "MTObjType": "Instrument","MTObjVersion": "0.9.0","pos": {"x": 300,"y": 250},"angle": 0,"image": "./PalletImages/1.png","shape": [ {"x": -25,  "y": -10  }, {"x": 25,  "y": -10  }, {"x": 20,  "y": 10  }, {"x": -20,  "y": 10  } ],"collisionFilter": {  "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF },"sound": [  {"note": "A3",  "length": "8n"  }, {"note": "B3",  "length": "8n"  }, {"note": "C4",  "length": "8n"  } ]};
-
+let otherSavedObject = {"MTObjType":"Instrument","MTObjVersion":"1.0.0","pos":{"x":400,"y":350},"angle":0,"image":null,"shape":[{"x":-25,"y":-10},{"x":25,"y":-10},{"x":20,"y":10},{"x":-20,"y":10}],"collisionFilter":{ "group":0,"category":0,"mask":0},"sound":{ "note":"C4","length":"8n"}};
 export class Scene extends React.Component {
 
     /**
@@ -353,6 +354,7 @@ export class Scene extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button>
+                        
                     </div>
                    
                 </div>
@@ -543,13 +545,15 @@ export class Scene extends React.Component {
 
             //load json
             newObject.loadObject(mtObject);
-            this.addObject(newObject
-            )
+            this.addObject(newObject);
         }
         catch (exception_var) {
             console.log("could not load object");
+            console.log(exception_var);
         }
     }
+
+
 
     /**
      * removes object from known cannon, ball, or instrument lists
@@ -573,6 +577,127 @@ export class Scene extends React.Component {
                     sequencerData: data.sequencer
                 });
             });
+
+        
     }
 }
 export default Scene;
+
+
+
+
+
+
+
+// saved object temp storage
+
+
+
+
+/*
+
+{
+    "MTObjType": "Cannon",
+    "MTObjVersion": "1.0.0",
+    "pos": {
+        "x": 200,
+        "y": 100
+    },
+    "angle": 0,
+    "image": null,
+    "shape": [
+        {
+            "x": -20,
+            "y": -20
+        },
+        {
+            "x": 40,
+            "y": 0
+        },
+        {
+            "x": -20,
+            "y": 20
+        },
+        {
+            "x": -30,
+            "y": 0
+        }
+    ],
+    "collisionFilter": {
+        "group": 0,
+        "category": 0,
+        "mask": 0
+    },
+    "fireLayer": 1,
+    "power": 20,
+    "marbleSize": 20,
+    "marbleColor": "rand",
+    "marbleCollisionFilter": {
+        "group": -1,
+        "category": 4294967295,
+        "mask": 4294967295
+    }
+}
+
+
+
+
+
+{
+    "MTObjType": "Cannon",
+    "MTObjVersion": "1.0.0",
+    "pos": {
+        "x": 200,
+        "y": 200
+    },
+    "angle": 0,
+    "image": null,
+    "shape": [
+        {
+            "x": -20,
+            "y": -20
+        },
+        {
+            "x": 40,
+            "y": 0
+        },
+        {
+            "x": -20,
+            "y": 20
+        },
+        {
+            "x": -30,
+            "y": 0
+        }
+    ],
+    "collisionFilter": {
+        "group": 0,
+        "category": 0,
+        "mask": 0
+    },
+    "fireLayer": 2,
+    "power": 20,
+    "marbleSize": 20,
+    "marbleColor": "rand",
+    "marbleCollisionFilter": {
+        "group": -1,
+        "category": 4294967295,
+        "mask": 4294967295
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */
