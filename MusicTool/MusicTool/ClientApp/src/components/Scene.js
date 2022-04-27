@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Matter, { Engine, World, Mouse, MouseConstraint } from "matter-js";
 import Cannon from "./Cannon"
+import MTObj from "./MTObj"
 import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
