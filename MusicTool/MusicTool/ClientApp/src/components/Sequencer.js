@@ -4,6 +4,8 @@ import { SequencerTrack } from './SequencerTrack';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import Button from '@mui/material/Button';
 import AddBox from '@mui/icons-material/AddBox';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 
 
@@ -190,8 +192,8 @@ export class Sequencer extends Component {
         return (
             <div className="row">
                 <div className="col-2">
-                    <button onClick={this._startSequence.bind(this)}>Play</button>
-                    <button onClick={this._stopSequence.bind(this)}>Pause</button>
+                    <Button endIcon={<PlayArrowIcon />} onClick={this._startSequence.bind(this)}>Play</Button>
+                    <Button endIcon={<PauseIcon />} onClick={this._stopSequence.bind(this)}>Pause</Button>
                 </div>
                 <div className="col-auto">
                     {tracks}

@@ -15,13 +15,13 @@ builder.Services.AddDefaultIdentity<MusicToolUser>(options => options.SignIn.Req
 var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection");
 
 
-var dbPassword = builder.Configuration["ApplicationDatabase:Password"];
+//var dbPassword = builder.Configuration["ApplicationDatabase:Password"];
 
-var strBuilder = new SqlConnectionStringBuilder(
-        builder.Configuration.GetConnectionString("RemoteMusicToolApplicationContextConnection"));
-strBuilder.Password = dbPassword;
+//var strBuilder = new SqlConnectionStringBuilder(
+//        builder.Configuration.GetConnectionString("RemoteMusicToolApplicationContextConnection"));
+//strBuilder.Password = dbPassword;
 
-applicationConnectionString = strBuilder.ConnectionString;
+//applicationConnectionString = strBuilder.ConnectionString;
 
 
 

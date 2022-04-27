@@ -94,7 +94,7 @@ public class ApplicationContext : DbContext
         {
             Sequencer s = new Sequencer();
             s.CreationID = cID;
-            s.Json = "{\"tracks\": [{\"name\": \"track1\", \"id\": 1, \"notes\": [true, true, true, false, false, false]}, {\"name\": \"track2\", \"id\": 2, \"notes\": [true, false, false, false, false, false]}]}";
+            s.Json = "{\"tracks\": [{\"name\": \"Backbeat\", \"id\": 1, \"notes\": [true, false, true, false, true, false, true, false]}, {\"name\": \"Cowbell\", \"id\": 2, \"notes\": [true, true, true, true, true, true, true, true]}]}";
             context.Sequencer.Add(s);
         }
         if (!context.Access.Any())
