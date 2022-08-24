@@ -141,7 +141,7 @@ export class Scene extends React.Component {
         /**
          *      Handle Collision Interactions
          */
-        Matter.Events.on(engine, "collisionStart",
+        Matter.Events.on(this.engine, "collisionStart",
             function (event) {
                 for (let i = 0; i < event.pairs.length; i++) {
                     for (let j = 0; j < drums.length; j++)
@@ -153,8 +153,8 @@ export class Scene extends React.Component {
                                 debugLoad = false;
                                 let oldBody = drums[j].loadObject(savedObject);
                                 
-                                Matter.Composite.remove(engine.world, oldBody);
-                                Matter.World.add(engine.world, drums[j].body);
+                                Matter.Composite.remove(this.engine.world, oldBody);
+                                Matter.World.add(this.engine.world, drums[j].body);
                             }
                         }
                 }
@@ -176,14 +176,14 @@ export class Scene extends React.Component {
                 // shift mode - Fire Cannons - to be removed
                 if (event.mouse.sourceEvents.mousedown.shiftKey) {
                     //var ball = Matter.Bodies.circle(position.x, position.y, 20);
-                    /* World.add(engine.world, [ball]);*/
+                    /* World.add(this.engine.world, [ball]);*/
                     for (let i = 0; i < cannons.length; i++) {
                         let ball = cannons[i].fireMarble(-1);
                         balls.push(ball);
-                        World.add(engine.world, [ball]);
+                        World.add(this.engine.world, [ball]);
                     }
                     if (selection != null) {
-                        Matter.Composite.remove(engine.world, selection.bodies)
+                        Matter.Composite.remove(this.engine.world, selection.bodies)
                         selection = null;
                     }
                 }
@@ -195,10 +195,10 @@ export class Scene extends React.Component {
 
                     let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
                     cannons.push(cannon);
-                    World.add(engine.world, cannon.getBody());
-                    //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
+                    World.add(this.engine.world, cannon.getBody());
+                    //World.add(this.engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
                     if (selection != null) {
-                        Matter.Composite.remove(engine.world, selection.bodies)
+                        Matter.Composite.remove(this.engine.world, selection.bodies)
                         selection = null;
                     }
                 }
@@ -217,7 +217,7 @@ export class Scene extends React.Component {
                         }
                         if (currCannon != null) {
                             selection = new Selection(currCannon);
-                            World.add(engine.world, selection.bodies);
+                            World.add(this.engine.world, selection.bodies);
                         }
 
                     }
@@ -225,7 +225,7 @@ export class Scene extends React.Component {
                     else {
                         if (!selection.handleSelection(position.x, position.y)) {
                             if (selection != null) { // deselect
-                                Matter.Composite.remove(engine.world, selection.bodies)
+                                Matter.Composite.remove(this.engine.world, selection.bodies)
                                 selection = null;
                             }
                             //Check if another cannon should be selected
@@ -238,7 +238,7 @@ export class Scene extends React.Component {
                             }
                             if (currCannon != null) {
                                 selection = new Selection(currCannon);
-                                World.add(engine.world, selection.bodies);
+                                World.add(this.engine.world, selection.bodies);
                             }
                         }
                     }
@@ -327,7 +327,7 @@ export class Scene extends React.Component {
         position = { x: width * (0.1), y: height * (0.2) + 50 };
         let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
         drums.push(drum);
-        World.add(engine.world, drum.body);
+        World.add(this.engine.world, drum.body);
         //   flip top cannon to this  angle:2.9158123171809476, dx:-173.4000015258789, dy:39.8125
         //   tune 0-0- ---- 00-- ----
 
@@ -340,7 +340,7 @@ export class Scene extends React.Component {
         // create inital marbles
         /*var ballA = Bodies.circle(210, 100, 30, { restitution: 0.8 });
         var ballB = Bodies.circle(110, 50, 30, { restitution: 0.8 });
-        World.add(engine.world, [ballA, ballB]);*/
+        World.add(this.engine.world, [ballA, ballB]);*/
 
 
         //this.backgroundObjects = [].concat(marbles, walls);
@@ -423,8 +423,8 @@ export class Scene extends React.Component {
                     //     debugLoad = false;
                     //     let oldBody = drums[j].loadObject(savedObject);
                         
-                    //     Matter.Composite.remove(engine.world, oldBody);
-                    //     Matter.World.add(engine.world, drums[j].body);
+                    //     Matter.Composite.remove(this.engine.world, oldBody);
+                    //     Matter.World.add(this.engine.world, drums[j].body);
                     // }
                 }
         }
