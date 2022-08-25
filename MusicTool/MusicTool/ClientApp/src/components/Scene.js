@@ -90,7 +90,7 @@ export class Scene extends React.Component {
         World.add(this.engine.world, mouseConstraint);
 
         
-        let savedObject = {
+        let savedObject = { 
             "MTObjType": "Instrument",
             "MTObjVersion": "0.9.0",
             "pos": {
