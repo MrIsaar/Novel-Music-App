@@ -286,29 +286,29 @@ export class Scene extends React.Component {
 
 
         }
-        else {
+        //else {
 
 
-            for (let i = 1; i < 5; i++) {
-                position = { x: width * (0.2), y: height * (0.2 * i) };
-                cannon = new Cannon(position, 0, 20, i);
-                cannons.push(cannon);
+        //    for (let i = 1; i < 5; i++) {
+        //        position = { x: width * (0.2), y: height * (0.2 * i) };
+        //        cannon = new Cannon(position, 0, 20, i);
+        //        cannons.push(cannon);
 
-            }
-            for (let i = 1; i < 5; i++) {
-                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                    isStatic: true,
-                    render: {
-                        fillStyle: "red"
-                    }
-                }))*/
-                position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-                let drum = new Instrument(position, 0, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-                drums.push(drum);
-                Matter.World.add(this.engine.world, drum.body);
+        //    }
+        //    for (let i = 1; i < 5; i++) {
+        //        /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
+        //            isStatic: true,
+        //            render: {
+        //                fillStyle: "red"
+        //            }
+        //        }))*/
+        //        position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
+        //        let drum = new Instrument(position, 0, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
+        //        drums.push(drum);
+        //        Matter.World.add(this.engine.world, drum.body);
 
-            }
-        }
+        //    }
+        //}
         //position = { x: width * (0.1), y: height * (0.2) + 50 };
         //let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
         //drums.push(drum);
@@ -559,15 +559,15 @@ export class Scene extends React.Component {
             let pos = { x: 0, y: 0 };
 
             // create temp object to load object into
-            if (mtObject.MTObjType == "MTObj") {
+            if (mtObject.json.MTObjType == "MTObj") {
                 newObject = new MTObj(pos);
                 otherObj.push(newObject);
             } 
-            else if (mtObject.MTObjType == "Cannon") {
+            else if (mtObject.json.MTObjType == "Cannon") {
                 newObject = new Cannon(pos);
                 cannons.push(newObject);
             }
-            else if (mtObject.MTObjType == "Instrument") {
+            else if (mtObject.json.MTObjType == "Instrument") {
                 newObject = new Instrument(pos);
                 drums.push(newObject);
             }
@@ -577,7 +577,7 @@ export class Scene extends React.Component {
             }
 
             //load json
-            newObject.loadObject(mtObject);
+            newObject.loadObject(mtObject.json);
             this.addObject(newObject);
         }
         catch (exception_var) {
@@ -600,8 +600,8 @@ export class Scene extends React.Component {
     }
 
     loadCreation() {
-        //fetch('/api/Creations/' + this.creationID)
-        fetch('/api/Creations/' + 1)
+        fetch('/api/Creations/' + this.creationID)
+        //fetch('/api/Creations/' + 1)
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
@@ -610,9 +610,17 @@ export class Scene extends React.Component {
                     loading: false,
                     sequencerData: data.sequencer
                 });
+
+                this.loadObjects(data.creationObject);
             });
 
         
+    }
+
+    loadObjects(objs) {
+        for (let i = 0; i < objs.length; i++) {
+            this.loadObject(objs[i]);
+        }
     }
 }
 export default Scene;
