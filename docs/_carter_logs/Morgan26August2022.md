@@ -6,8 +6,7 @@ date: 2022-08-26
 
 Time estimate: 7 hrs
 
-- Set up team website.
-- Met with team to plan for the semester.                     
+I met with my team to plan for the semester and worked to set up our team website.
 
 - Teammates worked with:
   - Jackson
