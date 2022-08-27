@@ -20,7 +20,7 @@ Rebuild Azure hosting - Jackson \
 Over the summer Microsoft deleted all of our hosting services, databases, payment plans, etc. All of this needed to be recreated from scratch. Thankfully we documented our setup procedure last semester so we were able to replicate the environment. \
 Clean Github Repos - Isaac, Xiaodi \
 Merge test development branches / remove unnecessary branches. \
-Fix some small bugs so that the website can run properly. \
+Fix some small bugs so that the website can run properly.
 
 Goals & Priorities
 
@@ -39,7 +39,7 @@ Associate projects with user accounts \
 Export and upload projects as JSON files \
 Cooperative creation support \
 Combine all our React components \
-Built-in tutorial \
+Built-in tutorial
 
 Needs
 
