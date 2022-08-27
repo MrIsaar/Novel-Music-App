@@ -18,7 +18,7 @@ Carter Morgan
 
 [Weekly Management Reports]({{ "weekly_reports" | relative_url }})
 
-[Jackson's Log]()  
-[Isaac's Log]()  
-[Xiaodi's Log]()  
-[Carter's Log]()  
+[Jackson's Log]({{ "jackson_logs" | relative_url }})  
+[Isaac's Log]({{ "isaac_logs" | relative_url }})  
+[Xiaodi's Log]({{ "xiaodi_logs" | relative_url }})  
+[Carter's Log]({{ "carter_logs" | relative_url }})  

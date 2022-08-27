@@ -33,6 +33,14 @@ url: https://mrisaar.github.io # the base hostname & protocol for your site, e.g
 collections:
   weekly_reports:
     output: true
+  jackson_logs:
+    output: true
+  isaac_logs:
+    output: true
+  xiaodi_logs:
+    output: true
+  carter_logs:
+    output: true
 # theme: minima
 plugins:
   - jekyll-feed
