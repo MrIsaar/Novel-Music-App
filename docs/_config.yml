@@ -30,6 +30,9 @@ url: https://mrisaar.github.io # the base hostname & protocol for your site, e.g
 # github_username:  jekyll
 
 # Build settings
+collections:
+  weekly_reports:
+    output: true
 # theme: minima
 plugins:
   - jekyll-feed

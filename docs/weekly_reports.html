@@ -1,0 +1,10 @@
+---
+layout: default
+---
+<h1>Weekly Reports</h1>
+
+<ul>
+  {% for report in site.weekly_reports %}
+    <li><a href="{{ report.url | relative_url }}">{{ report.title }}</a></li>
+  {% endfor %}
+</ul>

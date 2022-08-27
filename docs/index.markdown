@@ -16,7 +16,7 @@ Carter Morgan
 
 ---------------------------------------------
 
-[Weekly Management Reports]()
+[Weekly Management Reports]({{ "weekly_reports" | relative_url }})
 
 [Jackson's Log]()  
 [Isaac's Log]()  
