@@ -22,7 +22,6 @@ Clean Github Repos - Isaac, Xiaodi
 Merge test development branches / remove unnecessary branches.
 Fix some small bugs so that the website can run properly.
 
-
 Goals & Priorities
 
 Short-term:
