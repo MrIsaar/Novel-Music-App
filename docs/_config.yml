@@ -30,6 +30,10 @@ url: https://mrisaar.github.io # the base hostname & protocol for your site, e.g
 # github_username:  jekyll
 
 # Build settings
+
+# Render posts w/ future dates
+future: true
+
 collections:
   weekly_reports:
     output: true
