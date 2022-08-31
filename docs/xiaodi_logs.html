@@ -3,15 +3,5 @@ layout: default
 ---
 <h1>Xiaodi's Logs</h1>
 
-<table>
-  <thead></thead>
-  <tbody>
-    {% for log in site.xiaodi_logs %}
-      <tr>
-        <a href="{{ log.url | relative_url }}">
-          Week {{ log.week }} - {{ log.date | date_to_string }}
-        </a>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% assign xiaodi_logs = site.xiaodi_logs | reverse %}
+{% include log_list.html logs=xiaodi_logs  %}

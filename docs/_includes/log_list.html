@@ -1,0 +1,14 @@
+<table>
+  <thead></thead>
+  <tbody>
+    {% for log in include.logs %}
+      <tr>
+        <td>
+          <a href="{{ log.url | relative_url }}">
+            Week {{ log.week }} - {{ log.date | date_to_string }}
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

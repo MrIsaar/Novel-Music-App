@@ -3,18 +3,5 @@ layout: default
 ---
 <h1>Carter's Logs</h1>
 
-<table>
-  <thead></thead>
-  <tbody>
-    {% assign logs = site.carter_logs | reverse %}
-    {% for log in logs %}
-      <tr>
-        <td>
-          <a href="{{ log.url | relative_url }}">
-            Week {{ log.week }} - {{ log.date | date_to_string }}
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% assign carter_logs = site.carter_logs | reverse %}
+{% include log_list.html logs=carter_logs  %}

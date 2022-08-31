@@ -3,15 +3,5 @@ layout: default
 ---
 <h1>Jackson's Logs</h1>
 
-<table>
-  <thead></thead>
-  <tbody>
-    {% for log in site.jackson_logs %}
-      <tr>
-        <a href="{{ log.url | relative_url }}">
-          Week {{ log.week }} - {{ log.date | date_to_string }}
-        </a>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% assign jackson_logs = site.jackson_logs | reverse %}
+{% include log_list.html logs=jackson_logs  %}
