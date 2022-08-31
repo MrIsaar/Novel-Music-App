@@ -6,7 +6,8 @@ layout: default
 <table>
   <thead></thead>
   <tbody>
-    {% for log in site.carter_logs %}
+    {% assign logs = site.carter_logs | reverse %}
+    {% for log in logs %}
       <tr>
         <td>
           <a href="{{ log.url | relative_url }}">
