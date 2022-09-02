@@ -6,7 +6,7 @@ date: 2022-09-2
 
 Time estimate: <time estimate in hrs>
 
-<topic of work>
+Reset database credentials and get start with user account part in database, add identity scaffold.
 
 - Teammates worked with:
-  - <list any team mates worked with>
+  - Xiaodi
