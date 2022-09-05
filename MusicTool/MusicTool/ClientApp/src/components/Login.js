@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import http from '../httpFetch';
 
 export class Login extends Component {
     constructor(props) {
@@ -9,7 +10,7 @@ export class Login extends Component {
             error: '',
             isLoading: false,
             isLogin: false,
-            isSignin: false,
+            isSignup: false,
 
         };
     }
@@ -30,8 +31,8 @@ export class Login extends Component {
         //this.setState({ isLogin: isLogin })
         this.setState({ isLogin })
     };
-    setIsSignin = (isSignin) => {
-        this.setState({ isSignin })
+    setIsSignup = (isSignup) => {
+        this.setState({ isSignup })
     };
     componentDidMount() {
         // call api
@@ -41,48 +42,62 @@ export class Login extends Component {
 
 
     // Accept login
-    login = ({ email, password }) => {
-        const { isSignin } = this.state;
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // If new users sign in, add them to database, then login them
-                if (isSignin) {
-                    // TODO: Add new user to database
-                }
+    login = async ({ email, password }) => {
+        // const { isSignup } = this.state;
+        // return new Promise((resolve, reject) => {
+        //     setTimeout(() => {
+        //         // If new users sign in, add them to database, then login them
+        //         if (isSignup) {
+        //             // TODO: Add new user to database
+        //         }
 
-                // TODO: Accept user based on database
-                // HINT: Object.is() works better than == in ReactJS
-                let isInDB = false
-                if (Object.is(email, 'correctEmail@gmail.com') && Object.is(password, 'correctPassword')) {
-                    isInDB = true
-                }
+        //         // TODO: Accept user based on database
+        //         // HINT: Object.is() works better than == in ReactJS
+        //         let isInDB = false
+        //         if (Object.is(email, 'correctEmail@gmail.com') && Object.is(password, 'correctPassword')) {
+        //             isInDB = true
+        //         }
 
-                // login user
-                if (isInDB) {
-                    resolve()
-                }
-                else {
-                    reject()
-                }
-            }, 1000) // rescrict 1 second running time
+        //         // login user
+        //         if (isInDB) {
+        //             resolve()
+        //         }
+        //         else {
+        //             reject()
+        //         }
+        //     }, 1000) // rescrict 1 second running time
+        // })
+        // const { email, password } = this.state;
+        // http.get('/user/').then((res) => {
+        //     console.log(res);
+        // })
+        return http.post('/user/login', { data: { email, password } }).then((res) => {
+            // console.log(res);
+            return res;
         })
     }
 
     handleLogin = async (e) => {
         e.preventDefault();
-        const { email, password } = this.state;
+        const { isSignup, email, password } = this.state;
         this.setIsLoading(true)
         try {
-            await this.login({ email, password })
+            http.post(isSignup ? '/user/signup' : '/user/login', { data: { email, password } }).then((res) => {
+                //console.log('res:', res);
+                // res.userID
+                // sessionStorage.setItem('userId', res.userID);
+                http.setUserId(res.userID);
+                //console.log(http.getUserId())
 
-            this.setEmail(email)
-            this.setPassword(password)
-            this.setError('')
-            this.setIsLoading(false)
-            this.setIsLogin(true)
-
-            console.log('Login successful')
-
+                this.setEmail(email)
+                this.setPassword(password)
+                this.setError('')
+                this.setIsLoading(false)
+                this.setIsLogin(true)
+                console.log('Login successful')
+            }).catch((ex) => {
+                // console.log('ex:', ex);
+            })
             // TODO: Switch to Music Tool API window here
         } catch (error) {
             this.setEmail('')
@@ -146,11 +161,11 @@ export class Login extends Component {
                                     </button>
 
                                     <button
-                                        onClick={() => this.setIsSignin(true)}
+                                        onClick={() => this.setIsSignup(true)}
                                         disabled={isLoading ? true : false}
-                                        type="Sign in"
+                                        type="Sign up"
                                         className="btn btn-block btn-dark">
-                                        {isLoading ? 'Submitting' : 'Sign in'}
+                                        {isLoading ? 'Submitting' : 'Sign Up'}
                                     </button>
                                 </div>
                             </form>

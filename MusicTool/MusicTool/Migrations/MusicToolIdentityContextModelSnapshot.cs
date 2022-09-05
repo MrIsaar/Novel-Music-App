@@ -10,7 +10,7 @@ using MusicTool.Data;
 
 namespace MusicTool.Migrations
 {
-    [DbContext(typeof(MusicToolIdentityContext))]
+    [DbContext(typeof(IdentityContext))]
     partial class MusicToolIdentityContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
