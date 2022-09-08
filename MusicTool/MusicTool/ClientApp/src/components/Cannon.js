@@ -66,8 +66,8 @@ import Ball from "./Ball";
      * returns null if not fired
      * 
      */
-    fireMarble(fireLayer = -1) {
-        if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
+    fireMarble(fireLayer=-1) {
+        if (fireLayer !== -1 && this.fireOn !== -1 && fireLayer !== this.fireOn) {
             return null;   // do not fire
         }
 
