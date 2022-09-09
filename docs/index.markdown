@@ -16,11 +16,14 @@ Carter Morgan
 
 ---------------------------------------------
 
+### Reports
 [Weekly Management Reports]({{ "weekly_reports" | relative_url }})
 
+### Logs
 [Jackson's Log]({{ "jackson_logs" | relative_url }})  
 [Isaac's Log]({{ "isaac_logs" | relative_url }})  
 [Xiaodi's Log]({{ "xiaodi_logs" | relative_url }})  
 [Carter's Log]({{ "carter_logs" | relative_url }})  
 
+### Documents
 [Design Document 0](/assets/pdf/design-doc-0.pdf)
