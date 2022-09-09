@@ -36,6 +36,7 @@ namespace MusicTool.Controllers
             var res = await _context.Users.Where ((p =>p.Email==user.Email && p.Password == user.Password )).FirstOrDefaultAsync();
             if (res == null || String.IsNullOrEmpty( res.Email))
             {
+                // pop message
                 return new BadRequestObjectResult(new {message="Invalid user email or password." });
             }
             return res;

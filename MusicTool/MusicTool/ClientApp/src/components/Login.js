@@ -97,6 +97,8 @@ export class Login extends Component {
                 console.log('Login successful')
             }).catch((ex) => {
                 // console.log('ex:', ex);
+                console.log('Login not successful')
+                window.location.reload()
             })
             // TODO: Switch to Music Tool API window here
         } catch (error) {
