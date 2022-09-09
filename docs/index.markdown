@@ -26,4 +26,5 @@ Carter Morgan
 [Carter's Log]({{ "carter_logs" | relative_url }})  
 
 ### Documents
-[Design Document 0](/assets/pdf/design-doc-0.pdf)
+[Design Document 0]({{ "/assets/pdf/design-doc-0.pdf" | relative_url}})  
+[Design Document 1]({{ "/assets/pdf/design-doc-1.pdf" | relative_url}})
