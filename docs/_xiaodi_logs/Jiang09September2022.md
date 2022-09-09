@@ -6,8 +6,8 @@ date: 2022-09-09
 
 Time estimate: 9 hours
 
-- Connect user account to database, and make Login & SignUp page works properly based on database.
-- Create httpFetch to support data communication in the website.
+Connect user account to database, and make Login & SignUp page works properly based on database.<br> 
+Create httpFetch to support data communication in the website.
 
 - Teammates worked with:
   - ...
