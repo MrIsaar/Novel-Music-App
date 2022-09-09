@@ -22,3 +22,5 @@ Carter Morgan
 [Isaac's Log]({{ "isaac_logs" | relative_url }})  
 [Xiaodi's Log]({{ "xiaodi_logs" | relative_url }})  
 [Carter's Log]({{ "carter_logs" | relative_url }})  
+
+[Design Document 0](/assets/pdf/design-doc-0.pdf)
