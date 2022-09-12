@@ -1,12 +1,16 @@
 ﻿import * as PIXI from "pixi.js";
 import { Circle } from "./ShapePrimitives";
 import Matter from "matter-js";
+import MTObj from "./MTObj";
+import Ball from "./Ball";
 
 // Cannon rendering constants
 const CANNON_COLOR = 0xff0000;
 const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
 
- export class Cannon extends PIXI.Graphics{
+
+ export class Cannon extends MTObj  {
+
 
     /**
      * creates a cannon at specified position with angle.
@@ -14,9 +18,10 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      * @param {any} pos    {x, y}
      * @param {any} angle angle in radians
      * @param {any} power default 20 how fast marbles will be shot
-     * @param {any} fireOn default -1, if -1 then always fires
+     * @param {any} fireLayer default -1, if -1 then always fires
      * @param {any} marbleColor HTML recognized color, random is default
      * @param {any} marbleSize default 20
+     * @param {any} marbleCollisionFilter default is all
      */
      constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
         super();
@@ -24,12 +29,23 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         this.fireOn = fireOn;
         this.position = pos;
         this.rotation = angle;
+
         this.power = power;
         this.marbleSize = marbleSize;
         this.marbleColor = marbleColor;
-
+        this.MTObjType = 'Cannon';
+        
+        this.marbleCollisionFilter = marbleCollisionFilter;
+      
     }
 
+    /**
+     * change fireLayer
+     * @param {any} newLayer
+     */
+    updateFirelayer(newLayer) {
+        this.fireOn = newLayer;
+    }
 
     /**
      *  Returns matter.js body of this cannon 
@@ -76,9 +92,11 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
                  collisionFilter: { group: -1 }
              });
         //set velocity
-         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
+        let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
+        console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
          Matter.Body.setVelocity(ball.body, dv)
          return ball;
+
 
      }
 

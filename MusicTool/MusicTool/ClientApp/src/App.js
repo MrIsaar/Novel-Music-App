@@ -11,6 +11,8 @@ import { Selection } from './components/Selection'
 import { SequencerDemo } from './components/SequencerDemo';
 import { PalletDemo } from './components/PalletDemo';
 import Overlay from 'react-bootstrap/Overlay';
+import { DBTest } from './components/DBTest';
+import { Login } from './components/Login';
 
 import './custom.css'
 
@@ -25,8 +27,10 @@ export default class App extends Component {
             <Route path='/fetch-data' component={FetchData} />
               <Route path='/sequencer-demo' component={SequencerDemo} />
               <Route path='/cannon' component={Cannon} />
-              <Route path='/scene' component={Scene} />
+              <Route path='/scene/:creationID' component={Scene} />
+              <Route path='/db-test' component={DBTest} />
               <Route path='/PalletDemo' component={PalletDemo} />
+              <Route path='/Login' component={Login} />
       </Layout>
     );
   }

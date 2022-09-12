@@ -3,7 +3,7 @@ import './SequencerNote.css';
 
 
 export const SequencerNote = ({
-    channelID,
+    trackID,
     stepID,
     isNoteOn,
     isNoteOnCurrentStep,
@@ -18,7 +18,7 @@ export const SequencerNote = ({
 
     const noteClicked = e => {
         e.target.classList.toggle('on')
-        toggleNote(channelID, stepID)
+        toggleNote(trackID, stepID)
     }
 
     return (

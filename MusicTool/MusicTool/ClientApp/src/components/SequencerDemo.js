@@ -19,17 +19,17 @@ export class SequencerDemo extends Component {
         }
 
         this.notes = ['C4', 'G3', 'E3', 'C3'];
+        this.callback = this.playNote.bind(this);
 
+    }
+
+    playNote(trackID) {
+        let note = trackID % this.notes.length;
+        this.instruments[note].triggerAttackRelease(this.notes[note], '8n');
     }
 
     
     render() {
-        let callbacks = [
-            () => this.instruments[0].triggerAttackRelease(this.notes[0], '8n'),
-            () => this.instruments[1].triggerAttackRelease(this.notes[1], '8n'),
-            () => this.instruments[2].triggerAttackRelease(this.notes[2], '8n'),
-            () => this.instruments[3].triggerAttackRelease(this.notes[3], '8n')
-        ];
     
         
         return (
@@ -40,7 +40,7 @@ export class SequencerDemo extends Component {
                 <Sequencer
                     numTracks={this.state.numTracks}
                     numSteps={this.state.numSteps}
-                    callbacks={ callbacks }
+                    callback={ this.callback }
                 />
             </div>
         )
