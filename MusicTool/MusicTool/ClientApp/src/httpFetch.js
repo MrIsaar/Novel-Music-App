@@ -60,6 +60,9 @@ class HttpFetch {
 
   getUserId = () => this.getValue('userId')
   setUserId = (id) => this.setValue('userId', id)
+
+  getUserEmail = () => this.getValue('userEmail')
+  setUserEmail = (email) => this.setValue('userEmail', email)
 }
 
 export default new HttpFetch()

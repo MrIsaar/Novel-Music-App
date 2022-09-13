@@ -82,11 +82,18 @@ export class Login extends Component {
         const { isSignup, email, password } = this.state;
         this.setIsLoading(true)
         try {
+            /*if (http.getUserId() != null & http.getUserEmail() != null) {
+                this.setEmail(http.getUserEmail())
+                this.setIsLogin(true)
+            }*/
+
             http.post(isSignup ? '/user/signup' : '/user/login', { data: { email, password } }).then((res) => {
                 //console.log('res:', res);
                 // res.userID
                 // sessionStorage.setItem('userId', res.userID);
                 http.setUserId(res.userID);
+                http.setUserEmail(email)
+                //console.log(http.getUserEmail())
                 //console.log(http.getUserId())
 
                 this.setEmail(email)
@@ -119,9 +126,11 @@ export class Login extends Component {
 
                 <div>{/*Logout and return back to Login page OR Sinin/Login to API */}</div>
                 {
-                    isLogin ?
-                        <><h1> Welcome, {email} </h1>
-                            <button onClick={() => this.setIsLogin(false)} className='btn btn-dark'> Logout </button>
+                    isLogin || (http.getUserId() != null & http.getUserEmail() != null) ?
+                        <><h1> Welcome, {http.getUserEmail()} </h1>
+                            <button onClick={() => (this.setIsLogin(false), http.setUserId(null), http.setUserEmail(null))} className='btn btn-dark'>
+                                Logout
+                            </button>
                         </>
                         :
                         <div className="card-body">
