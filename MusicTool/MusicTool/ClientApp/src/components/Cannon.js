@@ -33,14 +33,14 @@ import Ball from "./Ball";
         this.pos = pos;
         this.rotation = angle;
 
-        this.power = power;
-        this.marbleSize = marbleSize;
-        this.marbleColor = marbleColor;
-        this.MTObjType = 'Cannon';
-        
-        this.marbleCollisionFilter = marbleCollisionFilter;
-      
-    }
+         this.power = power;
+         this.marbleSize = marbleSize;
+         this.marbleColor = marbleColor;
+         this.MTObjType = 'Cannon';
+
+         this.marbleCollisionFilter = marbleCollisionFilter;
+
+     }
 
     /**
      * change fireLayer
