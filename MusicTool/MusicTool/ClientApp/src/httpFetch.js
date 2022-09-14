@@ -1,3 +1,4 @@
+// NOTICE: Not support IE
 class HttpFetch {
   queryString = (params = {}) => {
     return Object.keys(params).map((key) => `${params[key]}`).join('&')

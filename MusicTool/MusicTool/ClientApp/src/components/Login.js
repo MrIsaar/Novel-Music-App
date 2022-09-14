@@ -10,12 +10,13 @@ export class Login extends Component {
             email: '',
             password: '',
             error: '',
-            isLoading: false,
-            isLogin: false,
-            isSignup: false,
-            showReminder: false,
-            projectList: null,
-            projectListItems: null
+            isLoading: false,       // load login/signup action
+            isLogin: false,         // old user
+            isSignup: false,        // new user
+            showReminder: false,    // show delete reminder box
+            // array = [{projectID, projectName}, {projectID, projectName}, ...] TODO: should be null
+            projectList: [{ id: '000001', name: 'scene1' }, { id: '000002', name: 'scene2' },
+                            { id: '000003', name: 'scene3' }, { id: '000004', name: 'scene4' }]
 
         };
     }
@@ -44,9 +45,6 @@ export class Login extends Component {
     }
     setProjectList = (projectList) => {
         this.setState({ projectList })
-    }
-    setProjectListItems = (projectListItems) => {
-        this.setState({ projectListItems })
     }
 
     // Accept login
@@ -124,13 +122,11 @@ export class Login extends Component {
     handleCloseReminder = () => this.setShowReminder(false);
     handleShowReminder = () => this.setShowReminder(true);
 
-    // Get user's project list from Access db
-    handleAccessProject = () => { }
-
-    // Loop: list user projects
+    // Get a list of projectID and projectName based on uerID from Application db
+    handleProjectList = () => { }
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, projectList } = this.state;
         return (
             // use bootstrap card and form styles
             <div className="card container mt-5" >
@@ -161,26 +157,17 @@ export class Login extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Scene1</td>
-                                        <td>000001</td>
-                                        <td><Button variant="primary" onClick={() => (null)}>
-                                            Go
-                                        </Button></td>
-                                        <td><Button variant="danger" onClick={() => (null)}>
-                                            Delete
-                                        </Button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Scene2</td>
-                                        <td>000002</td>
-                                        <td><Button variant="primary" onClick={() => (null)}>
-                                            Go
-                                        </Button></td>
-                                        <td><Button variant="danger" onClick={() => (null)}>
-                                            Delete
-                                        </Button></td>
-                                    </tr>
+                                    {projectList.map(({ id, name }) => (
+                                        <tr>
+                                            <td>{ name}</td>
+                                            <td>{ id}</td>
+                                            <td><Button variant="primary" onClick={() => (null)}>
+                                                Go
+                                            </Button></td>
+                                            <td><Button variant="danger" onClick={() => (null)}>
+                                                Delete
+                                            </Button></td>
+                                        </tr>))}
                                 </tbody>
                             </table>
 
