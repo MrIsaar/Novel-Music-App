@@ -15,76 +15,42 @@ export class Login extends Component {
             isSignup: false,
             showReminder: false,
             projectList: null,
-            projectListItem: null
+            projectListItems: null
 
         };
     }
 
     setEmail = (email) => {
         this.setState({ email })
-    };
+    }
     setPassword = (password) => {
         this.setState({ password });
-    };
+    }
     setError = (error) => {
         this.setState({ error })
-    };
+    }
     setIsLoading = (isLoading) => {
         this.setState({ isLoading })
-    };
+    }
     setIsLogin = (isLogin) => {
         //this.setState({ isLogin: isLogin })
         this.setState({ isLogin })
-    };
+    }
     setIsSignup = (isSignup) => {
         this.setState({ isSignup })
-    };
+    }
     setShowReminder = (showReminder) => {
         this.setState({ showReminder })
-    };
+    }
     setProjectList = (projectList) => {
         this.setState({ projectList })
-    };
-    setProjectListItem = (projectListItem) => {
-        this.setState({ projectListItem })
-    };
-/*    componentDidMount() {
-        // call api
-        this.setState({ aa: 12 })
-    };*/
-
-
+    }
+    setProjectListItems = (projectListItems) => {
+        this.setState({ projectListItems })
+    }
 
     // Accept login
     login = async ({ email, password }) => {
-        // const { isSignup } = this.state;
-        // return new Promise((resolve, reject) => {
-        //     setTimeout(() => {
-        //         // If new users sign in, add them to database, then login them
-        //         if (isSignup) {
-        //             // TODO: Add new user to database
-        //         }
-
-        //         // TODO: Accept user based on database
-        //         // HINT: Object.is() works better than == in ReactJS
-        //         let isInDB = false
-        //         if (Object.is(email, 'correctEmail@gmail.com') && Object.is(password, 'correctPassword')) {
-        //             isInDB = true
-        //         }
-
-        //         // login user
-        //         if (isInDB) {
-        //             resolve()
-        //         }
-        //         else {
-        //             reject()
-        //         }
-        //     }, 1000) // rescrict 1 second running time
-        // })
-        // const { email, password } = this.state;
-        // http.get('/user/').then((res) => {
-        //     console.log(res);
-        // })
         return http.post('/user/login', { data: { email, password } }).then((res) => {
             // console.log(res);
             return res;
@@ -97,15 +63,7 @@ export class Login extends Component {
         const { isSignup, email, password } = this.state;
         this.setIsLoading(true)
         try {
-            /*if (http.getUserId() != null & http.getUserEmail() != null) {
-                this.setEmail(http.getUserEmail())
-                this.setIsLogin(true)
-            }*/
-
             http.post(isSignup ? '/user/signup' : '/user/login', { data: { email, password } }).then((res) => {
-                //console.log('res:', res);
-                // res.userID
-                // sessionStorage.setItem('userId', res.userID);
                 http.setUserId(res.userID);
                 http.setUserEmail(email)
                 //console.log(http.getUserEmail())
@@ -167,6 +125,8 @@ export class Login extends Component {
     handleShowReminder = () => this.setShowReminder(true);
 
     // Get user's project list from Access db
+    handleAccessProject = () => { }
+
     // Loop: list user projects
 
     render() {
@@ -226,7 +186,7 @@ export class Login extends Component {
 
                             <br></br>
 
-                            <div>{/* TODO: change link based on new project ID ? */}</div>
+                            <div>{/* TODO: change link*/}</div>
                             <a href="/scene/1" className="btn btn-primary">
                                 Create A New Project
                             </a>
@@ -254,20 +214,12 @@ export class Login extends Component {
                             </Modal>
 
                             <br></br>
-
-                            <div>{/* <button
-                                    onClick={() => (this.handleDelete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
-                                    className='btn btn-block btn-dark'>
-                                    Delete My Account
-                                </button>*/}</div>
-
                             <br></br>
                         </>
                         :
                         <div className="card-body">
                             <h2 className="card-title">Music Tool</h2>
 
-                            <div>{/* Report Error Message */}</div>
                             {error && <h3 className='text-danger'> {error} </h3>}
 
                             <form onSubmit={this.handleLogin}>
