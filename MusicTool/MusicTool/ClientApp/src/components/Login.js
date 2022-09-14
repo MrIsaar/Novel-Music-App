@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import http from '../httpFetch';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 export class Login extends Component {
     constructor(props) {
@@ -11,6 +13,9 @@ export class Login extends Component {
             isLoading: false,
             isLogin: false,
             isSignup: false,
+            showReminder: false,
+            projectList: null,
+            projectListItem: null
 
         };
     }
@@ -34,10 +39,19 @@ export class Login extends Component {
     setIsSignup = (isSignup) => {
         this.setState({ isSignup })
     };
-    componentDidMount() {
+    setShowReminder = (showReminder) => {
+        this.setState({ showReminder })
+    };
+    setProjectList = (projectList) => {
+        this.setState({ projectList })
+    };
+    setProjectListItem = (projectListItem) => {
+        this.setState({ projectListItem })
+    };
+/*    componentDidMount() {
         // call api
         this.setState({ aa: 12 })
-    }
+    };*/
 
 
 
@@ -77,6 +91,7 @@ export class Login extends Component {
         })
     }
 
+    // load or create account in Users db
     handleLogin = async (e) => {
         e.preventDefault();
         const { isSignup, email, password } = this.state;
@@ -107,6 +122,14 @@ export class Login extends Component {
                 console.log('Login not successful')
                 window.location.reload()
             })
+
+            if (isSignup) {
+                http.post('/user/login', { data: { email, password } }).then((res) => {
+                    http.setUserId(res.userID);
+                }).catch((ex) => {
+                    window.location.reload()
+                })
+            }
         } catch (error) {
             this.setEmail('')
             this.setPassword('')
@@ -117,7 +140,8 @@ export class Login extends Component {
         }
     }
 
-    delete = () => {
+    // delete account in Users db
+    handleDelete = () => {
         const { email } = this.state;
         try {
             http.delete('/user/delete', { data: { email } }).then((res) => {
@@ -138,8 +162,15 @@ export class Login extends Component {
         }
     }
 
+    // reminder box: ask if delete account
+    handleCloseReminder = () => this.setShowReminder(false);
+    handleShowReminder = () => this.setShowReminder(true);
+
+    // Get user's project list from Access db
+    // Loop: list user projects
+
     render() {
-        const { isLogin, email, password, isLoading, error } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder } = this.state;
         return (
             // use bootstrap card and form styles
             <div className="card container mt-5" >
@@ -152,8 +183,8 @@ export class Login extends Component {
 
                             <h3> Welcome, {http.getUserEmail()} </h3>
                             <button
-                                onClick={() => (this.delete, this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
-                                className='btn btn-dark'>
+                                onClick={() => (this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
+                                className='btn btn-primary'>
                                 Logout
                             </button>
 
@@ -165,19 +196,30 @@ export class Login extends Component {
                                     <tr>
                                         <th>Project Name</th>
                                         <th>Project ID</th>
-                                        <th>Link</th>
+                                        <th>Project Workspace</th>
+                                        <th>Delete Project</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>Scene1</td>
                                         <td>000001</td>
-                                        <td>www</td>
+                                        <td><Button variant="primary" onClick={() => (null)}>
+                                            Go
+                                        </Button></td>
+                                        <td><Button variant="danger" onClick={() => (null)}>
+                                            Delete
+                                        </Button></td>
                                     </tr>
                                     <tr>
                                         <td>Scene2</td>
                                         <td>000002</td>
-                                        <td>www</td>
+                                        <td><Button variant="primary" onClick={() => (null)}>
+                                            Go
+                                        </Button></td>
+                                        <td><Button variant="danger" onClick={() => (null)}>
+                                            Delete
+                                        </Button></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -185,15 +227,39 @@ export class Login extends Component {
                             <br></br>
 
                             <div>{/* TODO: change link based on new project ID ? */}</div>
-                            <a href="/scene/1" className="btn btn-dark">Create A New Project</a>
+                            <a href="/scene/1" className="btn btn-primary">
+                                Create A New Project
+                            </a>
 
                             <br></br>
 
-                            <button
-                                onClick={() => (this.delete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
-                                className='btn btn-block btn-dark'>
+                            <Button variant="danger" onClick={this.handleShowReminder}>
                                 Delete My Account
-                            </button>
+                            </Button>
+
+                            <Modal show={showReminder} onHide={this.handleCloseReminder}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Warning</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>Are you sure to delete your account?</Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="danger"
+                                        onClick={() => (this.handleCloseReminder(), this.handleDelete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}>
+                                        Yes
+                                    </Button>
+                                    <Button variant="primary" onClick={this.handleCloseReminder}>
+                                        No
+                                    </Button>
+                                </Modal.Footer>
+                            </Modal>
+
+                            <br></br>
+
+                            <div>{/* <button
+                                    onClick={() => (this.handleDelete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
+                                    className='btn btn-block btn-dark'>
+                                    Delete My Account
+                                </button>*/}</div>
 
                             <br></br>
                         </>
