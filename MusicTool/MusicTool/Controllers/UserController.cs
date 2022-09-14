@@ -30,7 +30,7 @@ namespace MusicTool.Controllers
             return await _context.Users.ToListAsync();
         }
 
-        // POST api/user
+        // POST api/login
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(User user) {
             var res = await _context.Users.Where ((p =>p.Email==user.Email && p.Password == user.Password )).FirstOrDefaultAsync();
@@ -43,7 +43,7 @@ namespace MusicTool.Controllers
         }
 
 
-        // POST api/user
+        // POST api/signup
         [HttpPost("signUp")]
         public async Task<ActionResult<User>> SignUp(User user)
         {
@@ -66,6 +66,22 @@ namespace MusicTool.Controllers
             await _context.SaveChangesAsync();
 
             return new OkObjectResult(new {message="Sign up success"});
+        }
+
+        // DELETE: api/delete
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteUser(User user)
+        {
+            var res = await _context.Users.Where((p => p.Email == user.Email)).FirstOrDefaultAsync();
+            if (res == null || String.IsNullOrEmpty(res.Email))
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(res);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

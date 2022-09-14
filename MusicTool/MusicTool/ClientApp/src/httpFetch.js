@@ -31,7 +31,7 @@ class HttpFetch {
 
   get = (url, params) => this.ajax(url, { method: 'get', params })
   post = (url, { params, data }) => this.ajax(url, { method: 'post', params, data })
-  delete = (url, { params }) => this.ajax(url, { method: 'delete', params })
+  delete = (url, { params, data }) => this.ajax(url, { method: 'delete', params, data })
   put = (url, { params, data }) => this.ajax(url, { method: 'put', params, data })
 
 

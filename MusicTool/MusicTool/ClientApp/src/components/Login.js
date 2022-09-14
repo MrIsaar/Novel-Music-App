@@ -107,7 +107,6 @@ export class Login extends Component {
                 console.log('Login not successful')
                 window.location.reload()
             })
-            // TODO: Switch to Music Tool API window here
         } catch (error) {
             this.setEmail('')
             this.setPassword('')
@@ -118,19 +117,85 @@ export class Login extends Component {
         }
     }
 
+    delete = () => {
+        const { email } = this.state;
+        try {
+            http.delete('/user/delete', { data: { email } }).then((res) => {
+                http.setUserId(null);
+                http.setUserEmail(null)
+
+                this.setEmail(null)
+                this.setPassword(null)
+                this.setError('')
+                this.setIsLogin(false)
+                this.setIsSignup(false)
+                console.log('Delete successful')
+            }).catch((ex) => {
+                console.log('Delete not successful')
+                window.location.reload()
+            })
+        } catch (error) {
+        }
+    }
+
     render() {
         const { isLogin, email, password, isLoading, error } = this.state;
         return (
             // use bootstrap card and form styles
             <div className="card container mt-5" >
 
-                <div>{/*Logout and return back to Login page OR Sinin/Login to API */}</div>
+                <div>{/*Logout and return back to Login page OR Sinin/Logup to API */}</div>
                 {
                     isLogin || (http.getUserId() != null & http.getUserEmail() != null) ?
-                        <><h1> Welcome, {http.getUserEmail()} </h1>
-                            <button onClick={() => (this.setIsLogin(false), http.setUserId(null), http.setUserEmail(null))} className='btn btn-dark'>
+                        <>
+                            <br></br>
+
+                            <h3> Welcome, {http.getUserEmail()} </h3>
+                            <button
+                                onClick={() => (this.delete, this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
+                                className='btn btn-dark'>
                                 Logout
                             </button>
+
+                            <br></br>
+
+                            <h5>My Projects</h5>
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Project Name</th>
+                                        <th>Project ID</th>
+                                        <th>Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Scene1</td>
+                                        <td>000001</td>
+                                        <td>www</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Scene2</td>
+                                        <td>000002</td>
+                                        <td>www</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <br></br>
+
+                            <div>{/* TODO: change link based on new project ID ? */}</div>
+                            <a href="/scene/1" className="btn btn-dark">Create A New Project</a>
+
+                            <br></br>
+
+                            <button
+                                onClick={() => (this.delete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
+                                className='btn btn-block btn-dark'>
+                                Delete My Account
+                            </button>
+
+                            <br></br>
                         </>
                         :
                         <div className="card-body">
