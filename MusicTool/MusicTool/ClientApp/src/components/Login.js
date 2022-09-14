@@ -15,8 +15,8 @@ export class Login extends Component {
             isSignup: false,        // new user
             showReminder: false,    // show delete reminder box
             // array = [{projectID, projectName}, {projectID, projectName}, ...] TODO: should be null
-            projectList: [{ id: '000001', name: 'scene1' }, { id: '000002', name: 'scene2' },
-                            { id: '000003', name: 'scene3' }, { id: '000004', name: 'scene4' }]
+            projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' },
+                            { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
 
         };
     }
@@ -161,9 +161,9 @@ export class Login extends Component {
                                         <tr>
                                             <td>{ name}</td>
                                             <td>{ id}</td>
-                                            <td><Button variant="primary" onClick={() => (null)}>
-                                                Go
-                                            </Button></td>
+                                            <td><a href={"/scene/" + {id}} className="btn btn-primary">
+                                                Go to Project
+                                            </a></td>
                                             <td><Button variant="danger" onClick={() => (null)}>
                                                 Delete
                                             </Button></td>
