@@ -9,7 +9,7 @@ import { Sequencer } from './Sequencer';
 
 import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
-
+import MTObj from "./MTObj";
 import Instrument from './Instrument';
 
 
