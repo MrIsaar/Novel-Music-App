@@ -502,7 +502,7 @@ export class Scene extends React.Component {
             
             this.addObject(ball);
         }
-        if (selection != null) {
+        if (selection != null && selection.bodies != undefined) {
             Matter.Composite.remove(this.engine.world, selection.bodies)
             selection = null;
         }
