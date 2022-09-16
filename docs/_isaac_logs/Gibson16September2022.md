@@ -4,7 +4,7 @@ date: 2022-09-16
 ---
 # Log for Week {{page.week}}: 2022-09-10 - 2022-09-16
 
-Time estimate: 10 hrs
+Time estimate: 11 hrs
 
  - Branch management and clean up. Remove old branches that are not in use.
  - Implment scene storage to save and load current creation objects as JSON objects
