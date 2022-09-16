@@ -24,7 +24,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      * @param {any} marbleCollisionFilter default is all
      */
    constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }) {
-        super();
+        super(pos);
         this.body = Matter.Bodies.fromVertices(pos.x, pos.y, CANNON_SHAPE, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.fireOn = fireOn;
         this.position = pos;
