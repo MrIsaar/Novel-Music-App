@@ -106,8 +106,8 @@ export class Instrument extends MTObj {
 
         //create ball
         var ball = Matter.Bodies.circle(
-            this.pos.x,
-            this.pos.y,
+            this.position.x,
+            this.position.y,
             this.marbleSize,
             {
                 mass: 10,
@@ -136,7 +136,7 @@ export class Instrument extends MTObj {
         return {
             MTObjType: 'Instrument',
             MTObjVersion: this.MTObjVersion,
-            pos: this.pos,
+            position: this.position,
             angle: this.angle,
             image: this.image,
             shape: this.shape,
@@ -160,9 +160,9 @@ export class Instrument extends MTObj {
         let previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.body = Matter.Bodies.fromVertices(savedJSON.position.x, savedJSON.position.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
         this.updateAngle(savedJSON.angle);
-        this.updatePosition(savedJSON.pos);
+        this.updatePosition(savedJSON.position);
         this.changeCollisionFilter(savedJSON.collisionFilter);
         
         this.image = savedJSON.image;

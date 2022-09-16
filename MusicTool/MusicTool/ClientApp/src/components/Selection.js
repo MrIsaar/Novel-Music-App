@@ -9,12 +9,12 @@ const CROSSBAR_WIDTH = 5;
 export class Selection extends PIXI.Graphics {
     /**
      * 
-     * @param {any} selected object such as cannon or instrument with selected.body, selected.pos, selected.angle
+     * @param {any} selected object such as cannon or instrument with selected.body, selected.position, selected.angle
      */
     constructor(selected, size = 100) {
         super();
         this.selected = selected
-        this.position = this.selected.pos;
+        this.position = this.selected.position;
         this.size = size < 40 ? 40 : size;
         this.translationThreshold = this.size * 0.6;
         this.rotationThreshold = this.size;
@@ -73,9 +73,9 @@ export class Selection extends PIXI.Graphics {
         let dp = { x: dx, y: dy }
 
         Matter.Body.translate(this.selected.body, dp)
-        this.selected.pos = this.selected.body.position;
+        this.selected.position = this.selected.body.position;
 
-        this.position = this.selected.pos;
+        this.position = this.selected.position;
     }
     /***
     * updates angle and scales cannon relative to center of body

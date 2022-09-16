@@ -4,6 +4,10 @@ import Matter from "matter-js";
 import MTObj from "./MTObj";
 import Ball from "./Ball";
 
+// Cannon rendering constants
+const CANNON_COLOR = 0xff0000;
+const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
+
 
  export class Cannon extends MTObj  {
 
@@ -22,7 +26,7 @@ import Ball from "./Ball";
 
     constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
 
-        let shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
+        let shape = CANNON_SHAPE;
         super(pos, angle, shape, image)
         
         
@@ -30,7 +34,7 @@ import Ball from "./Ball";
         // body created in super MTObj
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.fireOn = fireLayer
-        this.pos = pos;
+        
         this.rotation = angle;
 
         this.power = power;
@@ -83,8 +87,8 @@ import Ball from "./Ball";
 
         //create ball
        /* var ball = Matter.Bodies.circle(
-            this.pos.x,
-            this.pos.y,
+            this.position.x,
+            this.position.y,
             this.marbleSize,
             {
                 mass: 10,
@@ -95,7 +99,7 @@ import Ball from "./Ball";
                 },
                 collisionFilter: this.marbleCollisionFilter
             });*/
-        var ball = new Ball(this.pos, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
+        var ball = new Ball(this.position, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
 
         //set velocity
         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
@@ -118,7 +122,7 @@ import Ball from "./Ball";
         return {
             MTObjType: 'Cannon',
             MTObjVersion: this.MTObjVersion,
-            pos: this.pos,
+            position: this.position,
             angle: this.angle,
             image: this.image,
             shape: this.shape,
@@ -146,8 +150,8 @@ import Ball from "./Ball";
         let previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
-        this.pos = savedJSON.pos;
+        this.body = Matter.Bodies.fromVertices(savedJSON.position.x, savedJSON.position.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.position = savedJSON.position;
         this.angle = savedJSON.angle;
         this.image = savedJSON.image;
         this.fireOn = savedJSON.fireLayer;
