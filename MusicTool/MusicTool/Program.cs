@@ -1,17 +1,29 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MusicTool.Areas.Identity.Data;
 using MusicTool.Data;
 var builder = WebApplication.CreateBuilder(args);
 var identityConnectionString = builder.Configuration.GetConnectionString("MusicToolIdentityContextConnection");;
 
-builder.Services.AddDbContext<MusicToolIdentityContext>(options =>
+builder.Services.AddDbContext<IdentityContext>(options =>
     options.UseSqlServer(identityConnectionString));;
 
-builder.Services.AddDefaultIdentity<MusicToolUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<MusicToolIdentityContext>();
+/*builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<IdentityContext>();*/
 
-var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection"); ;
+var applicationConnectionString = builder.Configuration.GetConnectionString("MusicToolApplicationContextConnection");
+
+
+//var dbPassword = builder.Configuration["ApplicationDatabase:Password"];
+
+//var strBuilder = new SqlConnectionStringBuilder(
+//        builder.Configuration.GetConnectionString("RemoteMusicToolApplicationContextConnection"));
+//strBuilder.Password = dbPassword;
+
+//applicationConnectionString = strBuilder.ConnectionString;
+
+
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(applicationConnectionString));
@@ -20,7 +32,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 
 
 // Add services to the container.
-
+builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -61,6 +73,19 @@ static async Task CreateDbIfNotExistsAsync(WebApplication app)
             await context.Database.EnsureCreatedAsync();
             ApplicationContext.Seed(context);
             
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred creating the DB.");
+        }
+
+        try
+        {
+            var context = services.GetRequiredService<IdentityContext>();
+            await context.Database.EnsureCreatedAsync();
+            //context.Users.Add(new User {Email="aaa@gmail.com",Password="1234" });
+            //context.SaveChanges(); 
         }
         catch (Exception ex)
         {

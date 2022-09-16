@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using MusicTool.Areas.Identity.Data
 
-@inject SignInManager<MusicToolUser> SignInManager
-@inject UserManager<MusicToolUser> UserManager
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

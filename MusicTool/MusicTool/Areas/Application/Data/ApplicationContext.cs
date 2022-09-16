@@ -49,29 +49,52 @@ public class ApplicationContext : DbContext
                     new CreationObject
                     {
                         CreationID = cID,
-                        Json = "{\"type\": \"cannon\", \"x\": 0, \"y\": 0, \"radius\": 10, \"color\": \"red\"}",
-                        Type = "cannon"
+                        Json = "{ \" MTObjType\" : \" Cannon\" , \" MTObjVersion\" : \" 1.0.0\" , \" pos\" : { \" x\" : 200, \" y\" : 100 }, \" angle\" : 0, \" image\" : null, \" shape\" : [ { \" x\" : -20, \" y\" : -20 }, { \" x\" : 40, \" y\" : 0 }, { \" x\" : -20, \" y\" : 20 }, { \" x\" : -30, \" y\" : 0 } ], \" collisionFilter\" : { \" group\" : 0, \" category\" : 0, \" mask\" : 0 }, \" fireLayer\" : 1, \" power\" : 20, \" marbleSize\" : 20, \" marbleColor\" : \" rand\" , \" marbleCollisionFilter\" : { \" group\" : -1, \" category\" : 4294967295, \" mask\" : 4294967295 } }",
+                        Type = "Cannon"
                     },
                     new CreationObject
                     {
                         CreationID = cID,
-                        Json = "{\"type\": \"drum\", \"x\": 10, \"y\": 10, \"radius\": 10, \"color\": \"red\"}",
-                        Type = "drum"
+                        Json = "{ \" MTObjType\" : \" Cannon\" , \" MTObjVersion\" : \" 1.0.0\" , \" pos\" : { \" x\" : 200, \" y\" : 200 }, \" angle\" : 0, \" image\" : null, \" shape\" : [ { \" x\" : -20, \" y\" : -20 }, { \" x\" : 40, \" y\" : 0 }, { \" x\" : -20, \" y\" : 20 }, { \" x\" : -30, \" y\" : 0 } ], \" collisionFilter\" : { \" group\" : 0, \" category\" : 0, \" mask\" : 0 }, \" fireLayer\" : 1, \" power\" : 20, \" marbleSize\" : 20, \" marbleColor\" : \" rand\" , \" marbleCollisionFilter\" : { \" group\" : -1, \" category\" : 4294967295, \" mask\" : 4294967295 } }",
+
+                        Type = "Cannon"
                     },
                     new CreationObject
                     {
                         CreationID = cID,
-                        Json = "{\"type\": \"cymbal\", \"x\": 30, \"y\": 30, \"radius\": 10, \"color\": \"red\"}",
-                        Type = "cymbal"
+                        Json = "{ \" MTObjType\" : \" Cannon\" , \" MTObjVersion\" : \" 1.0.0\" , \" pos\" : { \" x\" : 200, \" y\" : 300 }, \" angle\" : 0, \" image\" : null, \" shape\" : [ { \" x\" : -20, \" y\" : -20 }, { \" x\" : 40, \" y\" : 0 }, { \" x\" : -20, \" y\" : 20 }, { \" x\" : -30, \" y\" : 0 } ], \" collisionFilter\" : { \" group\" : 0, \" category\" : 0, \" mask\" : 0 }, \" fireLayer\" : 1, \" power\" : 20, \" marbleSize\" : 20, \" marbleColor\" : \" rand\" , \" marbleCollisionFilter\" : { \" group\" : -1, \" category\" : 4294967295, \" mask\" : 4294967295 } }",
+
+                        Type = "Cannon"
                     },
-                });
+                    new CreationObject
+                    {
+                        CreationID = cID,
+                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\",\"pos\":{\"x\":400,\"y\":150},\"angle\":0,\"image\":null,\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\":0,\"category\":0,\"mask\":0},\"sound\":{ \"note\":\"E4\",\"length\":\"8n\"}}",
+                        Type="Instrument"
+                    },
+                    new CreationObject
+                    {
+                        CreationID = cID,
+                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\",\"pos\":{\"x\":400,\"y\":250},\"angle\":0,\"image\":null,\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\":0,\"category\":0,\"mask\":0},\"sound\":{ \"note\":\"D4\",\"length\":\"8n\"}}",
+                        Type="Instrument"
+                    },
+                    new CreationObject
+                    {
+                        CreationID = cID,
+                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\",\"pos\":{\"x\":400,\"y\":350},\"angle\":0,\"image\":null,\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\":0,\"category\":0,\"mask\":0},\"sound\":{ \"note\":\"C4\",\"length\":\"8n\"}}",
+                        Type="Instrument"
+                    }
+
+
+                }
+                );
 
         }
         if (!context.Sequencer.Any())
         {
             Sequencer s = new Sequencer();
             s.CreationID = cID;
-            s.Json = "{\"tracks\": [{\"name\": \"track1\", \"id\": 1, \"notes\": [true, true, true, false, false, false]}, {\"name\": \"track2\", \"id\": 2, \"notes\": [true, false, false, false, false, false]}]}";
+            s.Json = "{\"tracks\": [{\"name\": \"Backbeat\", \"id\": 1, \"notes\": [true, false, true, false, true, false, true, false]}, {\"name\": \"Cowbell\", \"id\": 2, \"notes\": [true, true, true, true, true, true, true, true]}]}";
             context.Sequencer.Add(s);
         }
         if (!context.Access.Any())

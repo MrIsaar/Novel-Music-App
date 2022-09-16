@@ -7,8 +7,7 @@ export class Home extends Component {
   render () {
     return (
         <div>
-            <h1>Music Tool Pre-(Prototype Demo) Demo</h1>
-            <PalletDemo />
+            <h1>Music Tool Prototype Demo</h1>
         </div>
     );
   }

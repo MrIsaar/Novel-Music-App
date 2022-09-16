@@ -1,10 +1,12 @@
-﻿import React from "react";
-import ReactDOM from "react-dom";
-import * as PIXI from "pixi.js";
+﻿import * as PIXI from "pixi.js";
 import { Circle } from "./ShapePrimitives";
 import Matter from "matter-js";
 import MTObj from "./MTObj";
 import Ball from "./Ball";
+
+// Cannon rendering constants
+const CANNON_COLOR = 0xff0000;
+const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
 
 
  export class Cannon extends MTObj  {
@@ -21,18 +23,11 @@ import Ball from "./Ball";
      * @param {any} marbleSize default 20
      * @param {any} marbleCollisionFilter default is all
      */
-
-    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
-
-        let shape = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }]
-        super(pos, angle, shape, image)
-        
-        
-        
-        // body created in super MTObj
-        //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.fireOn = fireLayer
-        this.pos = pos;
+     constructor(pos, angle = 0, power = 20, fireOn = -1, marbleColor = "rand", marbleSize = 20) {
+        super();
+        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, CANNON_SHAPE, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.fireOn = fireOn;
+        this.position = pos;
         this.rotation = angle;
 
         this.power = power;
@@ -68,8 +63,8 @@ import Ball from "./Ball";
      * returns null if not fired
      * 
      */
-    fireMarble(fireLayer = -1) {
-        if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
+    fireMarble(fireLayer=-1) {
+        if (fireLayer !== -1 && this.fireOn !== -1 && fireLayer !== this.fireOn) {
             return null;   // do not fire
         }
 
@@ -78,27 +73,24 @@ import Ball from "./Ball";
         let color = "#" + randomColor;
         let rand = Math.random();
         if (rand > 0.6) { color = 'orange' }
-        if (this.marbleColor != "rand") {
+        if (this.marbleColor !== "rand") {
             color = this.marbleColor;
         }
 
-
-        //create ball
-       /* var ball = Matter.Bodies.circle(
-            this.pos.x,
-            this.pos.y,
-            this.marbleSize,
-            {
-                mass: 10,
-                restitution: 1,
-                friction: 0.005,
-                render: {
-                    fillStyle: color
-                },
-                collisionFilter: this.marbleCollisionFilter
-            });*/
-        var ball = new Ball(this.pos, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
-
+         //create ball
+         var ball = new Circle(
+             this.position.x,
+             this.position.y,
+             this.marbleSize,
+             {
+                 mass: 10,
+                 restitution: 1,
+                 friction: 0.005,
+                 render: {
+                     fillStyle: color
+                 },
+                 collisionFilter: { group: -1 }
+             });
         //set velocity
         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
         console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
@@ -108,58 +100,14 @@ import Ball from "./Ball";
 
      }
 
-
-
-
-    /**
-    *  returns a simplified version  JSON object of this object that can be saved
-    *  loaded with the loadObject function
-    *  
-    */
-    saveObject() {
-        return {
-            MTObjType: 'Cannon',
-            MTObjVersion: this.MTObjVersion,
-            pos: this.pos,
-            angle: this.angle,
-            image: this.image,
-            shape: this.shape,
-            collisionFilter: this.collisionFilter,
-            fireLayer: this.fireOn,
-            power: this.power,
-            marbleSize: this.marbleSize,
-            marbleColor: this.marbleColor,
-            marbleCollisionFilter: this.marbleCollisionFilter
-        }
-    }
-
-
-    /**
-     *  instatiate object based on saved version of this object from saveObject
-     *  return the previous body so that it can be removed from the world
-     * @param {any} savedJSON
+     /**
+     * Draw this object on the stage
      */
-    loadObject(savedJSON) {
-        if (savedJSON.MTObjType != 'Cannon') {
-            throw 'this is not a saved Cannon';
-        }
-        this.MTObjType = 'Cannon';
-        this.MTObjVersion = savedJSON.MTObjVersion;
-        let previousBody = this.body;
-        this.shape = savedJSON.shape;
-        this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
-        this.pos = savedJSON.pos;
-        this.angle = savedJSON.angle;
-        this.image = savedJSON.image;
-        this.fireOn = savedJSON.fireLayer;
-        this.power = savedJSON.power;
-        this.marbleSize = savedJSON.marbleSize;
-        this.marbleColor = savedJSON.marbleColor;
-        this.marbleCollisionFilter = savedJSON.marbleCollisionFilter;
-        
-        return previousBody;
-
-    }
+     draw() {
+         this.clear();
+         this.beginFill(CANNON_COLOR);
+         this.drawPolygon(CANNON_SHAPE);
+         this.endFill();
+     }
 }
 export default Cannon;
