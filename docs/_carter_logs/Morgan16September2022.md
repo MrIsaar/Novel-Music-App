@@ -4,7 +4,7 @@ date: 2022-09-16
 ---
 # Log for Week {{page.week}}: 2022-09-12 - 2022-09-16
 
-Time estimate: ...
+Time estimate: 5.5 hours
 
 - Worked on team website.
   - Fixed bug where incorrect files would be deployed on certain pushes.
@@ -12,4 +12,6 @@ Time estimate: ...
   - Fixed misc. bugs.
 
 # Teammates worked with:
-- N/A
+- Jackson
+- Isaac
+- Xiaodi
