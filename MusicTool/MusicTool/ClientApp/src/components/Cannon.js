@@ -71,7 +71,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      * 
      */
     fireMarble(fireLayer = -1) {
-        if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
+        if (fireLayer !== -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
             return null;   // do not fire
         }
 
