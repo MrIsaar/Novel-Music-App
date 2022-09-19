@@ -24,10 +24,10 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      * @param {any} marbleCollisionFilter default is all
      */
 
-    constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, image = null) {
+     constructor(pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, shape = CANNON_SHAPE, collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
 
-        let shape = CANNON_SHAPE;
-        super(pos, angle, shape, image)
+        
+         super(pos, angle, shape, collisionFilter, image)
         
         
         

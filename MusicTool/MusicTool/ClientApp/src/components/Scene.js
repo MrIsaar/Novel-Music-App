@@ -260,9 +260,9 @@ export class Scene extends React.Component {
 
 
         for (let i = 1; i < 5; i++) {
-            position = { x: width * (0.2), y: height * (0.2 * i) };
+            /*position = { x: width * (0.2), y: height * (0.2 * i) };
             cannon = new Cannon(position, 0, 20, i);
-            cannons.push(cannon);
+            cannons.push(cannon);*/
             
         }
         for (let i = 1; i < 5; i++) {
@@ -272,10 +272,10 @@ export class Scene extends React.Component {
                     fillStyle: "red"
                 }
             }))*/
-            position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
+            /*position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
             let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
             drums.push(drum);
-            Matter.World.add(this.engine.world, drum.body);
+            Matter.World.add(this.engine.world, drum.body);*/
 
         }
         //position = { x: width * (0.1), y: height * (0.2) + 50 };
@@ -521,19 +521,24 @@ export class Scene extends React.Component {
     loadObject(mtObject) {
         try {
             var newObject = null;
-            let pos = { x: 0, y: 0 };
+            let pos = mtObject.position;
+            let angle = mtObject.angle;
+            let shape = mtObject.shape;
+            let collisionFilter = mtObject.collisionFilter;
+            let image = mtObject.image;
 
             // create temp object to load object into
             if (mtObject.MTObjType == "MTObj") {
-                newObject = new MTObj(pos);
+                newObject = new MTObj(pos, angle, shape, collisionFilter, image);
                 otherObj.push(newObject);
             } 
             else if (mtObject.MTObjType == "Cannon") {
-                newObject = new Cannon(pos);
+                //newObject = new Cannon(pos);
+                newObject = new Cannon(pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
-                newObject = new Instrument(pos);
+                newObject = new Instrument(pos, angle, mtObject.sound, shape, image, collisionFilter);
                 drums.push(newObject);
             }
             else {
@@ -542,9 +547,8 @@ export class Scene extends React.Component {
             }
 
             //load json
-            newObject.loadObject(mtObject);
-            this.addObject(newObject
-            )
+            //newObject.loadObject(mtObject);
+            this.addObject(newObject)
         }
         catch (exception_var) {
             console.log("could not load object");
@@ -567,7 +571,18 @@ export class Scene extends React.Component {
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
-                this.sequencerSavedState = data.sequencer;
+                console.log("object list: ", data.creationObject);
+                for (let i = 0; i < data.creationObject.length; i++)
+                {
+                    console.log(`DB obj Saved cannon ${i}: `, data.creationObject[i]);
+                    console.log(`DB Saved MTObj cannon ${i}: `, data.creationObject[i].json);
+                    console.log(`DB Saved MTObj.type cannon ${i}: `, data.creationObject[i].json.MTObjType);
+                    console.log(`DB Saved MTObj.position cannon ${i}: `, data.creationObject[i].json.position);
+                    console.log(`DB Saved MTObj.angle cannon ${i}: `, data.creationObject[i].json.angle);
+                    this.loadObject(data.creationObject[i].json);
+                }
+                
+                this.sequencerSavedState = data.sequencer; 
                 this.setState({
                     loading: false,
                     sequencerData: data.sequencer

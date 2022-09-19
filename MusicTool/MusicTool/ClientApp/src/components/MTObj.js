@@ -1,8 +1,10 @@
 ﻿import * as PIXI from "pixi.js";
 import Matter from "matter-js";
 
-export class MTObj extends PIXI.Graphics{
 
+
+export class MTObj extends PIXI.Graphics{
+    
     /**
      * creates a cannon at specified position with angle.
      * 
@@ -11,16 +13,16 @@ export class MTObj extends PIXI.Graphics{
      * @param {any} angle angle in radians
 
      */
-    constructor(pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null) {
+    constructor(pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
         super()
         this.shape = shape;
-        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
+        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: collisionFilter });
         this.position = pos;
         this.angle = angle;
         this.image = image;
         this.MTObjType = 'MTObj';
         this.MTObjVersion = '1.0.0';
-        this.collisionFilter = { group: 0, category: 0, mask: 0 }
+        this.collisionFilter = collisionFilter;
     }
 
     /**
