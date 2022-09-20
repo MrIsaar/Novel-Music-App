@@ -6,7 +6,7 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
-import MTObj from "./MTObj";
+import Toolbar from './Toolbar';
 
 import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
@@ -26,8 +26,8 @@ const width = 1000;
 const height = 500;
 var debugLoad = true;
 var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
-let savedObject = { "MTObjType": "Instrument","MTObjVersion": "0.9.0","pos": {"x": 300,"y": 250},"angle": 0,"image": "./PalletImages/1.png","shape": [ {"x": -25,  "y": -10  }, {"x": 25,  "y": -10  }, {"x": 20,  "y": 10  }, {"x": -20,  "y": 10  } ],"collisionFilter": {  "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF },"sound": [  {"note": "A3",  "length": "8n"  }, {"note": "B3",  "length": "8n"  }, {"note": "C4",  "length": "8n"  } ]};
-let otherSavedObject = {"MTObjType":"Instrument","MTObjVersion":"1.0.0","pos":{"x":400,"y":350},"angle":0,"image":null,"shape":[{"x":-25,"y":-10},{"x":25,"y":-10},{"x":20,"y":10},{"x":-20,"y":10}],"collisionFilter":{ "group":0,"category":0,"mask":0},"sound":{ "note":"C4","length":"8n"}};
+let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
+let otherSavedObject = { "MTObjType": "Instrument", "MTObjVersion": "1.0.0", "pos": { "x": 400, "y": 350 }, "angle": 0, "image": null, "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "sound": { "note": "C4", "length": "8n" } };
 export class Scene extends React.Component {
 
     /**
@@ -38,7 +38,8 @@ export class Scene extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            sequencerData: {}
+            sequencerData: {},
+            selectedTool: 'select'
         };
         Tone.start();
 
@@ -52,6 +53,12 @@ export class Scene extends React.Component {
         this.creationID = creationID;
     }
 
+    setSelectedTool(tool) {
+        this.setState({ selectedTool: tool });
+        console.log(`Selected Tool: ${tool}`)
+    }
+
+
     /**
      * initiates Matter.js engine and event handlers
      * 
@@ -60,7 +67,7 @@ export class Scene extends React.Component {
         if (this.creationID) {
             this.loadCreation();
         }
-        
+
         // Create engine
         Tone.start();
         this.engine = Engine.create({
@@ -91,8 +98,8 @@ export class Scene extends React.Component {
             });
         World.add(this.engine.world, mouseConstraint);
 
-        
-        
+
+
 
         /**
          *      Handle Collision Interactions
@@ -108,7 +115,7 @@ export class Scene extends React.Component {
         //                     if (debugLoad) {
         //                         debugLoad = false;
         //                         let oldBody = drums[j].loadObject(savedObject);
-                                
+
         //                         Matter.Composite.remove(engine.world, oldBody);
         //                         Matter.World.add(engine.world, drums[j].body);
         //                     }
@@ -322,7 +329,7 @@ export class Scene extends React.Component {
         }
 
 
-        
+
 
 
         // create inital marbles
@@ -362,7 +369,7 @@ export class Scene extends React.Component {
      */
     render() {
         //let callbacks = [this.fireBalls];
-        
+
         /*sounds.push(<div>            <ToneExample />        </div>);*/
         //let callbacks = [this.fireBalls.bind(this)];
         let callback = (id) => this.fireBalls.bind(this)(id);
@@ -379,17 +386,21 @@ export class Scene extends React.Component {
                     callback={callback}
                 />
         }
-       
+
         return (
             <div id="_Scene" >
+                <Toolbar
+                    onChange={this.setSelectedTool.bind(this)}
+                    value={this.state.selectedTool}
+                ></Toolbar>
                 <div ref="scene" id="scene" />
                 <div className="row">
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button>
-                        
+
                     </div>
-                   
+
                 </div>
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
@@ -411,7 +422,7 @@ export class Scene extends React.Component {
                     // if (debugLoad) {
                     //     debugLoad = false;
                     //     let oldBody = drums[j].loadObject(savedObject);
-                        
+
                     //     Matter.Composite.remove(engine.world, oldBody);
                     //     Matter.World.add(engine.world, drums[j].body);
                     // }
@@ -442,22 +453,10 @@ export class Scene extends React.Component {
                 selection.destroy({ children: true });
                 selection = null;
             }
+            return;
         }
 
-        // alt mode - to be removed with drag and drop
-        else if (event.mouse.sourceEvents.mousedown.altKey) {
-            Tone.start();
-            let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
-            cannons.push(cannon);
-            this.addObject(cannon);
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
-            }
-        }
-
-        // normal click - select object under mouse
-        else {
+        if (this.state.selectedTool == "select") {
             // new select object - create new function for this
             if (selection == null) {
                 let currSelection = null;
@@ -466,6 +465,8 @@ export class Scene extends React.Component {
                         currSelection = cannons[i];
                         break;
                     }
+                }
+                for (let i = 0; i < drums.length; i++) {
                     if (Matter.Bounds.contains(drums[i].body.bounds, position)) {
                         currSelection = drums[i];
                         break;
@@ -496,6 +497,27 @@ export class Scene extends React.Component {
                         this.app.stage.addChild(selection);
                     }
                 }
+            }
+        }
+        
+        else if (this.state.selectedTool == "cannon") {
+            Tone.start();
+            let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
+            cannons.push(cannon);
+            this.addObject(cannon);
+            if (selection != null) {
+                selection.destroy({ children: true });
+                selection = null;
+            }
+        }
+        else { // anything else should be a type of instrument
+            Tone.start();
+            let instrument = new Instrument(position)//<Cannon pos={position} body={null} />;
+            drums.push(instrument);
+            this.addObject(instrument);
+            if (selection != null) {
+                selection.destroy({ children: true });
+                selection = null;
             }
         }
     }
@@ -533,7 +555,7 @@ export class Scene extends React.Component {
             if (ball == null)
                 continue;
             balls.push(ball);
-            
+
             this.addObject(ball);
         }
         if (selection != null) {
@@ -542,7 +564,7 @@ export class Scene extends React.Component {
         }
     }
 
-    
+
 
     addObject(object) {
         Matter.World.add(this.engine.world, [object.body]);
@@ -562,7 +584,7 @@ export class Scene extends React.Component {
             if (mtObject.json.MTObjType == "MTObj") {
                 newObject = new MTObj(pos);
                 otherObj.push(newObject);
-            } 
+            }
             else if (mtObject.json.MTObjType == "Cannon") {
                 newObject = new Cannon(pos);
                 cannons.push(newObject);
@@ -601,7 +623,7 @@ export class Scene extends React.Component {
 
     loadCreation() {
         fetch('/api/Creations/' + this.creationID)
-        //fetch('/api/Creations/' + 1)
+            //fetch('/api/Creations/' + 1)
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
@@ -614,7 +636,7 @@ export class Scene extends React.Component {
                 this.loadObjects(data.creationObject);
             });
 
-        
+
     }
 
     loadObjects(objs) {
