@@ -32,7 +32,7 @@ namespace MusicTool.Controllers
 
         // POST api/getCreationID/with_userID/{id}
         [HttpGet("getCreationID/with_userID/{id}")]
-        public async Task<List<int>> CreationIDList(string id)
+        public async Task<List<int>> GetCreationIDList(string id)
         {
             /*            var res = await _context.Access.Where(p => p.UserID == userID).ToListAsync(); // get Access obj
                         return res;*/

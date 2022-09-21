@@ -128,10 +128,16 @@ export class Login extends Component {
     // 2. Use CreationID get Name from Creation db_table
     handleProjectList = () => {
         const { projectList } = this.state;
-        http.get('/Access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
+        http.get('/access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
             // TODO: set list
             res.map(i => {
                 console.log(i)
+                // get name based on creationID
+                http.get('/creations/' + i).then((res) => {
+                    console.log(res.name)
+                }).catch((ex) => {
+                    console.log('Get name not successful')
+                })
             })
             
              //console.log(res.length)
