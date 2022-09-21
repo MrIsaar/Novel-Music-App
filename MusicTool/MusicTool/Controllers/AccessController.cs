@@ -30,5 +30,17 @@ namespace MusicTool.Controllers
             return await _context.Access.ToListAsync();
         }
 
+        // POST api/creationIDList
+        [HttpPost("creationIDList")]
+        public async Task<List<int>> CreationIDList(string userID)
+        {
+            /*            var res = await _context.Access.Where(p => p.UserID == userID).ToListAsync();
+                        return res;*/
+            var list = from item in _context.Access
+                       where item.UserID == userID
+                       select item.CreationID;
+            return await list.ToListAsync();
+        }
+
     }
 }

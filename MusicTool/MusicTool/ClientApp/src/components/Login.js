@@ -99,7 +99,7 @@ export class Login extends Component {
         const { email } = this.state;
         try {
             http.delete('/user/delete', { data: { email } }).then((res) => {
-                http.setUserId(null);
+                http.setUserId(null)
                 http.setUserEmail(null)
 
                 this.setEmail(null)
@@ -124,7 +124,18 @@ export class Login extends Component {
     handleShowShare = () => this.setShowShare(true);
 
     // Get a list of projectID and projectName based on uerID from Application db
-    handleProjectList = () => { }
+    // 1. Use UserID get CreationID from Access db_table
+    // 2. Use CreationID get Name from Creation db_table
+    handleProjectList = () => {
+        const { projectList } = this.state;
+        http.post('/Access/creationIDList', { data: http.getUserId() }).then((res) => {
+            // projectList = null
+            console.log(res)
+            console.log(http.getUserId())
+        }).catch((ex) => {
+            console.log('Get CreationID list not successful')
+        })
+    }
 
 
     render() {
@@ -150,6 +161,17 @@ export class Login extends Component {
                             <br></br>
 
                             <h5>My Projects</h5>
+
+                            <br></br>
+
+                            <button
+                                onClick={this.handleProjectList}
+                                className='btn btn-primary'>
+                                Get My Projects
+                            </button>
+
+                            <br></br>
+
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
