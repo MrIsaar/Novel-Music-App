@@ -418,14 +418,9 @@ export class Scene extends React.Component {
                 if (event.pairs[i].bodyA === drums[j].body || event.pairs[i].bodyB === drums[j].body) {
                     console.log("*Meep*");
                     let sound = drums[j].getSound()
-                    synth.triggerAttackRelease(sound.note, sound.length);
-                    // if (debugLoad) {
-                    //     debugLoad = false;
-                    //     let oldBody = drums[j].loadObject(savedObject);
-
-                    //     Matter.Composite.remove(engine.world, oldBody);
-                    //     Matter.World.add(engine.world, drums[j].body);
-                    // }
+                    drums[j].synth.triggerAttackRelease(sound.note, sound.length);
+                    //synth.triggerAttackRelease(sound.note, sound.length);
+   
                 }
         }
 
@@ -511,15 +506,74 @@ export class Scene extends React.Component {
             }
         }
         else { // anything else should be a type of instrument
-            Tone.start();
-            let instrument = new Instrument(position)//<Cannon pos={position} body={null} />;
-            drums.push(instrument);
-            this.addObject(instrument);
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
+            if (this.state.selectedTool == 'drum') {
+                Tone.start();
+                console.log('creating instrument')
+                let instrument = new Instrument(position, 1, new Tone.MembraneSynth({
+                    pitchDecay: 0.008,
+                    octaves: 2,
+                    envelope: {
+                        attack: 0.0006,
+                        decay: 0.5,
+                        sustain: 0
+                    }
+                }).toDestination(),
+                    undefined,
+                    [{ x: 30, y: 20 }, { x: 30, y: -10 }, { x: -30, y: -10 }, { x: -30, y: 20 }]
+                )//<Cannon pos={position} body={null} />;
+                drums.push(instrument);
+                this.addObject(instrument);
+                if (selection != null) {
+                    selection.destroy({ children: true });
+                    selection = null;
+                }
+            } else if (this.state.selectedTool == 'cymbal') {
+                Tone.start();
+                console.log('creating instrument')
+                let instrument = new Instrument(position, 1, new Tone.MetalSynth({
+                    frequency: 200,
+                    envelope: {
+                        attack: 0.0001,
+                        decay: 1.4,
+                        release: 0.2
+                    },
+                    harmonicity: 10,
+                    modulationIndex: 32,
+                    resonance: 4000,
+                    octaves: 1.5
+                }).toDestination(),
+                    { note: 'C2', length: '1n' },
+                    [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
+                drums.push(instrument);
+                this.addObject(instrument);
+                if (selection != null) {
+                    selection.destroy({ children: true });
+                    selection = null;
+                }
+            } else if (this.state.selectedTool == 'cowbell') {
+                Tone.start();
+                let instrument = new Instrument(position, 1, new Tone.MetalSynth({
+                    harmonicity: 12,
+                    resonance: 800,
+                    modulationIndex: 20,
+                    envelope: {
+                        decay: 0.4,
+                    },
+                    volume: -15
+                }).toDestination(),
+                    { note: 'C2', length: '1n' },
+                    [{ x: 15, y: 20 }, { x: 10, y: -20}, { x: -10, y: -20}, { x: -15, y:  20}])
+                drums.push(instrument);
+                this.addObject(instrument);
+                if (selection != null) {
+                    selection.destroy({ children: true });
+                    selection = null;
+                }
             }
         }
+
+        // default back to the select tool
+        this.setState({ selectedTool: "select" })
     }
 
     /**
