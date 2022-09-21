@@ -132,8 +132,10 @@ export class Login extends Component {
     // Get a list of projectID and projectName based on uerID from Application db
     handleProjectList = () => { }
 
+
     render() {
         const { isLogin, email, password, isLoading, error, showReminder, showShare, projectList } = this.state;
+
         return (
             // use bootstrap card and form styles
             <div className="card container mt-5" >
