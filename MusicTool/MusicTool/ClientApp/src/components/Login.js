@@ -128,10 +128,14 @@ export class Login extends Component {
     // 2. Use CreationID get Name from Creation db_table
     handleProjectList = () => {
         const { projectList } = this.state;
-        http.post('/Access/creationIDList', { data: http.getUserId() }).then((res) => {
-            // projectList = null
-            console.log(res)
-            console.log(http.getUserId())
+        http.get('/Access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
+            // TODO: set list
+            res.map(i => {
+                console.log(i)
+            })
+            
+             //console.log(res.length)
+             //console.log(http.getUserId())
         }).catch((ex) => {
             console.log('Get CreationID list not successful')
         })
