@@ -76,20 +76,13 @@ export class Login extends Component {
                 this.setError('')
                 this.setIsLoading(false)
                 this.setIsLogin(true)
+                this.setIsSignup(true)
                 console.log('Login successful')
             }).catch((ex) => {
                 // console.log('ex:', ex);
                 console.log('Login not successful')
                 window.location.reload()
             })
-
-            if (isSignup) {
-                http.post('/user/login', { data: { email, password } }).then((res) => {
-                    http.setUserId(res.userID);
-                }).catch((ex) => {
-                    window.location.reload()
-                })
-            }
         } catch (error) {
             this.setEmail('')
             this.setPassword('')
@@ -99,6 +92,7 @@ export class Login extends Component {
             console.log('Cannot login')
         }
     }
+ 
 
     // delete account in Users db
     handleDelete = () => {
