@@ -14,6 +14,7 @@ export class Login extends Component {
             isLogin: false,         // old user
             isSignup: false,        // new user
             showReminder: false,    // show delete reminder box
+            showShare: false,       // show share project dialog
             // array = [{projectID, projectName}, {projectID, projectName}, ...] TODO: should be null
             projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' },
                             { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
@@ -42,6 +43,9 @@ export class Login extends Component {
     }
     setShowReminder = (showReminder) => {
         this.setState({ showReminder })
+    }
+    setShowShare = (showShare) => {
+        this.setState({ showShare })
     }
     setProjectList = (projectList) => {
         this.setState({ projectList })
@@ -121,12 +125,15 @@ export class Login extends Component {
     // reminder box: ask if delete account
     handleCloseReminder = () => this.setShowReminder(false);
     handleShowReminder = () => this.setShowReminder(true);
+    // dialog: show link of project
+    handleCloseShare = () => this.setShowShare(false);
+    handleShowShare = () => this.setShowShare(true);
 
     // Get a list of projectID and projectName based on uerID from Application db
     handleProjectList = () => { }
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, projectList } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showShare, projectList } = this.state;
         return (
             // use bootstrap card and form styles
             <div className="card container mt-5" >
@@ -153,17 +160,39 @@ export class Login extends Component {
                                         <th>Project Name</th>
                                         <th>Project ID</th>
                                         <th>Project Workspace</th>
+                                        <th>Share Project</th>
                                         <th>Delete Project</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {projectList.map(({ id, name }) => (
                                         <tr>
-                                            <td>{ name}</td>
-                                            <td>{ id}</td>
+                                            <td>{name}</td>
+
+                                            <td>{id}</td>
+
                                             <td><a href={"/scene/" + {id}} className="btn btn-primary">
                                                 Go to Project
                                             </a></td>
+
+                                            <td>
+                                                <Button variant="primary" onClick={this.handleShowShare}>
+                                                    My Project
+                                                </Button>
+
+                                                <Modal show={showShare} onHide={this.handleCloseShare}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title>My Project</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>Place holder for project link or something else</Modal.Body>
+                                                    <Modal.Footer>
+                                                        <Button variant="primary" onClick={this.handleCloseShare}>
+                                                            Close
+                                                        </Button>
+                                                    </Modal.Footer>
+                                                </Modal>
+                                            </td>
+
                                             <td><Button variant="danger" onClick={() => (null)}>
                                                 Delete
                                             </Button></td>
