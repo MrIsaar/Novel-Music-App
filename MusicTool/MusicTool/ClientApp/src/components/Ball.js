@@ -33,7 +33,7 @@ function getShape(radius) {
      constructor(pos, marbleSize, marbleCollisionFilter, fireLayer, marbleColor , image = null) {
 
         let shape = [{ x: -10, y: 10 }, { x: 10, y: 0 }, { x: -10, y: -10 }, { x: -10, y: 0 }]
-         super({ x: pos.x, y: pos.y }, 0, shape, marbleCollisionFilter, image)
+         super(-1,{ x: pos.x, y: pos.y }, 0, shape, marbleCollisionFilter, image)
         this.marbleSize = marbleSize;
         this.marbleColor = marbleColor;
         this.marbleCollisionFilter = marbleCollisionFilter;

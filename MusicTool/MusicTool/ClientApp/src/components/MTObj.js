@@ -13,8 +13,9 @@ export class MTObj extends PIXI.Graphics{
      * @param {any} angle angle in radians
 
      */
-    constructor(pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
+    constructor(objectNumber,pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
         super()
+        this.objectNumber = objectNumber;
         this.shape = shape;
         this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: collisionFilter });
         this.position = pos;
@@ -90,6 +91,7 @@ export class MTObj extends PIXI.Graphics{
         return {
             MTObjType: 'MTObj',
             MTObjVersion: this.MTObjVersion,
+            objectNumber: this.objectNumber,
             position: this.position,
             angle: this.angle,
             image: this.image,

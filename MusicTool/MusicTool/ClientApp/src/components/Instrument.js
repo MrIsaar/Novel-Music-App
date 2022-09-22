@@ -11,10 +11,10 @@ export class Instrument extends MTObj {
      * @param {any} image
      * @param {any} sound default to C4, if passed a list it will play list in order
      */
-    constructor(pos, angle = 0, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: -1, category: 0xffffffff, mask: 0xffffffff })
+    constructor(objectNumber,pos, angle = 0, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: -1, category: 0xffffffff, mask: 0xffffffff })
     {
 
-        super(pos, angle, shape, collisionFilter, image);
+        super(objectNumber,pos, angle, shape, collisionFilter, image);
         this.MTObjType = 'Instrument';
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.body.collisionFilter = collisionFilter;
@@ -137,6 +137,7 @@ export class Instrument extends MTObj {
         return {
             MTObjType: 'Instrument',
             MTObjVersion: this.MTObjVersion,
+            objectNumber: this.objectNumber,
             position: this.position,
             angle: this.angle,
             image: this.image,

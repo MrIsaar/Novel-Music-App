@@ -518,9 +518,10 @@ export class Scene extends React.Component {
      * load an MTObj from json saved object into world
      * @param {any} mtObject music tool object that inherits from MTObj
      */
-    loadObject(mtObject) {
+    loadObject(objectNumber,mtObject) {
         try {
             var newObject = null;
+            
             let pos = mtObject.position;
             let angle = mtObject.angle;
             let shape = mtObject.shape;
@@ -529,16 +530,16 @@ export class Scene extends React.Component {
 
             // create temp object to load object into
             if (mtObject.MTObjType == "MTObj") {
-                newObject = new MTObj(pos, angle, shape, collisionFilter, image);
+                newObject = new MTObj(objectNumber,pos, angle, shape, collisionFilter, image);
                 otherObj.push(newObject);
             } 
             else if (mtObject.MTObjType == "Cannon") {
                 //newObject = new Cannon(pos);
-                newObject = new Cannon(pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
+                newObject = new Cannon(objectNumber,pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
-                newObject = new Instrument(pos, angle, mtObject.sound, shape, image, collisionFilter);
+                newObject = new Instrument(objectNumber, pos, angle, mtObject.sound, shape, image, collisionFilter);
                 drums.push(newObject);
             }
             else {
@@ -579,7 +580,7 @@ export class Scene extends React.Component {
                     console.log(`DB Saved MTObj.type cannon ${i}: `, data.creationObject[i].json.MTObjType);
                     console.log(`DB Saved MTObj.position cannon ${i}: `, data.creationObject[i].json.position);
                     console.log(`DB Saved MTObj.angle cannon ${i}: `, data.creationObject[i].json.angle);
-                    this.loadObject(data.creationObject[i].json);
+                    this.loadObject(data.creationObject[i].creationObjectID,data.creationObject[i].json);
                 }
                 
                 this.sequencerSavedState = data.sequencer; 
@@ -588,6 +589,47 @@ export class Scene extends React.Component {
                     sequencerData: data.sequencer
                 });
             });
+    }
+
+    saveCreation() {
+        /* cannons */
+        for (let i = 0; i < cannons.lenth; i++) {
+
+        }
+        /* drums   */
+        for (let i = 0; i < drums.lenth; i++) {
+
+        }
+        /* sounds  */
+        for (let i = 0; i < sounds.lenth; i++) {
+
+        }
+        /* otherObj*/
+        for (let i = 0; i < otherObj.lenth; i++) {
+
+        }
+        /* synth   */
+        for (let i = 0; i < synth.lenth; i++) {
+
+        }
+        // reference not for this project
+        /*let data = { day: day, time: time, onOff: onOff }
+        var postResutlt =
+            $.post("/Availabilities/SetSchedule", data)
+                .done(function (result) {
+                    //console.log(`${result}`);
+                    AvailabilityList = result;
+                    return result["availabilityID"]
+                    //update switches
+                })
+                .fail(function (result) {
+                    console.log("update failed")
+                    return -1
+                })
+                .always(function (result) {
+                    // something like stop spinning
+                })
+        return postResutlt*/
     }
 }
 export default Scene;
