@@ -149,6 +149,7 @@ export class Login extends Component {
         }).catch((ex) => {
             console.log('Get CreationID list not successful')
         })
+        // console.log(projectList)
         http.setProjectList(projectList)
     }
 
@@ -207,38 +208,80 @@ export class Login extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {projectList.map(({ id, name }) => (
-                                        <tr>
-                                            <td>{name}</td>
+                                {
+                                    projectList.length == 0 & http.getProjectList().length != 0 ?
+                                    <>
+                                        {http.getProjectList().map(({ id, name }) => (
+                                            <tr>
+                                                <td>{name}</td>
 
-                                            <td>{id}</td>
+                                                <td>{id}</td>
 
-                                            <td><a href={"/scene/" + {id}} className="btn btn-primary">
-                                                Go to Project
-                                            </a></td>
+                                                <td><a href={"/scene/" + {id}} className="btn btn-primary">
+                                                    Go to Project
+                                                </a></td>
 
-                                            <td>
-                                                <Button variant="primary" onClick={this.handleShowShare}>
-                                                    My Project
-                                                </Button>
+                                                <td>
+                                                    <Button variant="primary" onClick={this.handleShowShare}>
+                                                        My Project
+                                                    </Button>
 
-                                                <Modal show={showShare} onHide={this.handleCloseShare}>
-                                                    <Modal.Header closeButton>
-                                                        <Modal.Title>My Project</Modal.Title>
-                                                    </Modal.Header>
-                                                    <Modal.Body>Place holder for project link or something else</Modal.Body>
-                                                    <Modal.Footer>
-                                                        <Button variant="primary" onClick={this.handleCloseShare}>
-                                                            Close
-                                                        </Button>
-                                                    </Modal.Footer>
-                                                </Modal>
-                                            </td>
+                                                    <Modal show={showShare} onHide={this.handleCloseShare}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>My Project</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>Place holder for project link or something else</Modal.Body>
+                                                        <Modal.Footer>
+                                                            <Button variant="primary" onClick={this.handleCloseShare}>
+                                                                Close
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </td>
 
-                                            <td><Button variant="danger" onClick={() => (null)}>
-                                                Delete
-                                            </Button></td>
-                                        </tr>))}
+                                                <td><Button variant="danger" onClick={() => (null)}>
+                                                    Delete
+                                                </Button></td>
+                                            </tr>))
+                                        }
+                                    </>
+                                    :
+                                    <>
+                                        {projectList.map(({ id, name }) => (
+                                            <tr>
+                                                <td>{name}</td>
+
+                                                <td>{id}</td>
+
+                                                <td><a href={"/scene/" + {id}} className="btn btn-primary">
+                                                    Go to Project
+                                                </a></td>
+
+                                                <td>
+                                                    <Button variant="primary" onClick={this.handleShowShare}>
+                                                        My Project
+                                                    </Button>
+
+                                                    <Modal show={showShare} onHide={this.handleCloseShare}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>My Project</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>Place holder for project link or something else</Modal.Body>
+                                                        <Modal.Footer>
+                                                            <Button variant="primary" onClick={this.handleCloseShare}>
+                                                                Close
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </td>
+
+                                                <td><Button variant="danger" onClick={() => (null)}>
+                                                    Delete
+                                                </Button></td>
+                                            </tr>))
+                                        }
+                                    </>
+                                }
                                 </tbody>
                             </table>
 
