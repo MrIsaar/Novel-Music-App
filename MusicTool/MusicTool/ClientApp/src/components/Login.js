@@ -280,6 +280,7 @@ export class Login extends Component {
                                                 </Button></td>
                                             </tr>))
                                         }
+                                        {http.setProjectList(projectList)}
                                     </>
                                 }
                                 </tbody>
