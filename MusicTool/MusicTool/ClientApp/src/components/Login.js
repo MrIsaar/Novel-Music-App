@@ -15,9 +15,9 @@ export class Login extends Component {
             isSignup: false,        // new user
             showReminder: false,    // show delete reminder box
             showShare: false,       // show share project dialog
-            // array = [{projectID, projectName}, {projectID, projectName}, ...] TODO: should be null
-            projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' },
-                            { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
+            // array = [{projectID, projectName}, {projectID, projectName}, ...]
+            // projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' }, { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
+            projectList: []
 
         };
     }
@@ -62,12 +62,13 @@ export class Login extends Component {
     // load or create account in Users db
     handleLogin = async (e) => {
         e.preventDefault();
-        const { isSignup, email, password } = this.state;
+        const { isSignup, email, password, projectList } = this.state;
         this.setIsLoading(true)
         try {
             http.post(isSignup ? '/user/signup' : '/user/login', { data: { email, password } }).then((res) => {
                 http.setUserId(res.userID);
                 http.setUserEmail(email)
+                http.setProjectList(projectList)
                 //console.log(http.getUserEmail())
                 //console.log(http.getUserId())
 
@@ -101,12 +102,14 @@ export class Login extends Component {
             http.delete('/user/delete', { data: { email } }).then((res) => {
                 http.setUserId(null)
                 http.setUserEmail(null)
+                http.setProjectList(null)
 
                 this.setEmail(null)
                 this.setPassword(null)
                 this.setError('')
                 this.setIsLogin(false)
                 this.setIsSignup(false)
+                this.setProjectList([])
                 console.log('Delete successful')
             }).catch((ex) => {
                 console.log('Delete not successful')
@@ -128,23 +131,44 @@ export class Login extends Component {
     // 2. Use CreationID get Name from Creation db_table
     handleProjectList = () => {
         const { projectList } = this.state;
+        this.setProjectList([])
         http.get('/access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
-            // TODO: set list
             res.map(i => {
-                console.log(i)
+                //console.log(i)
                 // get name based on creationID
                 http.get('/creations/' + i).then((res) => {
-                    console.log(res.name)
+                    // console.log(res.name)
+                    // add { id: 'i', name: 'name' } to projectList
+                    this.addItem({ id: '' + i, name: '' + res.name })
                 }).catch((ex) => {
                     console.log('Get name not successful')
                 })
             })
-            
-             //console.log(res.length)
-             //console.log(http.getUserId())
+            //console.log(res.length)
+            //console.log(http.getUserId())
         }).catch((ex) => {
             console.log('Get CreationID list not successful')
         })
+        http.setProjectList(projectList)
+    }
+
+    // helper function that adds item to list
+    addItem = (item) => {
+        const { projectList } = this.state;
+        this.setProjectList(
+            [...projectList, item]
+        )
+        //console.log(projectList)
+    }
+
+    // cleanup data after logout/delete account
+    handleCleanUp = () => {
+        this.setIsLogin(false)
+        this.setIsSignup(false)
+        this.setProjectList([])
+        http.setUserId(null)
+        http.setUserEmail(null)
+        http.setProjectList(null)
     }
 
 
@@ -163,7 +187,7 @@ export class Login extends Component {
 
                             <h3> Welcome, {http.getUserEmail()} </h3>
                             <button
-                                onClick={() => (this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
+                                onClick={this.handleCleanUp}
                                 className='btn btn-primary'>
                                 Logout
                             </button>
@@ -171,16 +195,6 @@ export class Login extends Component {
                             <br></br>
 
                             <h5>My Projects</h5>
-
-                            <br></br>
-
-                            <button
-                                onClick={this.handleProjectList}
-                                className='btn btn-primary'>
-                                Get My Projects
-                            </button>
-
-                            <br></br>
 
                             <table className="table table-hover">
                                 <thead>
@@ -230,6 +244,14 @@ export class Login extends Component {
 
                             <br></br>
 
+                            <button
+                                onClick={this.handleProjectList}
+                                className='btn btn-primary'>
+                                Get My Projects
+                            </button>
+
+                            <br></br>
+
                             <div>{/* TODO: change link*/}</div>
                             <a href="/scene/1" className="btn btn-primary">
                                 Create A New Project
@@ -248,7 +270,7 @@ export class Login extends Component {
                                 <Modal.Body>Are you sure to delete your account?</Modal.Body>
                                 <Modal.Footer>
                                     <Button variant="danger"
-                                        onClick={() => (this.handleCloseReminder(), this.handleDelete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}>
+                                        onClick={() => (this.handleCloseReminder, this.handleDelete, this.handleCleanUp)}>
                                         Yes
                                     </Button>
                                     <Button variant="primary" onClick={this.handleCloseReminder}>
