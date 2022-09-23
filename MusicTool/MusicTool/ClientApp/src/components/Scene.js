@@ -633,7 +633,7 @@ export class Scene extends React.Component {
             let id = 1;
             let creation = "HELLO WORLD";//JSON.stringify(objects);
 
-            http.post('/creations/save/' + id, { data: { id: id, creation: creation } })
+            http.post('/creations/save', { data: { id: id, creation: creation } })
                 .then((res) => {
                     console.log(res);
                 }).catch((ex) => {
