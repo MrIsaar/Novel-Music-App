@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -78,14 +79,23 @@ namespace MusicTool.Controllers
 
 
 
-        // PUT: api/Creations/5
+        // POST: api/Creations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCreation(int id, Creation creation)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> PostCreation(String creation)
         {
-            if (id != creation.CreationID)
+            /*if (id != creation.CreationID)
             {
                 return BadRequest();
+            }*/
+            int id = 2;
+            if (creation is null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return StatusCode(418);
             }
 
             _context.Entry(creation).State = EntityState.Modified;

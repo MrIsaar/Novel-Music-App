@@ -39,5 +39,11 @@ namespace MusicTool.Areas.Application.Data
         public int CreationObjectCount { get; set; }
     }
 
+    public class TestClassForData
+    {
+        public int Id { get; set; }
+        public string Data { get; set; }
+    }
+
 }
 

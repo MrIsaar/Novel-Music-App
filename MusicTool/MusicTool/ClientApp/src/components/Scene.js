@@ -6,7 +6,7 @@ import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
 import MTObj from "./MTObj";
-
+import http from '../httpFetch';
 import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
@@ -352,7 +352,19 @@ export class Scene extends React.Component {
                 <div className="row">
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
-                        <button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button>
+                        <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
+                        <button onClick={
+                            async (e) => {
+                            http.post('/creations/' + this.creationID, { data: { creation } })
+                                .then((res) => {
+                                    console.log(res);
+                                }).catch((ex) => {
+                                    console.log('not successful')
+                                })
+                            }}
+                        >OtherSave</button>
+                        <button onClick={this.saveCreation.bind(this)}>------SAVE------</button>
+                        
                     </div>
                    
                 </div>
@@ -592,44 +604,62 @@ export class Scene extends React.Component {
     }
 
     saveCreation() {
+        let objects = [];
         /* cannons */
-        for (let i = 0; i < cannons.lenth; i++) {
-
+        for (let i = 0; i < cannons.length; i++) {
+            //cannons[i].savedObject();
         }
         /* drums   */
-        for (let i = 0; i < drums.lenth; i++) {
+        for (let i = 0; i < drums.length; i++) {
 
         }
         /* sounds  */
-        for (let i = 0; i < sounds.lenth; i++) {
+        for (let i = 0; i < sounds.length; i++) {
 
         }
         /* otherObj*/
-        for (let i = 0; i < otherObj.lenth; i++) {
+        for (let i = 0; i < otherObj.length; i++) {
 
         }
         /* synth   */
-        for (let i = 0; i < synth.lenth; i++) {
+        /*for (let i = 0; i < synth.length; i++) {
 
+        }*/
+
+
+        let id = this.creationID;
+        let creation = "HELLO WORLD";//JSON.stringify(objects);
+
+
+        let result = async (e) => {
+            http.post('/creations/' + this.creationID, { data: { creation } })
+            .then((res) => {
+                console.log(res);
+            }).catch((ex) => {
+                console.log('not successful')
+            })
         }
-        // reference not for this project
-        /*let data = { day: day, time: time, onOff: onOff }
-        var postResutlt =
-            $.post("/Availabilities/SetSchedule", data)
-                .done(function (result) {
-                    //console.log(`${result}`);
-                    AvailabilityList = result;
-                    return result["availabilityID"]
-                    //update switches
-                })
-                .fail(function (result) {
-                    console.log("update failed")
-                    return -1
-                })
-                .always(function (result) {
-                    // something like stop spinning
-                })
-        return postResutlt*/
+
+        /*const item = {
+            Id: parseInt(this.creationID, 10),
+            Data: "HELLO WORLD"
+        };
+        fetch('/api/Creations/' + this.creationID, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: item                                  
+        })
+            .then(() => "response?")*/
+
+
+
+
+
+
+        
     }
 }
 export default Scene;
