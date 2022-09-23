@@ -13,6 +13,7 @@ namespace MusicTool.Areas.Application.Data
         public Creation()
         {
             CreationObject = new HashSet<CreationObject>();
+            Sequencer = new Sequencer();
         }
         public int CreationID { get; set; }
         public string? Name { get; set; }
@@ -25,8 +26,8 @@ namespace MusicTool.Areas.Application.Data
         public DateTime LastEditDate { get; set; }
         // marking this as virtual allows for lazy loading, but we don't want that for now
         // almost anytime that we want the creation, we also want the objects and the sequencer
-        public virtual ICollection<CreationObject> CreationObject { get; set; }
-        public virtual Sequencer Sequencer { get; set; }
+        public ICollection<CreationObject> CreationObject { get; set; }
+        public Sequencer Sequencer { get; set; }
 
     }
 
@@ -39,11 +40,7 @@ namespace MusicTool.Areas.Application.Data
         public int CreationObjectCount { get; set; }
     }
 
-    public class TestClassForData
-    {
-        public int Id { get; set; }
-        public string Data { get; set; }
-    }
+  
 
 }
 

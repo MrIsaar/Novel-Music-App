@@ -81,8 +81,8 @@ namespace MusicTool.Controllers
 
         // POST: api/Creations/save/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("save")]
-        public async Task<ActionResult<Creation>> PostCreation(int id, String creation)
+        [HttpPost("save/{id}")]
+        public async Task<ActionResult<Creation>> PostCreation(int id, Creation creation)
         {
 /*            if (id != creation.CreationID)
             {

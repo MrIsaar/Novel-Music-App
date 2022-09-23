@@ -19,6 +19,10 @@ var selection = null;
 var drums = [];
 var sounds = [];
 var otherObj = [];
+var allObjects = [];
+
+
+
 var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
@@ -48,6 +52,8 @@ export class Scene extends React.Component {
 
         let { creationID } = this.props.match.params;
         this.creationID = creationID;
+
+        this.creationFromDB = null;
     }
 
     /**
@@ -585,7 +591,7 @@ export class Scene extends React.Component {
                     console.log(`DB Saved MTObj.angle cannon ${i}: `, data.creationObject[i].json.angle);
                     this.loadObject(data.creationObject[i].creationObjectID,data.creationObject[i].json);
                 }
-                
+                this.creationFromDB = data;
                 this.sequencerSavedState = data.sequencer; 
                 this.setState({
                     loading: false,
@@ -595,7 +601,7 @@ export class Scene extends React.Component {
     }
 
     saveCreation() {
-        let objects = [];
+        allObjects = [];
         /* cannons */
         for (let i = 0; i < cannons.length; i++) {
             //cannons[i].savedObject();
@@ -630,16 +636,15 @@ export class Scene extends React.Component {
         async (e) => {
 
             // let id = this.creationID;
-            let id = 1;
-            let creation = "HELLO WORLD";//JSON.stringify(objects);
+            let id = this.creationID;
+            let creation = JSON.stringify(this.creationFromDB);//"HELLO WORLD";//JSON.stringify(objects);
 
-            http.post('/creations/save', { data: { id: id, creation: creation } })
+            http.post('/creations/save/' + id, { data: { id: id, creation: creation } })
                 .then((res) => {
                     console.log(res);
                 }).catch((ex) => {
                     console.log('not successful')
                 })
-
         }
 }
 export default Scene;
