@@ -353,16 +353,7 @@ export class Scene extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
-                        <button onClick={
-                            async (e) => {
-                            http.post('/creations/' + this.creationID, { data: { "HelloWorld" } })
-                                .then((res) => {
-                                    console.log(res);
-                                }).catch((ex) => {
-                                    console.log('not successful')
-                                })
-                            }}
-                        >OtherSave</button>
+                        <button onClick={() => { this.saveCreation; this.handleSave; }}>OtherSave</button>
                         <button onClick={this.saveCreation.bind(this)}>------SAVE------</button>
                         
                     </div>
@@ -627,39 +618,27 @@ export class Scene extends React.Component {
         }*/
 
 
-        let id = this.creationID;
-        let creation = "HELLO WORLD";//JSON.stringify(objects);
-
-
-        let result = async (e) => {
-            http.post('/creations/' + this.creationID, { data: { creation } })
-            .then((res) => {
-                console.log(res);
-            }).catch((ex) => {
-                console.log('not successful')
-            })
-        }
-
-        /*const item = {
-            Id: parseInt(this.creationID, 10),
-            Data: "HELLO WORLD"
-        };
-        fetch('/api/Creations/' + this.creationID, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: item                                  
-        })
-            .then(() => "response?")*/
-
-
-
+        
 
 
 
         
     }
+
+    //handleSave() {
+    handleSave =
+        async (e) => {
+
+            let id = this.creationID;
+            let creation = "HELLO WORLD";//JSON.stringify(objects);
+
+            http.post('/creations/' + this.creationID, { data: { creation } })
+                .then((res) => {
+                    console.log(res);
+                }).catch((ex) => {
+                    console.log('not successful')
+                })
+
+        }
 }
 export default Scene;
