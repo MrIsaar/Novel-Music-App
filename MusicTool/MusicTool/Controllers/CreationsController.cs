@@ -79,24 +79,24 @@ namespace MusicTool.Controllers
 
 
 
-        // POST: api/Creations/5
+        // POST: api/Creations/save/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{id}")]
-        public async Task<IActionResult> PostCreation(String creation)
+        [HttpPost("save/{id}")]
+        public async Task<ActionResult<Creation>> PostCreation(int id, String creation)
         {
-            /*if (id != creation.CreationID)
+/*            if (id != creation.CreationID)
             {
-                return BadRequest();
-            }*/
-            int id = 2;
+                return new BadRequestObjectResult(new { message = "id != CreationID" });
+            }
+
             if (creation is null)
             {
-                return NoContent();
+                return new BadRequestObjectResult(new { message = "creation is null" });
             }
-            else
+*//*            else
             {
                 return StatusCode(418);
-            }
+            }*//*
 
             _context.Entry(creation).State = EntityState.Modified;
 
@@ -108,15 +108,21 @@ namespace MusicTool.Controllers
             {
                 if (!CreationExists(id))
                 {
-                    return NotFound();
+                    new BadRequestObjectResult(new { message = "creation id not exist" });
                 }
                 else
                 {
                     throw;
                 }
-            }
+            }*/
 
-            return NoContent();
+            var res = await _context.Creation.Where((p => p.CreationID == id)).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                // pop message
+                return new BadRequestObjectResult(new { message = "Fail to get creation" });
+            }
+            return res;
         }
 
         // POST: api/Creations

@@ -353,7 +353,7 @@ export class Scene extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
-                        <button onClick={() => { this.saveCreation; this.handleSave; }}>OtherSave</button>
+                        <button onClick={this.handleSave}>OtherSave</button>
                         <button onClick={this.saveCreation.bind(this)}>------SAVE------</button>
                         
                     </div>
@@ -629,10 +629,11 @@ export class Scene extends React.Component {
     handleSave =
         async (e) => {
 
-            let id = this.creationID;
+            // let id = this.creationID;
+            let id = 1;
             let creation = "HELLO WORLD";//JSON.stringify(objects);
 
-            http.post('/creations/' + this.creationID, { data: { creation } })
+            http.post('/creations/save/' + id, { data: { id: id, creation: creation } })
                 .then((res) => {
                     console.log(res);
                 }).catch((ex) => {
