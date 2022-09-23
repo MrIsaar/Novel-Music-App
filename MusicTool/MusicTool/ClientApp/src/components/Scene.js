@@ -355,7 +355,7 @@ export class Scene extends React.Component {
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
                         <button onClick={
                             async (e) => {
-                            http.post('/creations/' + this.creationID, { data: { creation } })
+                            http.post('/creations/' + this.creationID, { data: { "HelloWorld" } })
                                 .then((res) => {
                                     console.log(res);
                                 }).catch((ex) => {
