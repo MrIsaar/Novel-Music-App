@@ -642,9 +642,26 @@ export class Scene extends React.Component {
             http.post('/creations/save/' + id, { data: { id: id, creation: creation } })
                 .then((res) => {
                     console.log(res);
+                    // to save access
+                    // this.handleSaveAccess();
                 }).catch((ex) => {
                     console.log('not successful')
                 })
         }
+
+    handleSaveAccess = () => {
+        let CreationID = this.creationID;
+        let UserID = http.getUserId();
+        let AccessLevel = 2;
+        let Creation = null;
+
+        http.post('/access/save/' + CreationID, { data: { CreationID, UserID, AccessLevel, Creation } })
+            .then((res) => {
+                console.log(res);
+                console.log('save access successful');
+            }).catch((ex) => {
+                console.log('not successful')
+            })
+    }
 }
 export default Scene;

@@ -42,5 +42,42 @@ namespace MusicTool.Controllers
             return await list.ToListAsync();
         }
 
+        // POST api/save
+        [HttpPost("save/{id}")]
+        public async Task<ActionResult<Access>> saveAccess(Access access)
+        {
+            if (String.IsNullOrEmpty(access.UserID))
+            {
+                return new BadRequestObjectResult(new { message = "Please login first." });
+            }
+
+            if (String.IsNullOrEmpty(access.CreationID.ToString()))
+            {
+                return new BadRequestObjectResult(new { message = "CreationID is empty." });
+            }
+
+            if (String.IsNullOrEmpty(access.AccessLevel.ToString()))
+            {
+                return new BadRequestObjectResult(new { message = "AccessLevel is empty." });
+            }
+
+            var res = await _context.Access.Where(p => p.CreationID == access.CreationID).ToListAsync();
+            if (res != null && res.Count > 0)
+            {
+                return new BadRequestObjectResult(new { message = "CreationID already exists." });
+            }
+
+            await _context.Access.AddAsync(access);
+            await _context.SaveChangesAsync();
+
+            var res2 = await _context.Access.Where((p => p.CreationID == access.CreationID)).FirstOrDefaultAsync();
+            if (res2 == null || String.IsNullOrEmpty(res2.CreationID.ToString()))
+            {
+                // pop message
+                return new BadRequestObjectResult(new { message = "Invalid CreationID, try again." });
+            }
+            return res2;
+        }
+
     }
 }
