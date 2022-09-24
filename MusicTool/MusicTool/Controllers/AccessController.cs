@@ -44,7 +44,7 @@ namespace MusicTool.Controllers
 
         // POST api/save
         [HttpPost("save/{id}")]
-        public async Task<ActionResult<Access>> saveAccess(Access access)
+        public async Task<ActionResult<Access>> saveAccess( int id,[FromBody] Access access)
         {
             if (String.IsNullOrEmpty(access.UserID))
             {

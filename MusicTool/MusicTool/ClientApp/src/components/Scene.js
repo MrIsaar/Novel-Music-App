@@ -28,7 +28,7 @@ const width = 1000;
 const height = 500;
 var debugLoad = true;
 var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
-let savedObject = { "MTObjType": "Instrument","MTObjVersion": "0.9.0","pos": {"x": 300,"y": 250},"angle": 0,"image": "./PalletImages/1.png","shape": [ {"x": -25,  "y": -10  }, {"x": 25,  "y": -10  }, {"x": 20,  "y": 10  }, {"x": -20,  "y": 10  } ],"collisionFilter": {  "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF },"sound": [  {"note": "A3",  "length": "8n"  }, {"note": "B3",  "length": "8n"  }, {"note": "C4",  "length": "8n"  } ]};
+let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
 
 export class Scene extends React.Component {
 
@@ -64,7 +64,7 @@ export class Scene extends React.Component {
         if (this.creationID) {
             this.loadCreation();
         }
-        
+
         // Create engine
         Tone.start();
         this.engine = Engine.create({
@@ -95,8 +95,8 @@ export class Scene extends React.Component {
             });
         World.add(this.engine.world, mouseConstraint);
 
-        
-        
+
+
 
         /**
          *      Handle Collision Interactions
@@ -112,7 +112,7 @@ export class Scene extends React.Component {
         //                     if (debugLoad) {
         //                         debugLoad = false;
         //                         let oldBody = drums[j].loadObject(savedObject);
-                                
+
         //                         Matter.Composite.remove(engine.world, oldBody);
         //                         Matter.World.add(engine.world, drums[j].body);
         //                     }
@@ -269,7 +269,7 @@ export class Scene extends React.Component {
             /*position = { x: width * (0.2), y: height * (0.2 * i) };
             cannon = new Cannon(position, 0, 20, i);
             cannons.push(cannon);*/
-            
+
         }
         for (let i = 1; i < 5; i++) {
             /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
@@ -334,7 +334,7 @@ export class Scene extends React.Component {
      */
     render() {
         //let callbacks = [this.fireBalls];
-        
+
         /*sounds.push(<div>            <ToneExample />        </div>);*/
         //let callbacks = [this.fireBalls.bind(this)];
         let callback = (id) => this.fireBalls.bind(this)(id);
@@ -351,7 +351,7 @@ export class Scene extends React.Component {
                     callback={callback}
                 />
         }
-       
+
         return (
             <div id="_Scene" >
                 <div ref="scene" id="scene" />
@@ -361,9 +361,9 @@ export class Scene extends React.Component {
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
                         <button onClick={this.handleSave}>OtherSave</button>
                         <button onClick={this.saveCreation.bind(this)}>------SAVE------</button>
-                        
+
                     </div>
-                   
+
                 </div>
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
@@ -385,7 +385,7 @@ export class Scene extends React.Component {
                     // if (debugLoad) {
                     //     debugLoad = false;
                     //     let oldBody = drums[j].loadObject(savedObject);
-                        
+
                     //     Matter.Composite.remove(engine.world, oldBody);
                     //     Matter.World.add(engine.world, drums[j].body);
                     // }
@@ -507,7 +507,7 @@ export class Scene extends React.Component {
             if (ball == null)
                 continue;
             balls.push(ball);
-            
+
             this.addObject(ball);
         }
         if (selection != null && selection.bodies != undefined) {
@@ -516,7 +516,7 @@ export class Scene extends React.Component {
         }
     }
 
-    
+
 
     addObject(object) {
         Matter.World.add(this.engine.world, [object.body]);
@@ -527,10 +527,10 @@ export class Scene extends React.Component {
      * load an MTObj from json saved object into world
      * @param {any} mtObject music tool object that inherits from MTObj
      */
-    loadObject(objectNumber,mtObject) {
+    loadObject(objectNumber, mtObject) {
         try {
             var newObject = null;
-            
+
             let pos = mtObject.position;
             let angle = mtObject.angle;
             let shape = mtObject.shape;
@@ -539,12 +539,12 @@ export class Scene extends React.Component {
 
             // create temp object to load object into
             if (mtObject.MTObjType == "MTObj") {
-                newObject = new MTObj(objectNumber,pos, angle, shape, collisionFilter, image);
+                newObject = new MTObj(objectNumber, pos, angle, shape, collisionFilter, image);
                 otherObj.push(newObject);
-            } 
+            }
             else if (mtObject.MTObjType == "Cannon") {
                 //newObject = new Cannon(pos);
-                newObject = new Cannon(objectNumber,pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
+                newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
@@ -582,17 +582,16 @@ export class Scene extends React.Component {
             .then(data => {
                 console.log("creation data: ", data);
                 console.log("object list: ", data.creationObject);
-                for (let i = 0; i < data.creationObject.length; i++)
-                {
+                for (let i = 0; i < data.creationObject.length; i++) {
                     console.log(`DB obj Saved cannon ${i}: `, data.creationObject[i]);
                     console.log(`DB Saved MTObj cannon ${i}: `, data.creationObject[i].json);
                     console.log(`DB Saved MTObj.type cannon ${i}: `, data.creationObject[i].json.MTObjType);
                     console.log(`DB Saved MTObj.position cannon ${i}: `, data.creationObject[i].json.position);
                     console.log(`DB Saved MTObj.angle cannon ${i}: `, data.creationObject[i].json.angle);
-                    this.loadObject(data.creationObject[i].creationObjectID,data.creationObject[i].json);
+                    this.loadObject(data.creationObject[i].creationObjectID, data.creationObject[i].json);
                 }
                 this.creationFromDB = data;
-                this.sequencerSavedState = data.sequencer; 
+                this.sequencerSavedState = data.sequencer;
                 this.setState({
                     loading: false,
                     sequencerData: data.sequencer
@@ -624,11 +623,11 @@ export class Scene extends React.Component {
         }*/
 
 
-        
 
 
 
-        
+
+
     }
 
     //handleSave() {
@@ -637,31 +636,46 @@ export class Scene extends React.Component {
 
             // let id = this.creationID;
             let id = this.creationID;
-            let creation = JSON.stringify(this.creationFromDB);//"HELLO WORLD";//JSON.stringify(objects);
+            let creation = this.creationFromDB;//"HELLO WORLD";//HINT: httpFetch handles JSON.stringify(objects);
 
-            http.post('/creations/save/' + id, { data: { id: id, creation: creation } })
-                .then((res) => {
-                    console.log(res);
-                    // to save access
-                    // this.handleSaveAccess();
-                }).catch((ex) => {
-                    console.log('not successful')
-                })
+            // http.post('/creations/save/' + id, { data: creation })
+            //     .then((res) => {
+            //         console.log(res);
+            //         // to save access
+            //         this.handleSaveAccess();
+            //     }).catch((ex) => {
+            //         console.log('not successful')
+            //     })
+
+            try {
+                await http.post('/creations/save/' + id, { data: creation })
+                await this.handleSaveAccess();
+            } catch (ex) {
+                console.log('not successful')
+            }
+            
         }
 
-    handleSaveAccess = () => {
+    handleSaveAccess = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
-        let Creation = null;
+        let Creation = {};
+        try {
+            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
+            // todo: other db save post
+            console.log(res);
+            console.log('save access successful');
+        } catch (ex) {
+            console.log(ex)
+        }
 
-        http.post('/access/save/' + CreationID, { data: { CreationID, UserID, AccessLevel, Creation } })
-            .then((res) => {
-                console.log(res);
-                console.log('save access successful');
-            }).catch((ex) => {
-                console.log('not successful')
-            })
+            // .then((res) => {
+            //     console.log(res);
+            //     console.log('save access successful');
+            // }).catch((ex) => {
+            //     console.log('not successful')
+            // })
     }
 }
 export default Scene;
