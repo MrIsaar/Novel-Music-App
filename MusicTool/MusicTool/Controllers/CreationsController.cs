@@ -84,7 +84,7 @@ namespace MusicTool.Controllers
         [HttpPost("save/{id}")]
         public async Task<ActionResult<Creation>> PostCreation(int id, [FromBody] Creation creation)
         {
-           if (id != creation.CreationID)
+            if (id != creation.CreationID)
             {
                 return new BadRequestObjectResult(new { message = "id != CreationID" });
             }
@@ -93,10 +93,7 @@ namespace MusicTool.Controllers
             {
                 return new BadRequestObjectResult(new { message = "creation is null" });
             }
-/*            else
-            {
-                return StatusCode(418);
-            }*/
+            
 
             _context.Entry(creation).State = EntityState.Modified;
 
@@ -115,7 +112,6 @@ namespace MusicTool.Controllers
                     throw;
                 }
             }
-
 
             var res = await _context.Creation.Where((p => p.CreationID == id)).FirstOrDefaultAsync();
             if (res == null)

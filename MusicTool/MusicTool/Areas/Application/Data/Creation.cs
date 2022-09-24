@@ -13,7 +13,7 @@ namespace MusicTool.Areas.Application.Data
         public Creation()
         {
             CreationObject = new HashSet<CreationObject>();
-            Sequencer = new Sequencer();
+            
         }
         public int CreationID { get; set; }
         public string? Name { get; set; }
