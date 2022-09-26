@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,8 @@ public enum AccessLevel
 }
 public class Access
 {
+    public Access() { }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int AccessID { get; set; }
     public string UserID { get; set; }
     public int CreationID { get; set; }

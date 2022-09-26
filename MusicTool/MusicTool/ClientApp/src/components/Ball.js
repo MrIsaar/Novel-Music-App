@@ -33,14 +33,14 @@ function getShape(radius) {
      constructor(pos, marbleSize, marbleCollisionFilter, fireLayer, marbleColor , image = null) {
 
         let shape = [{ x: -10, y: 10 }, { x: 10, y: 0 }, { x: -10, y: -10 }, { x: -10, y: 0 }]
-         super({x: pos.x,y: pos.y}, 0, shape, image)
+         super(-1,{ x: pos.x, y: pos.y }, 0, shape, marbleCollisionFilter, image)
         this.marbleSize = marbleSize;
         this.marbleColor = marbleColor;
         this.marbleCollisionFilter = marbleCollisionFilter;
         //create ball
         var ball = Matter.Bodies.circle(
-            this.pos.x,
-            this.pos.y,
+            this.position.x,
+            this.position.y,
             this.marbleSize,
             {
                 
@@ -73,10 +73,10 @@ function getShape(radius) {
  */
      draw() {
          this.clear();
-         this.pos.x = this.body.position.x;
-         this.pos.y = this.body.position.y;
-         this.x = this.pos.x;
-         this.y = this.pos.y;
+         this.position.x = this.body.position.x;
+         this.position.y = this.body.position.y;
+         this.x = this.position.x;
+         this.y = this.position.y;
          this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle));
          this.drawPolygon(this.shape);
          this.endFill();

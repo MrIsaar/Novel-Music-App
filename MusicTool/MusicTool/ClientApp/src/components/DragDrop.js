@@ -92,8 +92,8 @@ export default class DragDrop extends Component {
             /*// handle images that already exit on board: move to new place and delete old place
             const findIndex = tmpBoard.findIndex((p) => p._id === oldIndex);
             // get position information of old place
-            const tb = tmpBoard.find((p) => p._id === oldIndex)*/
-            /*tb.info = { x, y };*/
+            const tb = tmpBoard.find((p) => p._id === oldIndex)
+            tb.info = { x, y };*/
         } else {
             // add new image to board
             tmpBoard.push({ ...pictureList[0], _id: Math.random(), info: { x, y } });

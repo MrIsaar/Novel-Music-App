@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -77,15 +78,22 @@ namespace MusicTool.Controllers
         }
 
 
-        // PUT: api/Creations/5
+        // e.g list?page=1&size=20&keyword=aaa [FromQuery] Creation creation1
+        // POST: api/Creations/save/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCreation(int id, Creation creation)
+        [HttpPost("save/{id}")]
+        public async Task<ActionResult<Creation>> PostCreation(int id, [FromBody] Creation creation)
         {
             if (id != creation.CreationID)
             {
-                return BadRequest();
+                return new BadRequestObjectResult(new { message = "id != CreationID" });
             }
+
+            if (creation is null)
+            {
+                return new BadRequestObjectResult(new { message = "creation is null" });
+            }
+            
 
             _context.Entry(creation).State = EntityState.Modified;
 
@@ -97,7 +105,7 @@ namespace MusicTool.Controllers
             {
                 if (!CreationExists(id))
                 {
-                    return NotFound();
+                    new BadRequestObjectResult(new { message = "creation id not exist" });
                 }
                 else
                 {
@@ -105,7 +113,13 @@ namespace MusicTool.Controllers
                 }
             }
 
-            return NoContent();
+            var res = await _context.Creation.Where((p => p.CreationID == id)).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                // pop message
+                return new BadRequestObjectResult(new { message = "Fail to get creation" });
+            }
+            return res;
         }
 
         // POST: api/Creations
