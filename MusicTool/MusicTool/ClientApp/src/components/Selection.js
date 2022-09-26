@@ -2,6 +2,7 @@
 import * as PIXI from "pixi.js";
 
 const COLOR = 0x0000ff; // Blue
+
 const CROSSBAR_ALPHA = 0.3;
 const THRESHOLD_ALPHA = 0.05;
 const CROSSBAR_WIDTH = 5;

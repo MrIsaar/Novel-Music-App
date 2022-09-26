@@ -50,6 +50,7 @@ public class ApplicationContext : DbContext
                     {
                         CreationID = cID,
                         Json = "{ \"MTObjType\": \"Cannon\", \"MTObjVersion\": \"1.0.0\",\"objectNumber\": \"0\", \"position\": { \"x\": 200, \"y\": 100 }, \"angle\": 0, \"image\": null, \"shape\": [ { \"x\": -20, \"y\": -20 }, { \"x\": 40, \"y\": 0 }, { \"x\": -20, \"y\": 20 }, { \"x\": -30, \"y\": 0 } ], \"collisionFilter\": { \"group\": 0, \"category\": 0, \"mask\": 0 }, \"fireLayer\": 1, \"power\": 20, \"marbleSize\": 20, \"marbleColor\": \"rand\", \"marbleCollisionFilter\": { \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295 } }",
+
                         Type = "Cannon"
                     },
                     new CreationObject
@@ -85,7 +86,6 @@ public class ApplicationContext : DbContext
                         Type="Instrument"
                     }
                 });
-
         }
         if (!context.Sequencer.Any())
         {

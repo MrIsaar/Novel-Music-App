@@ -5,9 +5,10 @@ using MusicTool.Areas.Identity.Data;
 
 namespace MusicTool.Data;
 
-public class MusicToolIdentityContext : IdentityDbContext<MusicToolUser>
+public class IdentityContext : DbContext // IdentityDbContext<MusicToolUser>
 {
-    public MusicToolIdentityContext(DbContextOptions<MusicToolIdentityContext> options)
+    public DbSet<User> Users { get; set; } 
+    public IdentityContext(DbContextOptions<IdentityContext> options)
         : base(options)
     {
     }

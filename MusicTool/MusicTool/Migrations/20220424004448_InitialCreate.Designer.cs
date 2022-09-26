@@ -11,7 +11,7 @@ using MusicTool.Data;
 
 namespace MusicTool.Migrations
 {
-    [DbContext(typeof(MusicToolIdentityContext))]
+    [DbContext(typeof(IdentityContext))]
     [Migration("20220424004448_InitialCreate")]
     partial class InitialCreate
     {
