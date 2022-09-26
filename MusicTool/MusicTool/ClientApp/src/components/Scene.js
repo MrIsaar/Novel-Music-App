@@ -421,7 +421,7 @@ export class Scene extends React.Component {
         // alt mode - to be removed with drag and drop
         else if (event.mouse.sourceEvents.mousedown.altKey) {
             Tone.start();
-            let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
+            let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
             cannons.push(cannon);
             this.addObject(cannon);
             if (selection != null) {
