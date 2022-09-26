@@ -435,15 +435,13 @@ export class Scene extends React.Component {
             // new select object - create new function for this
             if (selection == null) {
                 let currSelection = null;
-                for (let i = 0; i < cannons.length; i++) {
-                    if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-                        currSelection = cannons[i];
-                        break;
-                    }
-                    if (Matter.Bounds.contains(drums[i].body.bounds, position)) {
-                        currSelection = drums[i];
-                        break;
-                    }
+                for (let i = 0; i < cannons.length && !currSelection; i++) {
+                  if (Matter.Bounds.contains(cannons[i].body.bounds, position))
+                    currSelection = cannons[i];
+                }
+                for (let i = 0; i < drums.length && !currSelection; i++) {
+                  if (Matter.Bounds.contains(drums[i].body.bounds, position))
+                    currSelection = drums[i];
                 }
                 if (currSelection != null) {
                     selection = new Selection(currSelection);
