@@ -341,7 +341,7 @@ export class Scene extends React.Component {
             for (let i = 0; i < cannons.length; i++) {
                 Matter.World.add(this.engine.world, cannons[i].getBody());
             }
-
+        }
 
 
 
@@ -375,8 +375,6 @@ export class Scene extends React.Component {
                 if (selection !== null)
                     selection.draw();
             });
-
-        }
     }
 
     /**
