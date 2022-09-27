@@ -123,8 +123,20 @@ export class Login extends Component {
         }
     }
 
-    // delete project info in Application db
-    handleDelete_Proj = () => { }
+    // delete project info in Application db using creationID
+    handleDelete_Proj = ({id}) => {
+        // get creationID
+        let creationID = id
+        // console.log('' + creationID)
+
+        // delete from Access table
+        // delete from Creation table
+        // delete from CreationObject table
+        // delete from Sequencer table
+
+        this.setShowReminder_DeleteProj(false)
+        console.log('Delete project successful')
+    }
 
     // reminder box: ask if delete account
     handleCloseReminder = () => this.setShowReminder(false);
@@ -286,7 +298,7 @@ export class Login extends Component {
                                                 </td>
 
                                                 <td>
-                                                    <Button variant="danger" onClick={this.handleShowReminder_DeleteProj}>
+                                                    <Button variant="danger" onClick={() => (this.handleShowReminder_DeleteProj(), http.setIDToDelete({id}))}>
                                                     Delete
                                                     </Button>
 
@@ -297,10 +309,10 @@ export class Login extends Component {
                                                         <Modal.Body>Are you sure to delete your project?</Modal.Body>
                                                         <Modal.Footer>
                                                             <Button variant="danger"
-                                                                onClick={() => (this.handleCloseReminder_DeleteProj, this.handleDelete_Proj)}>
+                                                                onClick={() => this.handleDelete_Proj(http.getIDToDelete())}>
                                                                 Yes
                                                             </Button>
-                                                            <Button variant="primary" onClick={this.handleCloseReminder_DeleteProj}>
+                                                            <Button variant="primary" onClick={() => (this.handleCloseReminder_DeleteProj(), http.setIDToDelete(null))}>
                                                                 No
                                                             </Button>
                                                         </Modal.Footer>
