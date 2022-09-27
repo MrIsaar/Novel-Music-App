@@ -28,5 +28,18 @@ namespace MusicTool.Controllers
         {
             return await _context.Sequencer.ToListAsync();
         }
+
+        // GET: api/withCreationID/1
+        [HttpGet("withCreationID/{id}")]
+        public async Task<ActionResult<Sequencer>> GetSequencerWithCreationID(int id)
+        {
+            var res = await _context.Sequencer.Where(p => p.CreationID == id).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                // pop message
+                return new BadRequestObjectResult(new { message = "Can't get Sequencer." });
+            }
+            return res;
+        }
     }
 }
