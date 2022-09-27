@@ -259,105 +259,8 @@ export class Scene extends React.Component {
 
 
 
-        // create initial cannons
-        let position = { x: width * (0.7), y: height * 0.3 };
-        let cannon;/*= new Cannon(position)//<Cannon pos={position} body={null} />;
-        cannons.push(cannon);
-        position = { x: width * (0.2), y: height * 0.3 };
-        cannon = new Cannon(position, 1)//<Cannon pos={position} body={null} />;*/
-        let halfpi = 3.1415 / 2;
-        if (this.creationID == 2) {
+        
 
-
-            for (let i = 1; i < 5; i++) {
-                position = { x: width * (0.15 * i), y: height * (0.8) };
-                cannon = new Cannon(position, -halfpi, 20, i);
-                cannons.push(cannon);
-
-            }
-            for (let i = 1; i < 5; i++) {
-                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                    isStatic: true,
-                    render: {
-                        fillStyle: "red"
-                    }
-                }))*/
-                position = { x: width * (0.15 * i), y: height * (0.2) };
-                let drum = new Instrument(position, 1, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-                drums.push(drum);
-                Matter.World.add(this.engine.world, drum.body);
-
-            }
-
-            for (let i = 1; i < 5; i++) {
-                /*position = { x: width * (0.2), y: height * (0.2 * i) };
-                cannon = new Cannon(position, 0, 20, i);
-                cannons.push(cannon);*/
-
-            }
-            for (let i = 1; i < 5; i++) {
-                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                    isStatic: true,
-                    render: {
-                        fillStyle: "red"
-                    }
-                }))*/
-                /*position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-                let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-                drums.push(drum);
-                Matter.World.add(this.engine.world, drum.body);*/
-            }
-            //else {
-
-
-            //    for (let i = 1; i < 5; i++) {
-            //        position = { x: width * (0.2), y: height * (0.2 * i) };
-            //        cannon = new Cannon(position, 0, 20, i);
-            //        cannons.push(cannon);
-
-            //    }
-            //    for (let i = 1; i < 5; i++) {
-            //        /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-            //            isStatic: true,
-            //            render: {
-            //                fillStyle: "red"
-            //            }
-            //        }))*/
-            //        position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-            //        let drum = new Instrument(position, 0, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-            //        drums.push(drum);
-            //        Matter.World.add(this.engine.world, drum.body);
-
-            //    }
-            //}
-            //position = { x: width * (0.1), y: height * (0.2) + 50 };
-            //let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
-            //drums.push(drum);
-            //Matter.World.add(this.engine.world, drum.body);
-            //   flip top cannon to this  angle:2.9158123171809476, dx:-173.4000015258789, dy:39.8125
-            //   tune 0-0- ---- 00-- ----
-
-
-            for (let i = 0; i < cannons.length; i++) {
-                Matter.World.add(this.engine.world, cannons[i].getBody());
-            }
-        }
-
-
-
-
-            // create inital marbles
-            /*var ballA = Bodies.circle(210, 100, 30, { restitution: 0.8 });
-            var ballB = Bodies.circle(110, 50, 30, { restitution: 0.8 });
-            World.add(engine.world, [ballA, ballB]);*/
-
-
-            //this.backgroundObjects = [].concat(marbles, walls);
-
-            // Add initialized objects to scene
-            //this.backgroundObjects.forEach(o => this.addObject(o));
-            drums.forEach(d => this.addObject(d));
-            cannons.forEach(c => this.addObject(c));
 
             //END Scene Object initialization
 
@@ -646,17 +549,17 @@ export class Scene extends React.Component {
                     sequencerData: data.sequencer
                 });
 
-                this.loadObjects(data.creationObject);
+                //this.loadObjects(data.creationObject);
             });
 
         
     }
 
-    loadObjects(objs) {
+    /*loadObjects(objs) {
         for (let i = 0; i < objs.length; i++) {
             this.loadObject(objs[i]);
         }
-    }
+    }*/
 
 
 // saved object temp storage
