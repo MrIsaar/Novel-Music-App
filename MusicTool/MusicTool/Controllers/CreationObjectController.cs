@@ -55,7 +55,23 @@ namespace MusicTool.Controllers
             return NoContent();
         }
 
+        // auto delete all CreationObjects related to this creationID
         // DELETE: api/Creations/{creationID} <- handled by creationsController
 
+        // DELETE: api/creationobject/3
+        [HttpDelete("{CreationObjectID}")]
+        public async Task<IActionResult> DeleteCreationObject(int CreationObjectID)
+        {
+            var res = await _context.CreationObject.Where(p => p.CreationObjectID == CreationObjectID).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                return new BadRequestObjectResult(new { message = "CreationObject not found." });
+            }
+
+            _context.CreationObject.Remove(res);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

@@ -66,6 +66,23 @@ namespace MusicTool.Controllers
             return NoContent();
         }
 
+        // auto delete all sequencers related to this creationID
         // DELETE: api/Creations/{creationID} <- handled by creationsController
+
+        // DELETE: api/sequencer/3
+        [HttpDelete("{sequencerID}")]
+        public async Task<IActionResult> DeleteSequencer(int sequencerID)
+        {
+            var res = await _context.Sequencer.Where(p => p.SequencerID == sequencerID).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                return new BadRequestObjectResult(new { message = "Sequencer not found." });
+            }
+
+            _context.Sequencer.Remove(res);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
