@@ -129,17 +129,16 @@ export class Login extends Component {
         let creationID = id.id
         // console.log('' + creationID)
 
-        // delete from Access table
-        http.delete('/access/delete', { data: creationID }).then((res) => {
-            console.log('Delete access successful')
-        }).catch((ex) => {
-            // success, but with ex, and can ignore this ex
-            // console.log('Delete access not successful')
-        })
-
-        // delete from Creation table
-        // delete from CreationObject table
-        // delete from Sequencer table
+        try {
+            // delete from Access table
+            http.delete('/access/delete', { data: creationID })
+            // delete from Creation table
+            http.delete('/creations/' + creationID * 1, { data: creationID })
+            // delete from CreationObject table
+            // delete from Sequencer table
+        } catch (ex) {
+            console.log(ex)
+        }
 
         // update projectList and repoad page if necessary
         this.setProjectList([])
