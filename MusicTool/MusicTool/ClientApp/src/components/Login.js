@@ -114,9 +114,9 @@ export class Login extends Component {
                 this.setIsLogin(false)
                 this.setIsSignup(false)
                 this.setProjectList([])
-                console.log('Delete successful')
+                console.log('Delete account successful')
             }).catch((ex) => {
-                console.log('Delete not successful')
+                console.log('Delete account not successful')
                 window.location.reload()
             })
         } catch (error) {
@@ -124,18 +124,28 @@ export class Login extends Component {
     }
 
     // delete project info in Application db using creationID
-    handleDelete_Proj = ({id}) => {
+    handleDelete_Proj = (id) => {
         // get creationID
-        let creationID = id
+        let creationID = id.id
         // console.log('' + creationID)
 
         // delete from Access table
+        http.delete('/access/delete', { data: creationID }).then((res) => {
+            console.log('Delete access successful')
+        }).catch((ex) => {
+            // success, but with ex, and can ignore this ex
+            // console.log('Delete access not successful')
+        })
+
         // delete from Creation table
         // delete from CreationObject table
         // delete from Sequencer table
 
+        // update projectList and repoad page if necessary
+        this.setProjectList([])
+
         this.setShowReminder_DeleteProj(false)
-        console.log('Delete project successful')
+        // console.log('Delete project successful')
     }
 
     // reminder box: ask if delete account
