@@ -45,7 +45,7 @@ namespace MusicTool.Controllers
         // POST: api/sequencer/save/2
         // postman returns 1 if success
         [HttpPost("save/{id}")]
-        public async Task<ActionResult<Sequencer>> SaveCreationObject(int id, [FromBody] Sequencer sequencer)
+        public async Task<ActionResult<Sequencer>> SaveSequencer(int id, [FromBody] Sequencer sequencer)
         {
             if (id != sequencer.CreationID)
             {
