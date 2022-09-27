@@ -138,11 +138,11 @@ export class Login extends Component {
             console.log(ex)
         }
 
-        // update projectList and repoad page if necessary
-        this.setProjectList([])
-
         this.setShowReminder_DeleteProj(false)
         // console.log('Delete project successful')
+
+        // get project list again
+        this.handleProjectList(creationID)
     }
 
     // reminder box: ask if delete account
@@ -158,7 +158,7 @@ export class Login extends Component {
     // Get a list of projectID and projectName based on uerID from Application db
     // 1. Use UserID get CreationID from Access db_table
     // 2. Use CreationID get Name from Creation db_table
-    handleProjectList = () => {
+    handleProjectList = (deletedCreationID) => {
         const { projectList } = this.state;
         this.setProjectList([])
         http.get('/access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
@@ -168,7 +168,8 @@ export class Login extends Component {
                 http.get('/creations/' + i).then((res) => {
                     // console.log(res.name)
                     // add { id: 'i', name: 'name' } to projectList
-                    this.addItem({ id: '' + i, name: '' + res.name })
+                    if (i != deletedCreationID)
+                        this.addItem({ id: '' + i, name: '' + res.name })
                 }).catch((ex) => {
                     console.log('Get name not successful')
                 })
@@ -203,7 +204,7 @@ export class Login extends Component {
 
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList, showDeleteProjSuccess } = this.state;
 
         return (
             // use bootstrap card and form styles
@@ -316,9 +317,10 @@ export class Login extends Component {
                                                         <Modal.Body>Are you sure to delete your project?</Modal.Body>
                                                         <Modal.Footer>
                                                             <Button variant="danger"
-                                                                onClick={() => this.handleDelete_Proj(http.getIDToDelete())}>
+                                                                onClick={() => (this.handleDelete_Proj(http.getIDToDelete()))}>
                                                                 Yes
                                                             </Button>
+
                                                             <Button variant="primary" onClick={() => (this.handleCloseReminder_DeleteProj(), http.setIDToDelete(null))}>
                                                                 No
                                                             </Button>
@@ -336,7 +338,7 @@ export class Login extends Component {
                             <br></br>
 
                             <button
-                                onClick={this.handleProjectList}
+                                onClick={() => (this.handleProjectList(-1))}
                                 className='btn btn-primary'>
                                 Get My Projects
                             </button>
