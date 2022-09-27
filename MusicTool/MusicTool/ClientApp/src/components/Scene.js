@@ -6,7 +6,6 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
-import MTObj from "./MTObj";
 import http from '../httpFetch';
 import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
