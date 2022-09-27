@@ -13,7 +13,8 @@ export class Login extends Component {
             isLoading: false,       // load login/signup action
             isLogin: false,         // old user
             isSignup: false,        // new user
-            showReminder: false,    // show delete reminder box
+            showReminder: false,    // show delete account reminder box
+            showReminder_DeleteProj: false,    // show delete reminder box
             showShare: false,       // show share project dialog
             // array = [{projectID, projectName}, {projectID, projectName}, ...]
             // projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' }, { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
@@ -43,6 +44,9 @@ export class Login extends Component {
     }
     setShowReminder = (showReminder) => {
         this.setState({ showReminder })
+    }
+    setShowReminder_DeleteProj = (showReminder_DeleteProj) => {
+        this.setState({ showReminder_DeleteProj })
     }
     setShowShare = (showShare) => {
         this.setState({ showShare })
@@ -110,18 +114,46 @@ export class Login extends Component {
                 this.setIsLogin(false)
                 this.setIsSignup(false)
                 this.setProjectList([])
-                console.log('Delete successful')
+                console.log('Delete account successful')
             }).catch((ex) => {
-                console.log('Delete not successful')
+                console.log('Delete account not successful')
                 window.location.reload()
             })
         } catch (error) {
         }
     }
 
+    // delete project info in Application db using creationID
+    handleDelete_Proj = (id) => {
+        // get creationID
+        let creationID = id.id
+        // console.log('' + creationID)
+
+        // delete from Access table
+        http.delete('/access/delete', { data: creationID }).then((res) => {
+            console.log('Delete access successful')
+        }).catch((ex) => {
+            // success, but with ex, and can ignore this ex
+            // console.log('Delete access not successful')
+        })
+
+        // delete from Creation table
+        // delete from CreationObject table
+        // delete from Sequencer table
+
+        // update projectList and repoad page if necessary
+        this.setProjectList([])
+
+        this.setShowReminder_DeleteProj(false)
+        // console.log('Delete project successful')
+    }
+
     // reminder box: ask if delete account
     handleCloseReminder = () => this.setShowReminder(false);
     handleShowReminder = () => this.setShowReminder(true);
+    // reminder box: ask if delete project
+    handleCloseReminder_DeleteProj = () => this.setShowReminder_DeleteProj(false);
+    handleShowReminder_DeleteProj = () => this.setShowReminder_DeleteProj(true);
     // dialog: show link of project
     handleCloseShare = () => this.setShowShare(false);
     handleShowShare = () => this.setShowShare(true);
@@ -174,7 +206,7 @@ export class Login extends Component {
 
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, showShare, projectList } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList } = this.state;
 
         return (
             // use bootstrap card and form styles
@@ -275,9 +307,27 @@ export class Login extends Component {
                                                     </Modal>
                                                 </td>
 
-                                                <td><Button variant="danger" onClick={() => (null)}>
+                                                <td>
+                                                    <Button variant="danger" onClick={() => (this.handleShowReminder_DeleteProj(), http.setIDToDelete({id}))}>
                                                     Delete
-                                                </Button></td>
+                                                    </Button>
+
+                                                    <Modal show={showReminder_DeleteProj} onHide={this.handleCloseReminder_DeleteProj}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>Warning</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>Are you sure to delete your project?</Modal.Body>
+                                                        <Modal.Footer>
+                                                            <Button variant="danger"
+                                                                onClick={() => this.handleDelete_Proj(http.getIDToDelete())}>
+                                                                Yes
+                                                            </Button>
+                                                            <Button variant="primary" onClick={() => (this.handleCloseReminder_DeleteProj(), http.setIDToDelete(null))}>
+                                                                No
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </td>
                                             </tr>))
                                         }
                                         {http.setProjectList(projectList)}

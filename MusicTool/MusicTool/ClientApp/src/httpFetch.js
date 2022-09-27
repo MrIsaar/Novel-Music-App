@@ -67,6 +67,9 @@ class HttpFetch {
 
   getProjectList = () => this.getValue('ProjectList')
   setProjectList = (list) => this.setValue('ProjectList', list)
+
+  getIDToDelete = () => this.getValue('IDToDelete')
+  setIDToDelete = (id) => this.setValue('IDToDelete', id)
 }
 
 export default new HttpFetch()
