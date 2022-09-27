@@ -634,8 +634,7 @@ export class Scene extends React.Component {
         }*/
     }
 
-    //handleSave() {
-    handleSave =
+/*    handleSave =
         async (e) => {
 
             // let id = this.creationID;
@@ -658,16 +657,30 @@ export class Scene extends React.Component {
                 console.log('not successful')
             }
             
-        }
+        }*/
 
-    handleSaveAccess = async () => {
+    handleSave = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let Creation = {};
         try {
+            // Should store access before creation!
+            // save access
             const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
-            // todo: other db save post
+            // TODO: other db save post here are samples for saving creation, creationobject and sequencer
+            // CHECK Postman for more details on JSON_string <- MUST be in type od string
+
+            // save creations
+            // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
+            // await http.post('/creations/save/' + CreationID, { data: { CreationID, JSON_string })
+
+            // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
+            // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
+
+            // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
+            // await http.post('/creationObject/save/' + CreationID, { data: { CreationID, JSON_string} })
+
             console.log(res);
             console.log('save access successful');
         } catch (ex) {
