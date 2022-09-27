@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ namespace MusicTool.Areas.Application.Data
     // Add profile data for application users by adding properties to the MusicToolUser class
     public class Sequencer
     {
+        public Sequencer() { }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SequencerID { get; set; }
         
         [JsonConverter(typeof(RawStringValueConverter))]
