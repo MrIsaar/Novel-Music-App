@@ -126,16 +126,14 @@ export class Login extends Component {
     // delete project info in Application db using creationID
     handleDelete_Proj = (id) => {
         // get creationID
-        let creationID = id.id
+        let creationID = (id.id) * 1
         // console.log('' + creationID)
 
         try {
             // delete from Access table
-            http.delete('/access/delete', { data: creationID })
-            // delete from Creation table
-            http.delete('/creations/' + creationID * 1, { data: creationID })
-            // delete from CreationObject table
-            // delete from Sequencer table
+            http.delete('/access/' + creationID, { data: creationID })
+            // delete from Creation table along with CreationObject and Sequencer
+            http.delete('/creations/' + creationID, { data: creationID })
         } catch (ex) {
             console.log(ex)
         }

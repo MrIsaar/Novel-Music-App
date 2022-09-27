@@ -55,5 +55,7 @@ namespace MusicTool.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Creations/{creationID} <- handled by creationsController
+
     }
 }
