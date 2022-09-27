@@ -59,6 +59,8 @@ namespace MusicTool.Controllers
         // DELETE: api/Creations/{creationID} <- handled by creationsController
 
         // DELETE: api/creationobject/3
+        // HINT: CreationObjectID != CreationID
+        // TODO: need a way to get CreationObjectID
         [HttpDelete("{CreationObjectID}")]
         public async Task<IActionResult> DeleteCreationObject(int CreationObjectID)
         {
