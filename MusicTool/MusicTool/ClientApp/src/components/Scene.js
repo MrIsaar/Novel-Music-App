@@ -669,7 +669,7 @@ export class Scene extends React.Component {
             // save access
             const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
             // TODO: other db save post here are samples for saving creation, creationobject and sequencer
-            // CHECK Postman for more details on JSON_string <- MUST be in type od string
+            // CHECK Postman for more details on JSON_string <- MUST be in type of string
 
             // save creations
             // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
