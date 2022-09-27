@@ -13,6 +13,8 @@ namespace MusicTool.Areas.Application.Data
     // Add profile data for application users by adding properties to the MusicToolUser class
     public class CreationObject
     {
+        public CreationObject() { }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CreationObjectID { get; set; }
 
         [JsonConverter(typeof(RawStringValueConverter))]

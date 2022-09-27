@@ -38,5 +38,22 @@ namespace MusicTool.Controllers
                        select item;
             return await list.ToListAsync();
         }
+
+        // POST: api/creationobject/save/2
+        // postman returns 1 if success
+        [HttpPost("save/{id}")]
+        public async Task<ActionResult<CreationObject>> SaveCreationObject(int id, [FromBody] CreationObject creationObject)
+        {
+            if (id != creationObject.CreationID)
+            {
+                return new BadRequestObjectResult(new { message = "id != CreationID" });
+            }
+
+            await _context.CreationObject.AddAsync(creationObject);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }
