@@ -6,12 +6,12 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
-import MTObj from "./MTObj";
 import http from '../httpFetch';
 import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
 import Instrument from './Instrument';
+import Toolbar from './Toolbar'
 
 
 
@@ -106,117 +106,6 @@ export class Scene extends React.Component {
         World.add(this.engine.world, mouseConstraint);
 
 
-
-
-        /**
-         *      Handle Collision Interactions
-         */
-        // Matter.Events.on(engine, "collisionStart",
-        //     function (event) {
-        //         for (let i = 0; i < event.pairs.length; i++) {
-        //             for (let j = 0; j < drums.length; j++)
-        //                 if (event.pairs[i].bodyA == drums[j].body || event.pairs[i].bodyB == drums[j].body) {
-        //                     console.log("*Meep*");
-        //                     let sound = drums[j].getSound()
-        //                     synth.triggerAttackRelease(sound.note, sound.length);
-        //                     if (debugLoad) {
-        //                         debugLoad = false;
-        //                         let oldBody = drums[j].loadObject(savedObject);
-
-        //                         Matter.Composite.remove(engine.world, oldBody);
-        //                         Matter.World.add(engine.world, drums[j].body);
-        //                     }
-        //                 }
-        //         }
-
-        //     }
-        // );
-        /**
-         *      Mouse down handling
-         *      
-         *      normal click - Select mode
-         *      shift click  - Fire marbles from all cannons  - to be removed with sequencer
-         *      Alt click    - Create Cannon at location - to be removed with drag and drop
-         *      
-         */
-        // Matter.Events.on(mouseConstraint, "mousedown",
-        //     function (event) {
-        //         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-
-        //         // shift mode - Fire Cannons - to be removed
-        //         if (event.mouse.sourceEvents.mousedown.shiftKey) {
-        //             //var ball = Matter.Bodies.circle(position.x, position.y, 20);
-        //             /* World.add(engine.world, [ball]);*/
-        //             for (let i = 0; i < cannons.length; i++) {
-        //                 let ball = cannons[i].fireMarble(-1);
-        //                 balls.push(ball);
-        //                 World.add(engine.world, [ball]);
-        //             }
-        //             if (selection != null) {
-        //                 Matter.Composite.remove(engine.world, selection.bodies)
-        //                 selection = null;
-        //             }
-        //         }
-
-        //         // alt mode - to be removed with drag and drop
-        //         else if (event.mouse.sourceEvents.mousedown.altKey) {
-        //             Tone.start();
-        //             let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-
-        //             let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
-        //             cannons.push(cannon);
-        //             World.add(engine.world, cannon.getBody());
-        //             //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
-        //             if (selection != null) {
-        //                 Matter.Composite.remove(engine.world, selection.bodies)
-        //                 selection = null;
-        //             }
-        //         }
-
-        //         // normal click - select object under mouse
-        //         else {
-        //             // new select object - create new function for this
-        //             if (selection == null) {
-
-        //                 let currCannon = null;
-        //                 for (let i = 0; i < cannons.length; i++) {
-        //                     if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-        //                         currCannon = cannons[i];
-        //                         break;
-        //                     }
-        //                 }
-        //                 if (currCannon != null) {
-        //                     selection = new Selection(currCannon);
-        //                     World.add(engine.world, selection.bodies);
-        //                 }
-
-        //             }
-        //             // update object depending on selection mode
-        //             else {
-        //                 if (!selection.handleSelection(position.x, position.y)) {
-        //                     if (selection != null) { // deselect
-        //                         Matter.Composite.remove(engine.world, selection.bodies)
-        //                         selection = null;
-        //                     }
-        //                     //Check if another cannon should be selected
-        //                     let currCannon = null;
-        //                     for (let i = 0; i < cannons.length; i++) {
-        //                         if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-        //                             currCannon = cannons[i];
-        //                             break;
-        //                         }
-        //                     }
-        //                     if (currCannon != null) {
-        //                         selection = new Selection(currCannon);
-        //                         World.add(engine.world, selection.bodies);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // );
-
-
         /**
          *  Handle mouse movement 
          *  updates selected body if clicking
@@ -297,93 +186,52 @@ export class Scene extends React.Component {
 
             }
 
-        for (let i = 1; i < 5; i++) {
-            /*position = { x: width * (0.2), y: height * (0.2 * i) };
-            cannon = new Cannon(position, 0, 20, i);
-            cannons.push(cannon);*/
+            for (let i = 1; i < 5; i++) {
+                /*position = { x: width * (0.2), y: height * (0.2 * i) };
+                cannon = new Cannon(position, 0, 20, i);
+                cannons.push(cannon);*/
+
+            }
+            for (let i = 1; i < 5; i++) {
+                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
+                    isStatic: true,
+                    render: {
+                        fillStyle: "red"
+                    }
+                }))*/
+                /*position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
+                let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
+                drums.push(drum);
+                Matter.World.add(this.engine.world, drum.body);*/
+            }
+
+            for (let i = 0; i < cannons.length; i++) {
+                Matter.World.add(this.engine.world, cannons[i].getBody());
+            }
+
+            // Add initialized objects to scene
+            //this.backgroundObjects.forEach(o => this.addObject(o));
+            drums.forEach(d => this.addObject(d));
+            cannons.forEach(c => this.addObject(c));
+
+            //END Scene Object initialization
+
+            sounds.push(<div> <ToneExample /> </div>);
+
+
+            // Start engine & renderer
+            Engine.run(this.engine);
+            document.querySelector("#scene").appendChild(this.app.view);
+            this.app.ticker.add((delta) => {
+                //this.backgroundObjects.forEach(o => o.draw());
+                cannons.forEach(c => c.draw());
+                balls.forEach(b => b.draw());
+                drums.forEach(d => d.draw());
+                if (selection !== null)
+                    selection.draw();
+            });
 
         }
-        for (let i = 1; i < 5; i++) {
-            /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                isStatic: true,
-                render: {
-                    fillStyle: "red"
-                }
-            }))*/
-            /*position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-            let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-            drums.push(drum);
-            Matter.World.add(this.engine.world, drum.body);*/
-        }
-        //else {
-
-
-        //    for (let i = 1; i < 5; i++) {
-        //        position = { x: width * (0.2), y: height * (0.2 * i) };
-        //        cannon = new Cannon(position, 0, 20, i);
-        //        cannons.push(cannon);
-
-        //    }
-        //    for (let i = 1; i < 5; i++) {
-        //        /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-        //            isStatic: true,
-        //            render: {
-        //                fillStyle: "red"
-        //            }
-        //        }))*/
-        //        position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-        //        let drum = new Instrument(position, 0, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-        //        drums.push(drum);
-        //        Matter.World.add(this.engine.world, drum.body);
-
-        //    }
-        //}
-        //position = { x: width * (0.1), y: height * (0.2) + 50 };
-        //let drum = new Instrument(position, 0, [noteList[0], noteList[1], noteList[2]], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }], './PalletImages/1.png');
-        //drums.push(drum);
-        //Matter.World.add(this.engine.world, drum.body);
-        //   flip top cannon to this  angle:2.9158123171809476, dx:-173.4000015258789, dy:39.8125
-        //   tune 0-0- ---- 00-- ----
-
-
-        for (let i = 0; i < cannons.length; i++) {
-            Matter.World.add(this.engine.world, cannons[i].getBody());
-        }
-
-
-
-
-
-        // create inital marbles
-        /*var ballA = Bodies.circle(210, 100, 30, { restitution: 0.8 });
-        var ballB = Bodies.circle(110, 50, 30, { restitution: 0.8 });
-        World.add(engine.world, [ballA, ballB]);*/
-
-
-        //this.backgroundObjects = [].concat(marbles, walls);
-
-        // Add initialized objects to scene
-        //this.backgroundObjects.forEach(o => this.addObject(o));
-        drums.forEach(d => this.addObject(d));
-        cannons.forEach(c => this.addObject(c));
-
-        //END Scene Object initialization
-
-        sounds.push(<div> <ToneExample /> </div>);
-
-
-        // Start engine & renderer
-        Engine.run(this.engine);
-        document.querySelector("#scene").appendChild(this.app.view);
-        this.app.ticker.add((delta) => {
-            //this.backgroundObjects.forEach(o => o.draw());
-            cannons.forEach(c => c.draw());
-            balls.forEach(b => b.draw());
-            drums.forEach(d => d.draw());
-            if (selection !== null)
-                selection.draw();
-        });
-
     }
 
     /**
@@ -443,7 +291,7 @@ export class Scene extends React.Component {
                     let sound = drums[j].getSound()
                     drums[j].synth.triggerAttackRelease(sound.note, sound.length);
                     //synth.triggerAttackRelease(sound.note, sound.length);
-   
+
                 }
         }
 
@@ -479,12 +327,12 @@ export class Scene extends React.Component {
             if (selection == null) {
                 let currSelection = null;
                 for (let i = 0; i < cannons.length && !currSelection; i++) {
-                  if (Matter.Bounds.contains(cannons[i].body.bounds, position))
-                    currSelection = cannons[i];
+                    if (Matter.Bounds.contains(cannons[i].body.bounds, position))
+                        currSelection = cannons[i];
                 }
                 for (let i = 0; i < drums.length && !currSelection; i++) {
-                  if (Matter.Bounds.contains(drums[i].body.bounds, position))
-                    currSelection = drums[i];
+                    if (Matter.Bounds.contains(drums[i].body.bounds, position))
+                        currSelection = drums[i];
                 }
                 if (currSelection != null) {
                     selection = new Selection(currSelection);
@@ -513,7 +361,7 @@ export class Scene extends React.Component {
                 }
             }
         }
-        
+
         else if (this.state.selectedTool == "cannon") {
             Tone.start();
             let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
@@ -581,7 +429,7 @@ export class Scene extends React.Component {
                     volume: -15
                 }).toDestination(),
                     { note: 'C2', length: '1n' },
-                    [{ x: 15, y: 20 }, { x: 10, y: -20}, { x: -10, y: -20}, { x: -15, y:  20}])
+                    [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
                 drums.push(instrument);
                 this.addObject(instrument);
                 if (selection != null) {
@@ -733,85 +581,6 @@ export class Scene extends React.Component {
             this.loadObject(objs[i]);
         }
     }
-}
-export default Scene;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// saved object temp storage
-
-
-
-
-/*
-
-{
-    "MTObjType": "Cannon",
-    "MTObjVersion": "1.0.0",
-    "pos": {
-        "x": 200,
-        "y": 100
-    },
-    "angle": 0,
-    "image": null,
-    "shape": [
-        {
-            "x": -20,
-            "y": -20
-        },
-        {
-            "x": 40,
-            "y": 0
-        },
-        {
-            "x": -20,
-            "y": 20
-        },
-        {
-            "x": -30,
-            "y": 0
-        }
-    ],
-    "collisionFilter": {
-        "group": 0,
-        "category": 0,
-        "mask": 0
-    },
-    "fireLayer": 1,
-    "power": 20,
-    "marbleSize": 20,
-    "marbleColor": "rand",
-    "marbleCollisionFilter": {
-        "group": -1,
-        "category": 4294967295,
-        "mask": 4294967295
-    }
 
     saveCreation() {
         allObjects = [];
@@ -835,16 +604,8 @@ export default Scene;
         /*for (let i = 0; i < synth.length; i++) {
 
         }*/
-
-
-
-
-
-
-
     }
 
-    //handleSave() {
     handleSave =
         async (e) => {
 
@@ -867,7 +628,7 @@ export default Scene;
             } catch (ex) {
                 console.log('not successful')
             }
-            
+
         }
 
     handleSaveAccess = async () => {
@@ -876,7 +637,7 @@ export default Scene;
         let AccessLevel = 2;
         let Creation = {};
         try {
-            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
+            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
             // todo: other db save post
             console.log(res);
             console.log('save access successful');
@@ -884,74 +645,19 @@ export default Scene;
             console.log(ex)
         }
 
-            // .then((res) => {
-            //     console.log(res);
-            //     console.log('save access successful');
-            // }).catch((ex) => {
-            //     console.log('not successful')
-            // })
+        // .then((res) => {
+        //     console.log(res);
+        //     console.log('save access successful');
+        // }).catch((ex) => {
+        //     console.log('not successful')
+        // })
     }
+
 }
-
-
-
-
-
-{
-    "MTObjType": "Cannon",
-    "MTObjVersion": "1.0.0",
-    "pos": {
-        "x": 200,
-        "y": 200
-    },
-    "angle": 0,
-    "image": null,
-    "shape": [
-        {
-            "x": -20,
-            "y": -20
-        },
-        {
-            "x": 40,
-            "y": 0
-        },
-        {
-            "x": -20,
-            "y": 20
-        },
-        {
-            "x": -30,
-            "y": 0
-        }
-    ],
-    "collisionFilter": {
-        "group": 0,
-        "category": 0,
-        "mask": 0
-    },
-    "fireLayer": 2,
-    "power": 20,
-    "marbleSize": 20,
-    "marbleColor": "rand",
-    "marbleCollisionFilter": {
-        "group": -1,
-        "category": 4294967295,
-        "mask": 4294967295
-    }
-}
+export default Scene;
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
- */

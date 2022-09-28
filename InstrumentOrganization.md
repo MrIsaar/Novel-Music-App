@@ -35,3 +35,10 @@ At this time, the music app provides the user with three possible synthesizers, 
     - Implemented using a MetalSynth
 - Clap
     - Implemented using a NoiseSynth
+
+Each instrument object placed on the work area is represented by an Instrument object which has "physical" properties such as its shape, position, rotation, as well as "aural" properties such as the synthesizer and the note.
+
+## Triggering Sounds
+Sounds are triggered upon collisions between balls (or "marbles") and instrument objects. The sound itself comes from calling the synth.TriggerAttackRelease(note) method on the instruments internal synth object.
+
+The launching of marbles is triggered by a sequencer track. Each track of the sequencer is associated with a single cannon object. Whenever that track plays a note, the cannon fires a single marble. 
