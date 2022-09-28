@@ -615,23 +615,26 @@ export class Scene extends React.Component {
         /* cannons */
         for (let i = 0; i < cannons.length; i++) {
             //cannons[i].savedObject();
+            allObjects.push(cannons[i]);
         }
         /* drums   */
         for (let i = 0; i < drums.length; i++) {
-
+            allObjects.push(drums[i]);
         }
-        /* sounds  */
-        for (let i = 0; i < sounds.length; i++) {
-
-        }
+        
         /* otherObj*/
         for (let i = 0; i < otherObj.length; i++) {
-
+            allObjects.push(otherObj[i]);
         }
+        /* sounds  */
+        /*for (let i = 0; i < sounds.length; i++) {
+
+        }*/
         /* synth   */
         /*for (let i = 0; i < synth.length; i++) {
 
         }*/
+        return allObjects
     }
 
     /*    handleSave =
@@ -701,8 +704,9 @@ export class Scene extends React.Component {
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let Creation = this.creationFromDB;
-        for (let i = 0; i < cannons.length; i++) {
-            if (cannons[i].objectNumber > 0)
+        let allObjectsToSave = this.saveCreation();
+        for (let i = 0; i < allObjectsToSave.length; i++) {
+            if (allObjectsToSave[i].objectNumber > 0)
                 continue; //TODO: REMOVE TO ENABLE ALL SAVE
             try {
 
