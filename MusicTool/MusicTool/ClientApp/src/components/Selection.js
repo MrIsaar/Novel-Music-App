@@ -1,8 +1,8 @@
 ﻿import Matter from "matter-js";
 import * as PIXI from "pixi.js";
 
-// Selection rendering constants
-const COLOR = 0x0000ff;
+const COLOR = 0x0000ff; // Blue
+
 const CROSSBAR_ALPHA = 0.3;
 const THRESHOLD_ALPHA = 0.05;
 const CROSSBAR_WIDTH = 5;
@@ -10,7 +10,7 @@ const CROSSBAR_WIDTH = 5;
 export class Selection extends PIXI.Graphics {
     /**
      * 
-     * @param {any} selected object such as cannon or instrument with selected.body, selected.pos, selected.angle
+     * @param {any} selected object such as cannon or instrument with selected.body, selected.position, selected.angle
      */
     constructor(selected, size = 100) {
         super();

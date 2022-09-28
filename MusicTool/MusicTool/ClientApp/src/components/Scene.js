@@ -6,8 +6,8 @@ import Selection from "./Selection"
 import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
-import Toolbar from './Toolbar';
-
+import MTObj from "./MTObj";
+import http from '../httpFetch';
 import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
@@ -21,13 +21,18 @@ var selection = null;
 var drums = [];
 var sounds = [];
 var otherObj = [];
+var allObjects = [];
+
+
+
 var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
 var debugLoad = true;
 var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
 let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
-let otherSavedObject = { "MTObjType": "Instrument", "MTObjVersion": "1.0.0", "pos": { "x": 400, "y": 350 }, "angle": 0, "image": null, "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "sound": { "note": "C4", "length": "8n" } };
+
+
 export class Scene extends React.Component {
 
     /**
@@ -51,6 +56,8 @@ export class Scene extends React.Component {
 
         let { creationID } = this.props.match.params;
         this.creationID = creationID;
+
+        this.creationFromDB = null;
     }
 
     setSelectedTool(tool) {
@@ -290,8 +297,23 @@ export class Scene extends React.Component {
 
             }
 
+        for (let i = 1; i < 5; i++) {
+            /*position = { x: width * (0.2), y: height * (0.2 * i) };
+            cannon = new Cannon(position, 0, 20, i);
+            cannons.push(cannon);*/
 
-
+        }
+        for (let i = 1; i < 5; i++) {
+            /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
+                isStatic: true,
+                render: {
+                    fillStyle: "red"
+                }
+            }))*/
+            /*position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
+            let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
+            drums.push(drum);
+            Matter.World.add(this.engine.world, drum.body);*/
         }
         //else {
 
@@ -397,8 +419,9 @@ export class Scene extends React.Component {
                 <div className="row">
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
-                        <button onClick={this.fireBalls.bind(this)}>---------FIRE---------</button>
-
+                        <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
+                        <button onClick={this.handleSave}>OtherSave</button>
+                        <button onClick={this.saveCreation.bind(this)}>------SAVE------</button>
                     </div>
 
                 </div>
@@ -455,17 +478,13 @@ export class Scene extends React.Component {
             // new select object - create new function for this
             if (selection == null) {
                 let currSelection = null;
-                for (let i = 0; i < cannons.length; i++) {
-                    if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-                        currSelection = cannons[i];
-                        break;
-                    }
+                for (let i = 0; i < cannons.length && !currSelection; i++) {
+                  if (Matter.Bounds.contains(cannons[i].body.bounds, position))
+                    currSelection = cannons[i];
                 }
-                for (let i = 0; i < drums.length; i++) {
-                    if (Matter.Bounds.contains(drums[i].body.bounds, position)) {
-                        currSelection = drums[i];
-                        break;
-                    }
+                for (let i = 0; i < drums.length && !currSelection; i++) {
+                  if (Matter.Bounds.contains(drums[i].body.bounds, position))
+                    currSelection = drums[i];
                 }
                 if (currSelection != null) {
                     selection = new Selection(currSelection);
@@ -612,7 +631,7 @@ export class Scene extends React.Component {
 
             this.addObject(ball);
         }
-        if (selection != null) {
+        if (selection != null && selection.bodies != undefined) {
             Matter.Composite.remove(this.engine.world, selection.bodies)
             selection = null;
         }
@@ -629,22 +648,28 @@ export class Scene extends React.Component {
      * load an MTObj from json saved object into world
      * @param {any} mtObject music tool object that inherits from MTObj
      */
-    loadObject(mtObject) {
+    loadObject(objectNumber, mtObject) {
         try {
             var newObject = null;
-            let pos = { x: 0, y: 0 };
+
+            let pos = mtObject.position;
+            let angle = mtObject.angle;
+            let shape = mtObject.shape;
+            let collisionFilter = mtObject.collisionFilter;
+            let image = mtObject.image;
 
             // create temp object to load object into
-            if (mtObject.json.MTObjType == "MTObj") {
-                newObject = new MTObj(pos);
+            if (mtObject.MTObjType == "MTObj") {
+                newObject = new MTObj(objectNumber, pos, angle, shape, collisionFilter, image);
                 otherObj.push(newObject);
             }
-            else if (mtObject.json.MTObjType == "Cannon") {
-                newObject = new Cannon(pos);
+            else if (mtObject.MTObjType == "Cannon") {
+                //newObject = new Cannon(pos);
+                newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 cannons.push(newObject);
             }
-            else if (mtObject.json.MTObjType == "Instrument") {
-                newObject = new Instrument(pos);
+            else if (mtObject.MTObjType == "Instrument") {
+                newObject = new Instrument(objectNumber, pos, angle, mtObject.sound, shape, image, collisionFilter);
                 drums.push(newObject);
             }
             else {
@@ -653,8 +678,8 @@ export class Scene extends React.Component {
             }
 
             //load json
-            newObject.loadObject(mtObject.json);
-            this.addObject(newObject);
+            //newObject.loadObject(mtObject);
+            this.addObject(newObject)
         }
         catch (exception_var) {
             console.log("could not load object");
@@ -681,6 +706,16 @@ export class Scene extends React.Component {
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
+                console.log("object list: ", data.creationObject);
+                for (let i = 0; i < data.creationObject.length; i++) {
+                    console.log(`DB obj Saved cannon ${i}: `, data.creationObject[i]);
+                    console.log(`DB Saved MTObj cannon ${i}: `, data.creationObject[i].json);
+                    console.log(`DB Saved MTObj.type cannon ${i}: `, data.creationObject[i].json.MTObjType);
+                    console.log(`DB Saved MTObj.position cannon ${i}: `, data.creationObject[i].json.position);
+                    console.log(`DB Saved MTObj.angle cannon ${i}: `, data.creationObject[i].json.angle);
+                    this.loadObject(data.creationObject[i].creationObjectID, data.creationObject[i].json);
+                }
+                this.creationFromDB = data;
                 this.sequencerSavedState = data.sequencer;
                 this.setState({
                     loading: false,
@@ -776,6 +811,85 @@ export default Scene;
         "group": -1,
         "category": 4294967295,
         "mask": 4294967295
+    }
+
+    saveCreation() {
+        allObjects = [];
+        /* cannons */
+        for (let i = 0; i < cannons.length; i++) {
+            //cannons[i].savedObject();
+        }
+        /* drums   */
+        for (let i = 0; i < drums.length; i++) {
+
+        }
+        /* sounds  */
+        for (let i = 0; i < sounds.length; i++) {
+
+        }
+        /* otherObj*/
+        for (let i = 0; i < otherObj.length; i++) {
+
+        }
+        /* synth   */
+        /*for (let i = 0; i < synth.length; i++) {
+
+        }*/
+
+
+
+
+
+
+
+    }
+
+    //handleSave() {
+    handleSave =
+        async (e) => {
+
+            // let id = this.creationID;
+            let id = this.creationID;
+            let creation = this.creationFromDB;//"HELLO WORLD";//HINT: httpFetch handles JSON.stringify(objects);
+
+            // http.post('/creations/save/' + id, { data: creation })
+            //     .then((res) => {
+            //         console.log(res);
+            //         // to save access
+            //         this.handleSaveAccess();
+            //     }).catch((ex) => {
+            //         console.log('not successful')
+            //     })
+
+            try {
+                await http.post('/creations/save/' + id, { data: creation })
+                await this.handleSaveAccess();
+            } catch (ex) {
+                console.log('not successful')
+            }
+            
+        }
+
+    handleSaveAccess = async () => {
+        let CreationID = this.creationID;
+        let UserID = http.getUserId();
+        let AccessLevel = 2;
+        let Creation = {};
+        try {
+            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
+            // todo: other db save post
+            console.log(res);
+            console.log('save access successful');
+        } catch (ex) {
+            console.log(ex)
+        }
+
+            // .then((res) => {
+            //     console.log(res);
+            //     console.log('save access successful');
+            // }).catch((ex) => {
+            //     console.log('not successful')
+            // })
     }
 }
 

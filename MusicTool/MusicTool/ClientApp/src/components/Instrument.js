@@ -11,10 +11,10 @@ export class Instrument extends MTObj {
      * @param {any} image
      * @param {any} sound default to C4, if passed a list it will play list in order
      */
-    //constructor(pos, angle = 0, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: -1, mask: -1 }) {
-    constructor(pos, angle = 0, synth, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: -1, mask: -1 }) {
+    constructor(objectNumber,pos, angle = 0, synth, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: -1, category: 0xffffffff, mask: 0xffffffff })
+    {
 
-        super(pos, angle, shape, image);
+        super(objectNumber,pos, angle, shape, collisionFilter, image);
         this.MTObjType = 'Instrument';
         this.synth = synth;
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
@@ -108,8 +108,8 @@ export class Instrument extends MTObj {
 
         //create ball
         var ball = Matter.Bodies.circle(
-            this.pos.x,
-            this.pos.y,
+            this.position.x,
+            this.position.y,
             this.marbleSize,
             {
                 mass: 10,
@@ -138,7 +138,8 @@ export class Instrument extends MTObj {
         return {
             MTObjType: 'Instrument',
             MTObjVersion: this.MTObjVersion,
-            pos: this.pos,
+            objectNumber: this.objectNumber,
+            position: this.position,
             angle: this.angle,
             image: this.image,
             shape: this.shape,
@@ -162,9 +163,9 @@ export class Instrument extends MTObj {
         let previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.body = Matter.Bodies.fromVertices(savedJSON.position.x, savedJSON.position.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
         this.updateAngle(savedJSON.angle);
-        this.updatePosition(savedJSON.pos);
+        this.updatePosition(savedJSON.position);
         this.changeCollisionFilter(savedJSON.collisionFilter);
         
         this.image = savedJSON.image;

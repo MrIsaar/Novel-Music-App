@@ -25,7 +25,7 @@ namespace MusicTool.Controllers
 
         // GET: api/user
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetCreation()
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
             return await _context.Users.ToListAsync();
         }
@@ -65,7 +65,15 @@ namespace MusicTool.Controllers
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(new {message="Sign up success"});
+            //return new OkObjectResult(new {message="Sign up success"});
+
+            var res2 = await _context.Users.Where((p => p.Email == user.Email)).FirstOrDefaultAsync();
+            if (res2 == null || String.IsNullOrEmpty(res2.Email))
+            {
+                // pop message
+                return new BadRequestObjectResult(new { message = "Invalid user email, try login again." });
+            }
+            return res2;
         }
 
         // DELETE: api/delete

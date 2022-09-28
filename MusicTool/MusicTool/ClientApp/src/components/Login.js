@@ -14,9 +14,10 @@ export class Login extends Component {
             isLogin: false,         // old user
             isSignup: false,        // new user
             showReminder: false,    // show delete reminder box
-            // array = [{projectID, projectName}, {projectID, projectName}, ...] TODO: should be null
-            projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' },
-                            { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
+            showShare: false,       // show share project dialog
+            // array = [{projectID, projectName}, {projectID, projectName}, ...]
+            // projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' }, { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
+            projectList: []
 
         };
     }
@@ -43,6 +44,9 @@ export class Login extends Component {
     setShowReminder = (showReminder) => {
         this.setState({ showReminder })
     }
+    setShowShare = (showShare) => {
+        this.setState({ showShare })
+    }
     setProjectList = (projectList) => {
         this.setState({ projectList })
     }
@@ -58,12 +62,13 @@ export class Login extends Component {
     // load or create account in Users db
     handleLogin = async (e) => {
         e.preventDefault();
-        const { isSignup, email, password } = this.state;
+        const { isSignup, email, password, projectList } = this.state;
         this.setIsLoading(true)
         try {
             http.post(isSignup ? '/user/signup' : '/user/login', { data: { email, password } }).then((res) => {
                 http.setUserId(res.userID);
                 http.setUserEmail(email)
+                http.setProjectList(projectList)
                 //console.log(http.getUserEmail())
                 //console.log(http.getUserId())
 
@@ -72,20 +77,13 @@ export class Login extends Component {
                 this.setError('')
                 this.setIsLoading(false)
                 this.setIsLogin(true)
+                this.setIsSignup(true)
                 console.log('Login successful')
             }).catch((ex) => {
                 // console.log('ex:', ex);
                 console.log('Login not successful')
                 window.location.reload()
             })
-
-            if (isSignup) {
-                http.post('/user/login', { data: { email, password } }).then((res) => {
-                    http.setUserId(res.userID);
-                }).catch((ex) => {
-                    window.location.reload()
-                })
-            }
         } catch (error) {
             this.setEmail('')
             this.setPassword('')
@@ -95,20 +93,23 @@ export class Login extends Component {
             console.log('Cannot login')
         }
     }
+ 
 
     // delete account in Users db
     handleDelete = () => {
         const { email } = this.state;
         try {
             http.delete('/user/delete', { data: { email } }).then((res) => {
-                http.setUserId(null);
+                http.setUserId(null)
                 http.setUserEmail(null)
+                http.setProjectList(null)
 
                 this.setEmail(null)
                 this.setPassword(null)
                 this.setError('')
                 this.setIsLogin(false)
                 this.setIsSignup(false)
+                this.setProjectList([])
                 console.log('Delete successful')
             }).catch((ex) => {
                 console.log('Delete not successful')
@@ -121,12 +122,60 @@ export class Login extends Component {
     // reminder box: ask if delete account
     handleCloseReminder = () => this.setShowReminder(false);
     handleShowReminder = () => this.setShowReminder(true);
+    // dialog: show link of project
+    handleCloseShare = () => this.setShowShare(false);
+    handleShowShare = () => this.setShowShare(true);
 
     // Get a list of projectID and projectName based on uerID from Application db
-    handleProjectList = () => { }
+    // 1. Use UserID get CreationID from Access db_table
+    // 2. Use CreationID get Name from Creation db_table
+    handleProjectList = () => {
+        const { projectList } = this.state;
+        this.setProjectList([])
+        http.get('/access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
+            res.map(i => {
+                //console.log(i)
+                // get name based on creationID
+                http.get('/creations/' + i).then((res) => {
+                    // console.log(res.name)
+                    // add { id: 'i', name: 'name' } to projectList
+                    this.addItem({ id: '' + i, name: '' + res.name })
+                }).catch((ex) => {
+                    console.log('Get name not successful')
+                })
+            })
+            //console.log(res.length)
+            //console.log(http.getUserId())
+        }).catch((ex) => {
+            console.log('Get CreationID list not successful')
+        })
+        // console.log(projectList)
+        http.setProjectList(projectList)
+    }
+
+    // helper function that adds item to list
+    addItem = (item) => {
+        const { projectList } = this.state;
+        this.setProjectList(
+            [...projectList, item]
+        )
+        //console.log(projectList)
+    }
+
+    // cleanup data after logout/delete account
+    handleCleanUp = () => {
+        this.setIsLogin(false)
+        this.setIsSignup(false)
+        this.setProjectList([])
+        http.setUserId(null)
+        http.setUserEmail(null)
+        http.setProjectList(null)
+    }
+
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, projectList } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showShare, projectList } = this.state;
+
         return (
             // use bootstrap card and form styles
             <div className="card container mt-5" >
@@ -139,7 +188,7 @@ export class Login extends Component {
 
                             <h3> Welcome, {http.getUserEmail()} </h3>
                             <button
-                                onClick={() => (this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}
+                                onClick={this.handleCleanUp}
                                 className='btn btn-primary'>
                                 Logout
                             </button>
@@ -147,29 +196,103 @@ export class Login extends Component {
                             <br></br>
 
                             <h5>My Projects</h5>
+
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Project Name</th>
                                         <th>Project ID</th>
                                         <th>Project Workspace</th>
+                                        <th>Share Project</th>
                                         <th>Delete Project</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {projectList.map(({ id, name }) => (
-                                        <tr>
-                                            <td>{ name}</td>
-                                            <td>{ id}</td>
-                                            <td><a href={"/scene/" + {id}} className="btn btn-primary">
-                                                Go to Project
-                                            </a></td>
-                                            <td><Button variant="danger" onClick={() => (null)}>
-                                                Delete
-                                            </Button></td>
-                                        </tr>))}
+                                {
+                                    projectList.length == 0 & http.getProjectList().length != 0 ?
+                                    <>
+                                        {http.getProjectList().map(({ id, name }) => (
+                                            <tr>
+                                                <td>{name}</td>
+
+                                                <td>{id}</td>
+
+                                                <td><a href={"/scene/" + {id}} className="btn btn-primary">
+                                                    Go to Project
+                                                </a></td>
+
+                                                <td>
+                                                    <Button variant="primary" onClick={this.handleShowShare}>
+                                                        My Project
+                                                    </Button>
+
+                                                    <Modal show={showShare} onHide={this.handleCloseShare}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>My Project</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>Place holder for project link or something else</Modal.Body>
+                                                        <Modal.Footer>
+                                                            <Button variant="primary" onClick={this.handleCloseShare}>
+                                                                Close
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </td>
+
+                                                <td><Button variant="danger" onClick={() => (null)}>
+                                                    Delete
+                                                </Button></td>
+                                            </tr>))
+                                        }
+                                    </>
+                                    :
+                                    <>
+                                        {projectList.map(({ id, name }) => (
+                                            <tr>
+                                                <td>{name}</td>
+
+                                                <td>{id}</td>
+
+                                                <td><a href={"/scene/" + {id}} className="btn btn-primary">
+                                                    Go to Project
+                                                </a></td>
+
+                                                <td>
+                                                    <Button variant="primary" onClick={this.handleShowShare}>
+                                                        My Project
+                                                    </Button>
+
+                                                    <Modal show={showShare} onHide={this.handleCloseShare}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>My Project</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>Place holder for project link or something else</Modal.Body>
+                                                        <Modal.Footer>
+                                                            <Button variant="primary" onClick={this.handleCloseShare}>
+                                                                Close
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </td>
+
+                                                <td><Button variant="danger" onClick={() => (null)}>
+                                                    Delete
+                                                </Button></td>
+                                            </tr>))
+                                        }
+                                        {http.setProjectList(projectList)}
+                                    </>
+                                }
                                 </tbody>
                             </table>
+
+                            <br></br>
+
+                            <button
+                                onClick={this.handleProjectList}
+                                className='btn btn-primary'>
+                                Get My Projects
+                            </button>
 
                             <br></br>
 
@@ -191,7 +314,7 @@ export class Login extends Component {
                                 <Modal.Body>Are you sure to delete your account?</Modal.Body>
                                 <Modal.Footer>
                                     <Button variant="danger"
-                                        onClick={() => (this.handleCloseReminder(), this.handleDelete(), this.setIsLogin(false), this.setIsSignup(false), http.setUserId(null), http.setUserEmail(null))}>
+                                        onClick={() => (this.handleCloseReminder, this.handleDelete, this.handleCleanUp)}>
                                         Yes
                                     </Button>
                                     <Button variant="primary" onClick={this.handleCloseReminder}>

@@ -1,8 +1,10 @@
 ﻿import * as PIXI from "pixi.js";
 import Matter from "matter-js";
 
-export class MTObj extends PIXI.Graphics{
 
+
+export class MTObj extends PIXI.Graphics{
+    
     /**
      * creates a cannon at specified position with angle.
      * 
@@ -11,16 +13,17 @@ export class MTObj extends PIXI.Graphics{
      * @param {any} angle angle in radians
 
      */
-    constructor(pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null) {
+    constructor(objectNumber,pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
         super()
+        this.objectNumber = objectNumber;
         this.shape = shape;
-        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
-        this.pos = pos;
+        this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: collisionFilter });
+        this.position = pos;
         this.angle = angle;
         this.image = image;
         this.MTObjType = 'MTObj';
         this.MTObjVersion = '1.0.0';
-        this.collisionFilter = { group: 0, category: 0, mask: 0 }
+        this.collisionFilter = collisionFilter;
     }
 
     /**
@@ -29,8 +32,8 @@ export class MTObj extends PIXI.Graphics{
      */
     draw() {
         this.clear();
-        this.x = this.pos.x;
-        this.y = this.pos.y;
+        this.x = this.position.x;
+        this.y = this.position.y;
         this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle));
         this.drawPolygon(this.shape);
         this.endFill();
@@ -88,7 +91,8 @@ export class MTObj extends PIXI.Graphics{
         return {
             MTObjType: 'MTObj',
             MTObjVersion: this.MTObjVersion,
-            pos: this.pos,
+            objectNumber: this.objectNumber,
+            position: this.position,
             angle: this.angle,
             image: this.image,
             shape: this.shape,
@@ -107,8 +111,8 @@ export class MTObj extends PIXI.Graphics{
         var previousBody = this.body;
         this.shape = savedJSON.shape;
         this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(savedJSON.pos.x, savedJSON.pos.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
-        this.pos = savedJSON.pos;
+        this.body = Matter.Bodies.fromVertices(savedJSON.position.x, savedJSON.position.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.position = savedJSON.position;
         this.angle = savedJSON.angle;
         this.image = savedJSON.image;
         

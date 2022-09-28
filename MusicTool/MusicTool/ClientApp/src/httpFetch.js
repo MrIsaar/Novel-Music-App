@@ -64,6 +64,9 @@ class HttpFetch {
 
   getUserEmail = () => this.getValue('userEmail')
   setUserEmail = (email) => this.setValue('userEmail', email)
+
+  getProjectList = () => this.getValue('ProjectList')
+  setProjectList = (list) => this.setValue('ProjectList', list)
 }
 
 export default new HttpFetch()
