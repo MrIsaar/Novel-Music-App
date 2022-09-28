@@ -156,25 +156,25 @@ export class Scene extends React.Component {
 
 
 
-        
 
 
-            //END Scene Object initialization
 
-            sounds.push(<div> <ToneExample /> </div>);
+        //END Scene Object initialization
+
+        sounds.push(<div> <ToneExample /> </div>);
 
 
-            // Start engine & renderer
-            Engine.run(this.engine);
-            document.querySelector("#scene").appendChild(this.app.view);
-            this.app.ticker.add((delta) => {
-                //this.backgroundObjects.forEach(o => o.draw());
-                cannons.forEach(c => c.draw());
-                balls.forEach(b => b.draw());
-                drums.forEach(d => d.draw());
-                if (selection !== null)
-                    selection.draw();
-            });
+        // Start engine & renderer
+        Engine.run(this.engine);
+        document.querySelector("#scene").appendChild(this.app.view);
+        this.app.ticker.add((delta) => {
+            //this.backgroundObjects.forEach(o => o.draw());
+            cannons.forEach(c => c.draw());
+            balls.forEach(b => b.draw());
+            drums.forEach(d => d.draw());
+            if (selection !== null)
+                selection.draw();
+        });
     }
 
     /**
@@ -211,8 +211,8 @@ export class Scene extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
-                        <button onClick={this.handleSave}>OtherSave</button>
-                        <button onClick={this.saveCreation.bind(this)}>------SAVE------</button>
+                        <button onClick={this.handleSave}>------SAVE------</button>
+                        <button onClick={this.saveObjectsToDB}>------SAVE-Object------</button>
                     </div>
 
                 </div>
@@ -533,34 +533,38 @@ export class Scene extends React.Component {
         /* cannons */
         for (let i = 0; i < cannons.length; i++) {
             //cannons[i].savedObject();
+            allObjects.push(cannons[i]);
         }
         /* drums   */
         for (let i = 0; i < drums.length; i++) {
-
+            allObjects.push(drums[i]);
         }
-        /* sounds  */
-        for (let i = 0; i < sounds.length; i++) {
-
-        }
+        
         /* otherObj*/
         for (let i = 0; i < otherObj.length; i++) {
-
+            allObjects.push(otherObj[i]);
         }
+        /* sounds  */
+        /*for (let i = 0; i < sounds.length; i++) {
+
+        }*/
         /* synth   */
         /*for (let i = 0; i < synth.length; i++) {
 
         }*/
+        return allObjects
     }
 
     handleSave = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
-        let Creation = {};
+        let Creation = this.creationFromDB;
+
         try {
             // Should store access before creation!
             // save access
-            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
+            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
             // TODO: other db save post here are samples for saving creation, creationobject and sequencer
             // CHECK Postman for more details on JSON_string <- MUST be in type of string
 
@@ -572,7 +576,7 @@ export class Scene extends React.Component {
             // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
 
             // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
-            // await http.post('/creationObject/save/' + CreationID, { data: { CreationID, JSON_string} })
+            // json = '{ "MTObjType": "Cannon", "MTObjVersion": "1.0.0","objectNumber":"2", "position": { "x": 300, "y": 150 }, "angle": 2, "image": null, "shape": [ { "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 } ], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "fireLayer": 1, "power": 20, "marbleSize": 20, "marbleColor": "rand", "marbleCollisionFilter": { "group": -1, "category": 4294967295, "mask": 4294967295 } }';
 
             console.log(res);
             console.log('save access successful');
@@ -588,11 +592,50 @@ export class Scene extends React.Component {
         // })
     }
 
-}
-export default Scene;
 
 
 
 
+    saveObjectsToDB = async () => {
+        let CreationID = this.creationID;
+        let UserID = http.getUserId();
+        let AccessLevel = 2;
+        let Creation = this.creationFromDB;
+        let allObjectsToSave = this.saveCreation();
+        for (let i = 0; i < allObjectsToSave.length; i++) {
+            if (allObjectsToSave[i].objectNumber > 0)
+                continue; //TODO: REMOVE TO ENABLE ALL SAVE
+            try {
 
 
+                let json = cannons[i].saveObject();
+                /*json.shape = [{ "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 }];
+                json.angle = 2;
+                json.objectNumber = 10;
+                json.position = { "x": 300, "y": 150 };*/
+
+                let MTObjType = json.MTObjType;
+                let Id = json.objectNumber;
+                let creationObj = {};
+                //console.log(creationObj);
+                creationObj.creationObjectID = undefined;
+                creationObj.type = MTObjType;
+                creationObj.json = json;
+                creationObj.creationID = CreationID;
+                //console.log(creationObj);
+                const saveRes = await http.post('/creationObject/save/' + CreationID, { data: creationObj });
+                // store object id in json so next time it is synced
+                if (saveRes.creationObjectID != Id) {
+
+                    cannons[i].objectNumber = saveRes.creationObjectID;
+                }
+
+                console.log(saveRes);
+
+            } catch (ex) {
+                console.log(ex)
+            }
+        }
+    }
+
+} export default Scene;
