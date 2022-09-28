@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicTool.Areas.Application.Data;
 using MusicTool.Data;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using NuGet.Protocol;
 
 namespace MusicTool.Controllers
 {
@@ -48,11 +51,27 @@ namespace MusicTool.Controllers
             {
                 return new BadRequestObjectResult(new { message = "id != CreationID" });
             }
+            var data = (JObject)JsonConvert.DeserializeObject(creationObject.Json);
+            var objectNumber = data["objectNumber"].Value<int>();
+           
+
+            var objectType = data["MTObjType"].Value<string>();
+            if (creationObject.Type != objectType)
+            {
+                return new BadRequestObjectResult(new { message = "object type in saved json does not match type in creation Object" });
+            }
+
+            var res = await _context.CreationObject.Where(p => p.CreationID == creationObject.CreationID && p.CreationObjectID == objectNumber).ToListAsync();
+            if (res != null && res.Count > 0)
+            {
+                // TODO: replace with updating the db with new json
+                return new StatusCodeResult(418); // the server is a teapot
+            }
 
             await _context.CreationObject.AddAsync(creationObject);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return creationObject;
         }
 
         // auto delete all CreationObjects related to this creationID

@@ -116,8 +116,8 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
             MTObjType: 'Cannon',
             MTObjVersion: this.MTObjVersion,
             objectNumber: this.objectNumber,
-            position: this.position,
-            angle: this.angle,
+            position: { x: this.position.x, y: this.position.y }, // changes from pixi position to basic json object
+            angle: (this.angle % 360.0) * (3.141592 / 180),
             image: this.image,
             shape: this.shape,
             collisionFilter: this.collisionFilter,
