@@ -11,7 +11,7 @@ export class Instrument extends MTObj {
      * @param {any} image
      * @param {any} sound default to C4, if passed a list it will play list in order
      */
-    constructor(objectNumber,pos, angle = 0, synth, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: -1, category: 0xffffffff, mask: 0xffffffff })
+    constructor(objectNumber,pos, angle = 0, synth, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: 0xffffffff, mask: 0xffffffff })
     {
 
         super(objectNumber,pos, angle, shape, collisionFilter, image);

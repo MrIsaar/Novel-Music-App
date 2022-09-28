@@ -17,7 +17,10 @@ class HttpFetch {
 
     const response = await fetch('api' + _url, options);
     if (response.ok) {
-      return response.json(); // parses JSON response into native JavaScript objects
+        return response.json().catch(err => {
+            console.error(`'${err}' happened, but no big deal!`);
+            return {};
+        }); // parses JSON response into native JavaScript objects
     } else {
       const error = await response.json();
       const { message } = error;
@@ -67,6 +70,9 @@ class HttpFetch {
 
   getProjectList = () => this.getValue('ProjectList')
   setProjectList = (list) => this.setValue('ProjectList', list)
+
+  getIDToDelete = () => this.getValue('IDToDelete')
+  setIDToDelete = (id) => this.setValue('IDToDelete', id)
 }
 
 export default new HttpFetch()

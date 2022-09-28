@@ -78,5 +78,21 @@ namespace MusicTool.Controllers
             }
             return res2;
         }
+
+        // DELETE: api/1
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAccess(int id)
+        {
+            var res = await _context.Access.Where(p => p.CreationID == id).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                return new BadRequestObjectResult(new { message = "Access not found." });
+            }
+
+            _context.Access.Remove(res);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

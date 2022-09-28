@@ -156,63 +156,8 @@ export class Scene extends React.Component {
 
 
 
-        // create initial cannons
-        let position = { x: width * (0.7), y: height * 0.3 };
-        let cannon;/*= new Cannon(position)//<Cannon pos={position} body={null} />;
-        cannons.push(cannon);
-        position = { x: width * (0.2), y: height * 0.3 };
-        cannon = new Cannon(position, 1)//<Cannon pos={position} body={null} />;*/
-        let halfpi = 3.1415 / 2;
-        if (this.creationID == 2) {
+        
 
-
-            for (let i = 1; i < 5; i++) {
-                position = { x: width * (0.15 * i), y: height * (0.8) };
-                cannon = new Cannon(position, -halfpi, 20, i);
-                cannons.push(cannon);
-
-            }
-            for (let i = 1; i < 5; i++) {
-                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                    isStatic: true,
-                    render: {
-                        fillStyle: "red"
-                    }
-                }))*/
-                position = { x: width * (0.15 * i), y: height * (0.2) };
-                let drum = new Instrument(position, 1, noteList[5 - i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-                drums.push(drum);
-                Matter.World.add(this.engine.world, drum.body);
-
-            }
-
-            for (let i = 1; i < 5; i++) {
-                /*position = { x: width * (0.2), y: height * (0.2 * i) };
-                cannon = new Cannon(position, 0, 20, i);
-                cannons.push(cannon);*/
-
-            }
-            for (let i = 1; i < 5; i++) {
-                /*drums.push(Bodies.rectangle(width * (0.4), height * (0.2 * i) + 45 , 50, 20, {
-                    isStatic: true,
-                    render: {
-                        fillStyle: "red"
-                    }
-                }))*/
-                /*position = { x: width * (0.4), y: height * (0.2 * i) + 50 };
-                let drum = new Instrument(position, 0, noteList[5-i], [{ x: 20, y: 10 }, { x: 25, y: -10 }, { x: -25, y: -10 }, { x: -20, y: 10 }]);
-                drums.push(drum);
-                Matter.World.add(this.engine.world, drum.body);*/
-            }
-
-            for (let i = 0; i < cannons.length; i++) {
-                Matter.World.add(this.engine.world, cannons[i].getBody());
-            }
-
-            // Add initialized objects to scene
-            //this.backgroundObjects.forEach(o => this.addObject(o));
-            drums.forEach(d => this.addObject(d));
-            cannons.forEach(c => this.addObject(c));
 
             //END Scene Object initialization
 
@@ -230,8 +175,6 @@ export class Scene extends React.Component {
                 if (selection !== null)
                     selection.draw();
             });
-
-        }
     }
 
     /**
@@ -284,8 +227,10 @@ export class Scene extends React.Component {
      *      Handle Collision Interactions
      */
     onCollision(event) {
+        console.log("collision");
         for (let i = 0; i < event.pairs.length; i++) {
-            for (let j = 0; j < drums.length; j++)
+            for (let j = 0; j < drums.length; j++) {
+                console.log("wtf");
                 if (event.pairs[i].bodyA === drums[j].body || event.pairs[i].bodyB === drums[j].body) {
                     console.log("*Meep*");
                     let sound = drums[j].getSound()
@@ -293,6 +238,7 @@ export class Scene extends React.Component {
                     //synth.triggerAttackRelease(sound.note, sound.length);
 
                 }
+            }
         }
 
     }
@@ -364,7 +310,7 @@ export class Scene extends React.Component {
 
         else if (this.state.selectedTool == "cannon") {
             Tone.start();
-            let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
+            let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
             cannons.push(cannon);
             this.addObject(cannon);
             if (selection != null) {
@@ -376,7 +322,7 @@ export class Scene extends React.Component {
             if (this.state.selectedTool == 'drum') {
                 Tone.start();
                 console.log('creating instrument')
-                let instrument = new Instrument(position, 1, new Tone.MembraneSynth({
+                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth({
                     pitchDecay: 0.008,
                     octaves: 2,
                     envelope: {
@@ -397,7 +343,7 @@ export class Scene extends React.Component {
             } else if (this.state.selectedTool == 'cymbal') {
                 Tone.start();
                 console.log('creating instrument')
-                let instrument = new Instrument(position, 1, new Tone.MetalSynth({
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth({
                     frequency: 200,
                     envelope: {
                         attack: 0.0001,
@@ -419,7 +365,7 @@ export class Scene extends React.Component {
                 }
             } else if (this.state.selectedTool == 'cowbell') {
                 Tone.start();
-                let instrument = new Instrument(position, 1, new Tone.MetalSynth({
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth({
                     harmonicity: 12,
                     resonance: 800,
                     modulationIndex: 20,
@@ -570,17 +516,17 @@ export class Scene extends React.Component {
                     sequencerData: data.sequencer
                 });
 
-                this.loadObjects(data.creationObject);
+                //this.loadObjects(data.creationObject);
             });
 
 
     }
 
-    loadObjects(objs) {
+    /*loadObjects(objs) {
         for (let i = 0; i < objs.length; i++) {
             this.loadObject(objs[i]);
         }
-    }
+    } */
 
     saveCreation() {
         allObjects = [];
@@ -606,39 +552,28 @@ export class Scene extends React.Component {
         }*/
     }
 
-    handleSave =
-        async (e) => {
-
-            // let id = this.creationID;
-            let id = this.creationID;
-            let creation = this.creationFromDB;//"HELLO WORLD";//HINT: httpFetch handles JSON.stringify(objects);
-
-            // http.post('/creations/save/' + id, { data: creation })
-            //     .then((res) => {
-            //         console.log(res);
-            //         // to save access
-            //         this.handleSaveAccess();
-            //     }).catch((ex) => {
-            //         console.log('not successful')
-            //     })
-
-            try {
-                await http.post('/creations/save/' + id, { data: creation })
-                await this.handleSaveAccess();
-            } catch (ex) {
-                console.log('not successful')
-            }
-
-        }
-
-    handleSaveAccess = async () => {
+    handleSave = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let Creation = {};
         try {
-            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
-            // todo: other db save post
+            // Should store access before creation!
+            // save access
+            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID:`${UserID}`, AccessLevel, Creation } })
+            // TODO: other db save post here are samples for saving creation, creationobject and sequencer
+            // CHECK Postman for more details on JSON_string <- MUST be in type of string
+
+            // save creations
+            // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
+            // await http.post('/creations/save/' + CreationID, { data: { CreationID, JSON_string })
+
+            // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
+            // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
+
+            // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
+            // await http.post('/creationObject/save/' + CreationID, { data: { CreationID, JSON_string} })
+
             console.log(res);
             console.log('save access successful');
         } catch (ex) {

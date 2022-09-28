@@ -13,7 +13,8 @@ export class Login extends Component {
             isLoading: false,       // load login/signup action
             isLogin: false,         // old user
             isSignup: false,        // new user
-            showReminder: false,    // show delete reminder box
+            showReminder: false,    // show delete account reminder box
+            showReminder_DeleteProj: false,    // show delete reminder box
             showShare: false,       // show share project dialog
             // array = [{projectID, projectName}, {projectID, projectName}, ...]
             // projectList: [{ id: '1', name: 'scene1' }, { id: '2', name: 'scene2' }, { id: '3', name: 'scene3' }, { id: '4', name: 'scene4' }]
@@ -43,6 +44,9 @@ export class Login extends Component {
     }
     setShowReminder = (showReminder) => {
         this.setState({ showReminder })
+    }
+    setShowReminder_DeleteProj = (showReminder_DeleteProj) => {
+        this.setState({ showReminder_DeleteProj })
     }
     setShowShare = (showShare) => {
         this.setState({ showShare })
@@ -110,18 +114,43 @@ export class Login extends Component {
                 this.setIsLogin(false)
                 this.setIsSignup(false)
                 this.setProjectList([])
-                console.log('Delete successful')
+                console.log('Delete account successful')
             }).catch((ex) => {
-                console.log('Delete not successful')
+                console.log('Delete account not successful')
                 window.location.reload()
             })
         } catch (error) {
         }
     }
 
+    // delete project info in Application db using creationID
+    handleDelete_Proj = (id) => {
+        // get creationID
+        let creationID = (id.id) * 1
+        // console.log('' + creationID)
+
+        try {
+            // delete from Access table
+            http.delete('/access/' + creationID, { data: creationID })
+            // delete from Creation table along with CreationObject and Sequencer
+            http.delete('/creations/' + creationID, { data: creationID })
+        } catch (ex) {
+            console.log(ex)
+        }
+
+        this.setShowReminder_DeleteProj(false)
+        // console.log('Delete project successful')
+
+        // get project list again
+        this.handleProjectList(creationID)
+    }
+
     // reminder box: ask if delete account
     handleCloseReminder = () => this.setShowReminder(false);
     handleShowReminder = () => this.setShowReminder(true);
+    // reminder box: ask if delete project
+    handleCloseReminder_DeleteProj = () => this.setShowReminder_DeleteProj(false);
+    handleShowReminder_DeleteProj = () => this.setShowReminder_DeleteProj(true);
     // dialog: show link of project
     handleCloseShare = () => this.setShowShare(false);
     handleShowShare = () => this.setShowShare(true);
@@ -129,7 +158,7 @@ export class Login extends Component {
     // Get a list of projectID and projectName based on uerID from Application db
     // 1. Use UserID get CreationID from Access db_table
     // 2. Use CreationID get Name from Creation db_table
-    handleProjectList = () => {
+    handleProjectList = (deletedCreationID) => {
         const { projectList } = this.state;
         this.setProjectList([])
         http.get('/access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
@@ -139,7 +168,8 @@ export class Login extends Component {
                 http.get('/creations/' + i).then((res) => {
                     // console.log(res.name)
                     // add { id: 'i', name: 'name' } to projectList
-                    this.addItem({ id: '' + i, name: '' + res.name })
+                    if (i != deletedCreationID)
+                        this.addItem({ id: '' + i, name: '' + res.name })
                 }).catch((ex) => {
                     console.log('Get name not successful')
                 })
@@ -174,7 +204,7 @@ export class Login extends Component {
 
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, showShare, projectList } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList, showDeleteProjSuccess } = this.state;
 
         return (
             // use bootstrap card and form styles
@@ -275,9 +305,28 @@ export class Login extends Component {
                                                     </Modal>
                                                 </td>
 
-                                                <td><Button variant="danger" onClick={() => (null)}>
+                                                <td>
+                                                    <Button variant="danger" onClick={() => (this.handleShowReminder_DeleteProj(), http.setIDToDelete({id}))}>
                                                     Delete
-                                                </Button></td>
+                                                    </Button>
+
+                                                    <Modal show={showReminder_DeleteProj} onHide={this.handleCloseReminder_DeleteProj}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>Warning</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>Are you sure to delete your project?</Modal.Body>
+                                                        <Modal.Footer>
+                                                            <Button variant="danger"
+                                                                onClick={() => (this.handleDelete_Proj(http.getIDToDelete()))}>
+                                                                Yes
+                                                            </Button>
+
+                                                            <Button variant="primary" onClick={() => (this.handleCloseReminder_DeleteProj(), http.setIDToDelete(null))}>
+                                                                No
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </td>
                                             </tr>))
                                         }
                                         {http.setProjectList(projectList)}
@@ -289,7 +338,7 @@ export class Login extends Component {
                             <br></br>
 
                             <button
-                                onClick={this.handleProjectList}
+                                onClick={() => (this.handleProjectList(-1))}
                                 className='btn btn-primary'>
                                 Get My Projects
                             </button>
