@@ -204,7 +204,7 @@ export class Login extends Component {
 
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList, showDeleteProjSuccess } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList } = this.state;
 
         return (
             // use bootstrap card and form styles
