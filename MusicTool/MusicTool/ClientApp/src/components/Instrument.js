@@ -144,7 +144,8 @@ export class Instrument extends MTObj {
             image: this.image,
             shape: this.shape,
             collisionFilter: this.collisionFilter,
-            sound: this.sound
+            sound: this.sound,
+            synth: this.synth
         }
     }
 
