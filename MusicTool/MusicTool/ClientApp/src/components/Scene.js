@@ -7,7 +7,6 @@ import ToneExample from "./ToneSetup"
 import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
 import http from '../httpFetch';
-import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
 import Instrument from './Instrument';

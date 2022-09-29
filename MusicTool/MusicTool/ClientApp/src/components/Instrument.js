@@ -172,7 +172,7 @@ export class Instrument extends MTObj {
         
         this.image = savedJSON.image;
         this.synthrules = savedJSON.synthrules;
-        this.synth = new Tone.MembraneSynth(this.synthrules).toDestination()
+        //this.synth = new Tone.MembraneSynth(this.synthrules).toDestination()
         this.sound = savedJSON.sound;
         if (this.sound[0] == undefined) {
             this.noteNumber = -1;

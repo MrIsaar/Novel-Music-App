@@ -1,6 +1,4 @@
-﻿import * as PIXI from "pixi.js";
-import { Circle } from "./ShapePrimitives";
-import Matter from "matter-js";
+﻿import Matter from "matter-js";
 import MTObj from "./MTObj";
 import Ball from "./Ball";
 

@@ -1,7 +1,4 @@
-﻿import React from "react";
-import ReactDOM from "react-dom";
-import * as PIXI from "pixi.js";
-import { Circle } from "./ShapePrimitives";
+﻿import * as PIXI from "pixi.js";
 import Matter from "matter-js";
 import MTObj from "./MTObj";
 

@@ -3,7 +3,6 @@ import * as Tone from 'tone';
 import { SequencerTrack } from './SequencerTrack';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import Button from '@mui/material/Button';
-import AddBox from '@mui/icons-material/AddBox';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 

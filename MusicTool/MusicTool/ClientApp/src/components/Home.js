@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { PalletDemo } from './PalletDemo';
 
 export class Home extends Component {
   static displayName = Home.name;
