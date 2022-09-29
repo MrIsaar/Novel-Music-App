@@ -204,7 +204,7 @@ export class Login extends Component {
 
 
     render() {
-        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList, showDeleteProjSuccess } = this.state;
+        const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList } = this.state;
 
         return (
             // use bootstrap card and form styles
@@ -363,7 +363,7 @@ export class Login extends Component {
                                 <Modal.Body>Are you sure to delete your account?</Modal.Body>
                                 <Modal.Footer>
                                     <Button variant="danger"
-                                        onClick={() => (this.handleCloseReminder, this.handleDelete, this.handleCleanUp)}>
+                                        onClick={() => (this.handleCloseReminder(), this.handleDelete(), this.handleCleanUp())}>
                                         Yes
                                     </Button>
                                     <Button variant="primary" onClick={this.handleCloseReminder}>

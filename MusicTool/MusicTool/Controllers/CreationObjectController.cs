@@ -53,7 +53,7 @@ namespace MusicTool.Controllers
             }
             var data = (JObject)JsonConvert.DeserializeObject(creationObject.Json);
             var objectNumber = data["objectNumber"].Value<int>();
-           
+
 
             var objectType = data["MTObjType"].Value<string>();
             if (creationObject.Type != objectType)
@@ -62,13 +62,32 @@ namespace MusicTool.Controllers
             }
 
             var res = await _context.CreationObject.Where(p => p.CreationID == creationObject.CreationID && p.CreationObjectID == objectNumber).ToListAsync();
+            
             if (res != null && res.Count > 0)
             {
-                // TODO: replace with updating the db with new json
-                return new StatusCodeResult(418); // the server is a teapot
-            }
+                if (res.Count > 1)
+                {
+                    return new BadRequestObjectResult(new { message = "Multiple objects with same Id in database?" });
+                }
+                try
+                {
+                    // TODO: replace with updating the db with new json
 
-            await _context.CreationObject.AddAsync(creationObject);
+                    res[0].Json = creationObject.Json;
+                    
+                }
+                catch(Exception x)
+                {
+                    return new StatusCodeResult(418); // the server is a teapot
+                }
+
+                
+            }
+            else
+            {
+                await _context.CreationObject.AddAsync(creationObject);
+            }
+            
             await _context.SaveChangesAsync();
 
             return creationObject;
