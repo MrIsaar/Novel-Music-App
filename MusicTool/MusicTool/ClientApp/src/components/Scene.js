@@ -11,6 +11,7 @@ import { Rect, Circle } from "./ShapePrimitives";
 import * as PIXI from "pixi.js";
 
 import Instrument from './Instrument';
+import Toolbar from './Toolbar'
 
 
 
@@ -42,7 +43,8 @@ export class Scene extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            sequencerData: {}
+            sequencerData: {},
+            selectedTool: 'select'
         };
         Tone.start();
 
@@ -57,6 +59,12 @@ export class Scene extends React.Component {
 
         this.creationFromDB = null;
     }
+
+    setSelectedTool(tool) {
+        this.setState({ selectedTool: tool });
+        console.log(`Selected Tool: ${tool}`)
+    }
+
 
     /**
      * initiates Matter.js engine and event handlers
@@ -96,117 +104,6 @@ export class Scene extends React.Component {
                 }
             });
         World.add(this.engine.world, mouseConstraint);
-
-
-
-
-        /**
-         *      Handle Collision Interactions
-         */
-        // Matter.Events.on(engine, "collisionStart",
-        //     function (event) {
-        //         for (let i = 0; i < event.pairs.length; i++) {
-        //             for (let j = 0; j < drums.length; j++)
-        //                 if (event.pairs[i].bodyA == drums[j].body || event.pairs[i].bodyB == drums[j].body) {
-        //                     console.log("*Meep*");
-        //                     let sound = drums[j].getSound()
-        //                     synth.triggerAttackRelease(sound.note, sound.length);
-        //                     if (debugLoad) {
-        //                         debugLoad = false;
-        //                         let oldBody = drums[j].loadObject(savedObject);
-
-        //                         Matter.Composite.remove(engine.world, oldBody);
-        //                         Matter.World.add(engine.world, drums[j].body);
-        //                     }
-        //                 }
-        //         }
-
-        //     }
-        // );
-        /**
-         *      Mouse down handling
-         *      
-         *      normal click - Select mode
-         *      shift click  - Fire marbles from all cannons  - to be removed with sequencer
-         *      Alt click    - Create Cannon at location - to be removed with drag and drop
-         *      
-         */
-        // Matter.Events.on(mouseConstraint, "mousedown",
-        //     function (event) {
-        //         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-
-        //         // shift mode - Fire Cannons - to be removed
-        //         if (event.mouse.sourceEvents.mousedown.shiftKey) {
-        //             //var ball = Matter.Bodies.circle(position.x, position.y, 20);
-        //             /* World.add(engine.world, [ball]);*/
-        //             for (let i = 0; i < cannons.length; i++) {
-        //                 let ball = cannons[i].fireMarble(-1);
-        //                 balls.push(ball);
-        //                 World.add(engine.world, [ball]);
-        //             }
-        //             if (selection != null) {
-        //                 Matter.Composite.remove(engine.world, selection.bodies)
-        //                 selection = null;
-        //             }
-        //         }
-
-        //         // alt mode - to be removed with drag and drop
-        //         else if (event.mouse.sourceEvents.mousedown.altKey) {
-        //             Tone.start();
-        //             let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-
-        //             let cannon = new Cannon(position)//<Cannon pos={position} body={null} />;
-        //             cannons.push(cannon);
-        //             World.add(engine.world, cannon.getBody());
-        //             //World.add(engine.world, Bodies.circle(event.mouse.position.x, event.mouse.position.y, 30, { restitution: 0.7 }));
-        //             if (selection != null) {
-        //                 Matter.Composite.remove(engine.world, selection.bodies)
-        //                 selection = null;
-        //             }
-        //         }
-
-        //         // normal click - select object under mouse
-        //         else {
-        //             // new select object - create new function for this
-        //             if (selection == null) {
-
-        //                 let currCannon = null;
-        //                 for (let i = 0; i < cannons.length; i++) {
-        //                     if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-        //                         currCannon = cannons[i];
-        //                         break;
-        //                     }
-        //                 }
-        //                 if (currCannon != null) {
-        //                     selection = new Selection(currCannon);
-        //                     World.add(engine.world, selection.bodies);
-        //                 }
-
-        //             }
-        //             // update object depending on selection mode
-        //             else {
-        //                 if (!selection.handleSelection(position.x, position.y)) {
-        //                     if (selection != null) { // deselect
-        //                         Matter.Composite.remove(engine.world, selection.bodies)
-        //                         selection = null;
-        //                     }
-        //                     //Check if another cannon should be selected
-        //                     let currCannon = null;
-        //                     for (let i = 0; i < cannons.length; i++) {
-        //                         if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-        //                             currCannon = cannons[i];
-        //                             break;
-        //                         }
-        //                     }
-        //                     if (currCannon != null) {
-        //                         selection = new Selection(currCannon);
-        //                         World.add(engine.world, selection.bodies);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // );
 
 
         /**
@@ -305,6 +202,10 @@ export class Scene extends React.Component {
 
         return (
             <div id="_Scene" >
+                <Toolbar
+                    onChange={this.setSelectedTool.bind(this)}
+                    value={this.state.selectedTool}
+                ></Toolbar>
                 <div ref="scene" id="scene" />
                 <div className="row">
                     <div className="col-3"><ToneExample /> </div>
@@ -326,20 +227,18 @@ export class Scene extends React.Component {
      *      Handle Collision Interactions
      */
     onCollision(event) {
+        console.log("collision");
         for (let i = 0; i < event.pairs.length; i++) {
-            for (let j = 0; j < drums.length; j++)
+            for (let j = 0; j < drums.length; j++) {
+                console.log("wtf");
                 if (event.pairs[i].bodyA === drums[j].body || event.pairs[i].bodyB === drums[j].body) {
                     console.log("*Meep*");
                     let sound = drums[j].getSound()
-                    synth.triggerAttackRelease(sound.note, sound.length);
-                    // if (debugLoad) {
-                    //     debugLoad = false;
-                    //     let oldBody = drums[j].loadObject(savedObject);
+                    drums[j].synth.triggerAttackRelease(sound.note, sound.length);
+                    //synth.triggerAttackRelease(sound.note, sound.length);
 
-                    //     Matter.Composite.remove(engine.world, oldBody);
-                    //     Matter.World.add(engine.world, drums[j].body);
-                    // }
                 }
+            }
         }
 
     }
@@ -366,22 +265,10 @@ export class Scene extends React.Component {
                 selection.destroy({ children: true });
                 selection = null;
             }
+            return;
         }
 
-        // alt mode - to be removed with drag and drop
-        else if (event.mouse.sourceEvents.mousedown.altKey) {
-            Tone.start();
-            let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
-            cannons.push(cannon);
-            this.addObject(cannon);
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
-            }
-        }
-
-        // normal click - select object under mouse
-        else {
+        if (this.state.selectedTool == "select") {
             // new select object - create new function for this
             if (selection == null) {
                 let currSelection = null;
@@ -420,6 +307,86 @@ export class Scene extends React.Component {
                 }
             }
         }
+
+        else if (this.state.selectedTool == "cannon") {
+            Tone.start();
+            let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
+            cannons.push(cannon);
+            this.addObject(cannon);
+            if (selection != null) {
+                selection.destroy({ children: true });
+                selection = null;
+            }
+        }
+        else { // anything else should be a type of instrument
+            if (this.state.selectedTool == 'drum') {
+                Tone.start();
+                console.log('creating instrument')
+                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth({
+                    pitchDecay: 0.008,
+                    octaves: 2,
+                    envelope: {
+                        attack: 0.0006,
+                        decay: 0.5,
+                        sustain: 0
+                    }
+                }).toDestination(),
+                    undefined,
+                    [{ x: 30, y: 20 }, { x: 30, y: -10 }, { x: -30, y: -10 }, { x: -30, y: 20 }]
+                )//<Cannon pos={position} body={null} />;
+                drums.push(instrument);
+                this.addObject(instrument);
+                if (selection != null) {
+                    selection.destroy({ children: true });
+                    selection = null;
+                }
+            } else if (this.state.selectedTool == 'cymbal') {
+                Tone.start();
+                console.log('creating instrument')
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth({
+                    frequency: 200,
+                    envelope: {
+                        attack: 0.0001,
+                        decay: 1.4,
+                        release: 0.2
+                    },
+                    harmonicity: 10,
+                    modulationIndex: 32,
+                    resonance: 4000,
+                    octaves: 1.5
+                }).toDestination(),
+                    { note: 'C2', length: '1n' },
+                    [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
+                drums.push(instrument);
+                this.addObject(instrument);
+                if (selection != null) {
+                    selection.destroy({ children: true });
+                    selection = null;
+                }
+            } else if (this.state.selectedTool == 'cowbell') {
+                Tone.start();
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth({
+                    harmonicity: 12,
+                    resonance: 800,
+                    modulationIndex: 20,
+                    envelope: {
+                        decay: 0.4,
+                    },
+                    volume: -15
+                }).toDestination(),
+                    { note: 'C2', length: '1n' },
+                    [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
+                drums.push(instrument);
+                this.addObject(instrument);
+                if (selection != null) {
+                    selection.destroy({ children: true });
+                    selection = null;
+                }
+            }
+        }
+
+        // default back to the select tool
+        this.setState({ selectedTool: "select" })
     }
 
     /**
@@ -496,7 +463,7 @@ export class Scene extends React.Component {
                 cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
-                newObject = new Instrument(objectNumber, pos, angle, mtObject.sound, shape, image, collisionFilter);
+                newObject = new Instrument(objectNumber, pos, angle, mtObject.synth ,mtObject.sound, shape, image, collisionFilter);
                 drums.push(newObject);
             }
             else {
@@ -559,56 +526,7 @@ export class Scene extends React.Component {
         for (let i = 0; i < objs.length; i++) {
             this.loadObject(objs[i]);
         }
-    }*/
-
-
-    // saved object temp storage
-
-
-    /*
-    
-    {
-        "MTObjType": "Cannon",
-        "MTObjVersion": "1.0.0",
-        "pos": {
-            "x": 200,
-            "y": 100
-        },
-        "angle": 0,
-        "image": null,
-        "shape": [
-            {
-                "x": -20,
-                "y": -20
-            },
-            {
-                "x": 40,
-                "y": 0
-            },
-            {
-                "x": -20,
-                "y": 20
-            },
-            {
-                "x": -30,
-                "y": 0
-            }
-        ],
-        "collisionFilter": {
-            "group": 0,
-            "category": 0,
-            "mask": 0
-        },
-        "fireLayer": 1,
-        "power": 20,
-        "marbleSize": 20,
-        "marbleColor": "rand",
-        "marbleCollisionFilter": {
-            "group": -1,
-            "category": 4294967295,
-            "mask": 4294967295
-        }
-        */
+    } */
 
     saveCreation() {
         allObjects = [];
@@ -636,31 +554,6 @@ export class Scene extends React.Component {
         }*/
         return allObjects
     }
-
-    /*    handleSave =
-            async (e) => {
-    
-                // let id = this.creationID;
-                let id = this.creationID;
-                let creation = this.creationFromDB;//"HELLO WORLD";//HINT: httpFetch handles JSON.stringify(objects);
-    
-                // http.post('/creations/save/' + id, { data: creation })
-                //     .then((res) => {
-                //         console.log(res);
-                //         // to save access
-                //         this.handleSaveAccess();
-                //     }).catch((ex) => {
-                //         console.log('not successful')
-                //     })
-    
-                try {
-                    await http.post('/creations/save/' + id, { data: creation })
-                    await this.handleSaveAccess();
-                } catch (ex) {
-                    console.log('not successful')
-                }
-                
-            }*/
 
     handleSave = async () => {
         let CreationID = this.creationID;
@@ -698,6 +591,10 @@ export class Scene extends React.Component {
         //     console.log('not successful')
         // })
     }
+
+
+
+
 
     saveObjectsToDB = async () => {
         let CreationID = this.creationID;
