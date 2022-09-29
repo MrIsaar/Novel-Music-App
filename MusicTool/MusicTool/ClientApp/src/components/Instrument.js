@@ -138,7 +138,7 @@ export class Instrument extends MTObj {
             MTObjType: 'Instrument',
             MTObjVersion: this.MTObjVersion,
             objectNumber: this.objectNumber,
-            position: this.position,
+            position: { x: this.position.x, y: this.position.y }, // changes from pixi position to basic json object
             angle: this.angle,
             image: this.image,
             shape: this.shape,

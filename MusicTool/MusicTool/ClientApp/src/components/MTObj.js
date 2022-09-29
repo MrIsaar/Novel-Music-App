@@ -92,8 +92,8 @@ export class MTObj extends PIXI.Graphics{
             MTObjType: 'MTObj',
             MTObjVersion: this.MTObjVersion,
             objectNumber: this.objectNumber,
-            position: this.position,
-            angle: this.angle,
+            position: { x: this.position.x, y: this.position.y }, // changes from pixi position to basic json object
+            angle: (this.angle % 360.0) * (3.141592 / 180),
             image: this.image,
             shape: this.shape,
             collisionFilter: this.collisionFilter

@@ -706,12 +706,12 @@ export class Scene extends React.Component {
         let Creation = this.creationFromDB;
         let allObjectsToSave = this.saveCreation();
         for (let i = 0; i < allObjectsToSave.length; i++) {
-            if (allObjectsToSave[i].objectNumber > 0)
-                continue; //TODO: REMOVE TO ENABLE ALL SAVE
+            /*if (allObjectsToSave[i].objectNumber > 0)
+                continue; //TODO: REMOVE TO ENABLE ALL SAVE*/
             try {
 
 
-                let json = cannons[i].saveObject();
+                let json = allObjectsToSave[i].saveObject();
                 /*json.shape = [{ "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 }];
                 json.angle = 2;
                 json.objectNumber = 10;
@@ -729,7 +729,7 @@ export class Scene extends React.Component {
                 const saveRes = await http.post('/creationObject/save/' + CreationID, { data: creationObj });
                 // store object id in json so next time it is synced
                 if (saveRes.creationObjectID != Id) {
-                    cannons[i].objectNumber = saveRes.creationObjectID;
+                    allObjectsToSave[i].objectNumber = saveRes.creationObjectID;
                 }
 
                 console.log(saveRes);
