@@ -23,13 +23,8 @@ export default class App extends Component {
       return (
       <Layout>
         <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/fetch-data' component={FetchData} />
-        <Route path='/sequencer-demo' component={SequencerDemo} />
-        <Route path='/cannon' component={Cannon} />
         <Route path='/scene/:creationID' component={Scene} />
         <Route path='/db-test' component={DBTest} />
-        <Route path='/PalletDemo' component={PalletDemo} />
         <Route path='/Login' component={Login} />
       </Layout>
     );
