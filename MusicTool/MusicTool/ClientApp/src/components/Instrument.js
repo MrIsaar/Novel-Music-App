@@ -11,11 +11,12 @@ export class Instrument extends MTObj {
      * @param {any} image
      * @param {any} sound default to C4, if passed a list it will play list in order
      */
-    constructor(objectNumber,pos, angle = 0, synth, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: 0xffffffff, mask: 0xffffffff })
+    constructor(objectNumber,pos, angle = 0, synth,synthrules, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: 0xffffffff, mask: 0xffffffff })
     {
 
         super(objectNumber,pos, angle, shape, collisionFilter, image);
         this.MTObjType = 'Instrument';
+        this.synthrules = synthrules;
         this.synth = synth;
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.body.collisionFilter = collisionFilter;
@@ -145,7 +146,7 @@ export class Instrument extends MTObj {
             shape: this.shape,
             collisionFilter: this.collisionFilter,
             sound: this.sound,
-            synth: this.synth
+            synthrules: this.synthrules
         }
     }
 
@@ -170,7 +171,8 @@ export class Instrument extends MTObj {
         this.changeCollisionFilter(savedJSON.collisionFilter);
         
         this.image = savedJSON.image;
-        this.synth = savedJSON.synth;
+        this.synthrules = savedJSON.synthrules;
+        this.synth = new Tone.MembraneSynth(this.synthrules).toDestination()
         this.sound = savedJSON.sound;
         if (this.sound[0] == undefined) {
             this.noteNumber = -1;

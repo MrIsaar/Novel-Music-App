@@ -321,8 +321,8 @@ export class Scene extends React.Component {
         else { // anything else should be a type of instrument
             if (this.state.selectedTool == 'drum') {
                 Tone.start();
-                console.log('creating instrument')
-                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth({
+                console.log('creating instrument');
+                let synthrules = {
                     pitchDecay: 0.008,
                     octaves: 2,
                     envelope: {
@@ -330,7 +330,8 @@ export class Scene extends React.Component {
                         decay: 0.5,
                         sustain: 0
                     }
-                }).toDestination(),
+                };
+                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth(synthrules).toDestination(), synthrules,
                     undefined,
                     [{ x: 30, y: 20 }, { x: 30, y: -10 }, { x: -30, y: -10 }, { x: -30, y: 20 }]
                 )//<Cannon pos={position} body={null} />;
@@ -343,7 +344,7 @@ export class Scene extends React.Component {
             } else if (this.state.selectedTool == 'cymbal') {
                 Tone.start();
                 console.log('creating instrument')
-                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth({
+                let synthrules = {
                     frequency: 200,
                     envelope: {
                         attack: 0.0001,
@@ -354,7 +355,8 @@ export class Scene extends React.Component {
                     modulationIndex: 32,
                     resonance: 4000,
                     octaves: 1.5
-                }).toDestination(),
+                };
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), synthrules,
                     { note: 'C2', length: '1n' },
                     [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
                 drums.push(instrument);
@@ -365,7 +367,7 @@ export class Scene extends React.Component {
                 }
             } else if (this.state.selectedTool == 'cowbell') {
                 Tone.start();
-                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth({
+                let synthrules = {
                     harmonicity: 12,
                     resonance: 800,
                     modulationIndex: 20,
@@ -373,7 +375,8 @@ export class Scene extends React.Component {
                         decay: 0.4,
                     },
                     volume: -15
-                }).toDestination(),
+                };
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), synthrules,
                     { note: 'C2', length: '1n' },
                     [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
                 drums.push(instrument);
@@ -463,7 +466,7 @@ export class Scene extends React.Component {
                 cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
-                newObject = new Instrument(objectNumber, pos, angle, mtObject.synth ,mtObject.sound, shape, image, collisionFilter);
+                newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthrules ,mtObject.sound, shape, image, collisionFilter);
                 drums.push(newObject);
             }
             else {
