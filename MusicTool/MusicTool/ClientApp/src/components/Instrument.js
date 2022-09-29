@@ -170,7 +170,7 @@ export class Instrument extends MTObj {
         this.changeCollisionFilter(savedJSON.collisionFilter);
         
         this.image = savedJSON.image;
-        
+        this.synth = savedJSON.synth;
         this.sound = savedJSON.sound;
         if (this.sound[0] == undefined) {
             this.noteNumber = -1;

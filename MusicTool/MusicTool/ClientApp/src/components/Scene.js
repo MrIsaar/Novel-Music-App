@@ -463,7 +463,7 @@ export class Scene extends React.Component {
                 cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
-                newObject = new Instrument(objectNumber, pos, angle, mtObject.sound, shape, image, collisionFilter);
+                newObject = new Instrument(objectNumber, pos, angle, mtObject.synth ,mtObject.sound, shape, image, collisionFilter);
                 drums.push(newObject);
             }
             else {
