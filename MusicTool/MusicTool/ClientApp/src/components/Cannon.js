@@ -3,13 +3,9 @@ import MTObj from "./MTObj";
 import Ball from "./Ball";
 
 // Cannon rendering constants
-const CANNON_COLOR = 0xff0000;
 const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
 
-
  export class Cannon extends MTObj  {
-
-
     /**
      * creates a cannon at specified position with angle.
      * 
@@ -22,8 +18,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      * @param {any} marbleCollisionFilter default is all
      */
      constructor(objectNumber, pos, angle = 0, power = 20, fireLayer = -1, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, shape = CANNON_SHAPE, collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
-
-        
          super(objectNumber,pos, angle, shape, collisionFilter, image)
         
         // body created in super MTObj
@@ -38,7 +32,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         this.MTObjType = 'Cannon';
         
         this.marbleCollisionFilter = marbleCollisionFilter;
-      
     }
 
     /**
@@ -47,13 +40,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      */
     updateFirelayer(newLayer) {
         this.fireOn = newLayer;
-    }
-
-    /**
-     *  Returns matter.js body of this cannon 
-     */
-    getBody() {
-        return this.body;
     }
 
     /**
@@ -79,20 +65,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
             color = this.marbleColor;
         }
 
-        //create ball
-       /* var ball = Matter.Bodies.circle(
-            this.position.x,
-            this.position.y,
-            this.marbleSize,
-            {
-                mass: 10,
-                restitution: 1,
-                friction: 0.005,
-                render: {
-                    fillStyle: color
-                },
-                collisionFilter: this.marbleCollisionFilter
-            });*/
         var ball = new Ball(this.position, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
 
         //set velocity
@@ -100,8 +72,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
          Matter.Body.setVelocity(ball.body, dv)
          return ball;
-
-
      }
 
     /**
@@ -126,7 +96,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
             marbleCollisionFilter: this.marbleCollisionFilter
         }
     }
-
 
     /**
      *  instatiate object based on saved version of this object from saveObject
@@ -153,7 +122,6 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         this.marbleCollisionFilter = savedJSON.marbleCollisionFilter;
         
         return previousBody;
-
     }
 }
 export default Cannon;
