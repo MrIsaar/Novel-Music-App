@@ -43,6 +43,7 @@ public class ApplicationContext : DbContext
 
         if (!context.CreationObject.Any())
         {
+            
             context.CreationObject.AddRange(
                 new CreationObject[]
                 {
@@ -70,19 +71,19 @@ public class ApplicationContext : DbContext
                     new CreationObject
                     {
                         CreationID = cID,
-                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\", \"objectNumber\": \"0\", \"position\":{\"x\":400,\"y\":150},\"angle\":0,\"image\":null,\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295},\"sound\":{ \"note\":\"E4\",\"length\":\"8n\"}}",
+                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\", \"objectNumber\": \"0\", \"position\":{\"x\":400,\"y\":150},\"angle\":0,\"image\":null,\"synthrules\":{ \"pitchDecay\": \"0.008\", \"octaves\": \"2\", \"envelope\": { \"attack\": \"0.0006\", \"decay\": \"0.5\", \"sustain\": \"0\" }},\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295},\"sound\":{ \"note\":\"E4\",\"length\":\"8n\"}}",
                         Type="Instrument"
                     },
                     new CreationObject
                     {
                         CreationID = cID,
-                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\", \"objectNumber\": \"0\", \"position\":{\"x\":400,\"y\":250},\"angle\":0,\"image\":null,\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295},\"sound\":{ \"note\":\"D4\",\"length\":\"8n\"}}",
+                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\", \"objectNumber\": \"0\", \"position\":{\"x\":400,\"y\":250},\"angle\":0,\"image\":null,\"synthrules\":{ \"pitchDecay\": \"0.008\", \"octaves\": \"2\", \"envelope\": { \"attack\": \"0.0006\", \"decay\": \"0.5\", \"sustain\": \"0\" }},\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295},\"sound\":{ \"note\":\"D4\",\"length\":\"8n\"}}",
                         Type="Instrument"
                     },
                     new CreationObject
                     {
                         CreationID = cID,
-                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\", \"objectNumber\": \"0\", \"position\":{\"x\":400,\"y\":350},\"angle\":0,\"image\":null,\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295},\"sound\":{ \"note\":\"C4\",\"length\":\"8n\"}}",
+                        Json = "{\"MTObjType\":\"Instrument\",\"MTObjVersion\":\"1.0.0\", \"objectNumber\": \"0\", \"position\":{\"x\":400,\"y\":350},\"angle\":0,\"image\":null,\"synthrules\":{ \"pitchDecay\": \"0.008\", \"octaves\": \"2\", \"envelope\": { \"attack\": \"0.0006\", \"decay\": \"0.5\", \"sustain\": \"0\" }},\"shape\":[{\"x\":-25,\"y\":-10},{\"x\":25,\"y\":-10},{\"x\":20,\"y\":10},{\"x\":-20,\"y\":10}],\"collisionFilter\":{ \"group\": -1, \"category\": 4294967295, \"mask\": 4294967295},\"sound\":{ \"note\":\"C4\",\"length\":\"8n\"}}",
                         Type="Instrument"
                     }
                 });
