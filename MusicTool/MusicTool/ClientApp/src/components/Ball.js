@@ -13,8 +13,6 @@ function getShape(radius) {
 }
 
  export class Ball extends MTObj  {
-
-
     /**
      * creates a cannon at specified position with angle.
      * 
@@ -26,9 +24,7 @@ function getShape(radius) {
      * @param {any} marbleSize default 20
      * @param {any} marbleCollisionFilter default is all
      */
-
      constructor(pos, marbleSize, marbleCollisionFilter, fireLayer, marbleColor , image = null) {
-
         let shape = [{ x: -10, y: 10 }, { x: 10, y: 0 }, { x: -10, y: -10 }, { x: -10, y: 0 }]
          super(-1,{ x: pos.x, y: pos.y }, 0, shape, marbleCollisionFilter, image)
         this.marbleSize = marbleSize;
@@ -40,7 +36,6 @@ function getShape(radius) {
             this.position.y,
             this.marbleSize,
             {
-                
                 mass: 10,
                 restitution: 1,
                 friction: 0.005,
@@ -51,17 +46,10 @@ function getShape(radius) {
             });
          this.body = ball;
          this.shape = getShape(marbleSize);
-       
         this.fireOn = fireLayer
-        
-
-        
         this.marbleSize = marbleSize;
         this.marbleColor = marbleColor;
         this.MTObjType = 'Ball';
-        
-        
-      
      }
 
      /**
@@ -79,8 +67,6 @@ function getShape(radius) {
          this.endFill();
      }
 
-
-
     /**
      * change fireLayer
      * @param {any} newLayer
@@ -96,10 +82,6 @@ function getShape(radius) {
         return this.body;
     }
 
-
-
-
-
     /**
     *   inherited method that should not be used
     *  
@@ -108,16 +90,12 @@ function getShape(radius) {
         return {};
     }
 
-
     /**
      *  inherited method that should not be used
      * @param {any} savedJSON
      */
     loadObject(savedJSON) {
-
-        
         return {};
-
     }
 }
 export default Ball;
