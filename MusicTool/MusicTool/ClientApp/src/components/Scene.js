@@ -8,11 +8,8 @@ import * as Tone from 'tone';
 import { Sequencer } from './Sequencer';
 import http from '../httpFetch';
 import * as PIXI from "pixi.js";
-
 import Instrument from './Instrument';
 import Toolbar from './Toolbar'
-
-
 
 var cannons = [];
 var balls = [];
@@ -22,8 +19,6 @@ var sounds = [];
 var otherObj = [];
 var allObjects = [];
 
-
-
 var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
@@ -31,9 +26,7 @@ var debugLoad = true;
 var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
 let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
 
-
 export class Scene extends React.Component {
-
     /**
      * create Scene object
      * @param {any} props
@@ -64,7 +57,6 @@ export class Scene extends React.Component {
         console.log(`Selected Tool: ${tool}`)
     }
 
-
     /**
      * initiates Matter.js engine and event handlers
      * 
@@ -76,9 +68,7 @@ export class Scene extends React.Component {
 
         // Create engine
         Tone.start();
-        this.engine = Engine.create({
-            // positionIterations: 20
-        });
+        this.engine = Engine.create();
 
         // Create renderer
         this.app = new PIXI.Application({
@@ -88,11 +78,9 @@ export class Scene extends React.Component {
             antialias: true
         });
 
-
         // add mouse control
         var mouse = Mouse.create(this.app.view),
             mouseConstraint = MouseConstraint.create(this.engine, {
-
                 mouse: mouse,
                 constraint: {
                     stiffness: 0.2,
@@ -104,70 +92,25 @@ export class Scene extends React.Component {
             });
         World.add(this.engine.world, mouseConstraint);
 
-
-        /**
-         *  Handle mouse movement 
-         *  updates selected body if clicking
-         */
-        Matter.Events.on(mouseConstraint, "mousemove",
-            function (event) {
-                let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-                if (event.source.mouse.button > -1 && selection != null) {
-                    selection.handleSelection(position.x, position.y);
-                }
-            });
-
-        /**
-         * Handle mouse up
-         * sets selection mode to none
-         */
-        Matter.Events.on(mouseConstraint, "mouseup",
-            function (event) {
-                let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-                if (selection != null) {
-                    selection.cleanMode();
-                }
-            });
-
-
-
-
-
         // Set event handlers
         Matter.Events.on(this.engine, "collisionStart", this.onCollision);
         Matter.Events.on(mouseConstraint, "mousedown", this.onMouseDown);
         Matter.Events.on(mouseConstraint, "mousemove", this.onMouseMove);
         Matter.Events.on(mouseConstraint, "mouseup", this.onMouseUp);
 
-        //START Scene Object initialization
-
-
-
         // add walls
         World.add(this.engine.world, [
-            // walls
             Matter.Bodies.rectangle(width / 2, 0, width, 50, { isStatic: true }),
             Matter.Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
-            //Bodies.rectangle(width / 2, height / 2, 50, height, { isStatic: true }),
             Matter.Bodies.rectangle(0, height / 2, 50, height, { isStatic: true })
         ]);
 
-
-
-
-
-
-
-        //END Scene Object initialization
-
         sounds.push(<div> <ToneExample /> </div>);
-
 
         // Start engine & renderer
         Engine.run(this.engine);
         document.querySelector("#scene").appendChild(this.app.view);
         this.app.ticker.add((delta) => {
-            //this.backgroundObjects.forEach(o => o.draw());
             cannons.forEach(c => c.draw());
             balls.forEach(b => b.draw());
             drums.forEach(d => d.draw());
@@ -433,8 +376,6 @@ export class Scene extends React.Component {
         }
     }
 
-
-
     addObject(object) {
         Matter.World.add(this.engine.world, [object.body]);
         this.app.stage.addChild(object);
@@ -483,8 +424,6 @@ export class Scene extends React.Component {
         }
     }
 
-
-
     /**
      * removes object from known cannon, ball, or instrument lists
      * returns true if object deleted
@@ -520,8 +459,6 @@ export class Scene extends React.Component {
 
                 //this.loadObjects(data.creationObject);
             });
-
-
     }
 
     /*loadObjects(objs) {
@@ -594,10 +531,6 @@ export class Scene extends React.Component {
         // })
     }
 
-
-
-
-
     saveObjectsToDB = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
@@ -608,8 +541,6 @@ export class Scene extends React.Component {
             /*if (allObjectsToSave[i].objectNumber > 0)
                 continue; //TODO: REMOVE TO ENABLE ALL SAVE*/
             try {
-
-
                 let json = allObjectsToSave[i].saveObject();
                 /*json.shape = [{ "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 }];
                 json.angle = 2;
