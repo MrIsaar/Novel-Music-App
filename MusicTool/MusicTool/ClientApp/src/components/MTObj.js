@@ -1,17 +1,13 @@
 ﻿import * as PIXI from "pixi.js";
 import Matter from "matter-js";
 
-
-
 export class MTObj extends PIXI.Graphics{
-    
     /**
      * creates a cannon at specified position with angle.
      * 
      * @param {any} pos    {x, y}
      * @param {any} shape shape of the object, defaulted to a square
      * @param {any} angle angle in radians
-
      */
     constructor(objectNumber,pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
         super()
@@ -78,14 +74,12 @@ export class MTObj extends PIXI.Graphics{
      */
     changeCollisionFilter(collisionFilter) {
         this.body.collisionFilter = collisionFilter;
-
         this.collisionFilter = collisionFilter
     }
 
     /**
      *  returns a simplified version  JSON object of this object that can be saved
      *  loaded with the loadObject function
-     *  
      */
     saveObject() {
         return {
@@ -99,7 +93,6 @@ export class MTObj extends PIXI.Graphics{
             collisionFilter: this.collisionFilter
         }
     }
-
 
     /**
      *  instatiate object based on saved version of this object from saveObject
@@ -117,7 +110,6 @@ export class MTObj extends PIXI.Graphics{
         this.image = savedJSON.image;
         
         return previousBody;
-
     }
 }
 export default MTObj;

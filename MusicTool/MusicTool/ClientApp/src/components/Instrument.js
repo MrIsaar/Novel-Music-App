@@ -13,7 +13,6 @@ export class Instrument extends MTObj {
      */
     constructor(objectNumber,pos, angle = 0, synth,synthrules, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: 0xffffffff, mask: 0xffffffff })
     {
-
         super(objectNumber,pos, angle, shape, collisionFilter, image);
         this.MTObjType = 'Instrument';
         this.synthrules = synthrules;
@@ -21,7 +20,6 @@ export class Instrument extends MTObj {
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
         this.body.collisionFilter = collisionFilter;
         this.sound = sound;
-        
         
         if (this.sound[0] == undefined) {
             this.noteNumber = -1;
@@ -34,8 +32,6 @@ export class Instrument extends MTObj {
                 texture: image
             };*/
         }
-         
-
     }
 
     /**
@@ -44,13 +40,6 @@ export class Instrument extends MTObj {
      */
     updateFirelayer(newLayer) {
         this.fireOn = newLayer;
-    }
-
-    /**
-     *  Returns matter.js body of this cannon 
-     */
-    getBody() {
-        return this.body;
     }
 
     /**
@@ -82,54 +71,6 @@ export class Instrument extends MTObj {
         }
     }
 
-
-
-    /**
-     *     firelayer must match fireOn value for cannon
-     *     if fire layer is -1 it will always fire
-     *     fireOn of -1 will always fire regardless of fireLayer
-     * 
-     * return ball with current pos, angle, and power of shot 
-     * returns null if not fired
-     * 
-     */
-    fireMarble(fireLayer = -1) {
-        if (fireLayer != -1 && this.fireOn != -1 && fireLayer != this.fireOn) {
-            return null;   // do not fire
-        }
-
-        // choose random color of marble
-        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
-        let color = "#" + randomColor;
-        let rand = Math.random();
-        if (rand > 0.6) { color = 'orange' }
-        if (this.marbleColor != "rand") {
-            color = this.marbleColor;
-        }
-
-        //create ball
-        var ball = Matter.Bodies.circle(
-            this.position.x,
-            this.position.y,
-            this.marbleSize,
-            {
-                mass: 10,
-                restitution: 1,
-                friction: 0.005,
-                render: {
-                    fillStyle: color
-                },
-                collisionFilter: { group: -1 }
-            });
-        //set velocity
-        let dv = { x: this.power * Math.cos(this.angle), y: this.power * Math.sin(this.angle) };
-        Matter.Body.setVelocity(ball, dv)
-        return ball;
-
-    }
-
-
-
     /**
      *  returns a simplified version  JSON object of this object that can be saved
      *  loaded with the loadObject function
@@ -149,7 +90,6 @@ export class Instrument extends MTObj {
             synthrules: this.synthrules
         }
     }
-
 
     /**
      *  instatiate object based on saved version of this object from saveObject
@@ -182,7 +122,6 @@ export class Instrument extends MTObj {
         }
         
         return previousBody;
-
     }
 }
 export default Instrument;
