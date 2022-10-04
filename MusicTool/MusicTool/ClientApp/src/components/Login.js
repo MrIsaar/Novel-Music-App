@@ -262,7 +262,25 @@ export class Login extends Component {
                                                         <Modal.Header closeButton>
                                                             <Modal.Title>My Project</Modal.Title>
                                                         </Modal.Header>
-                                                        <Modal.Body>Place holder for project link or something else</Modal.Body>
+                                                        <Modal.Body>
+                                                            <div>{/* HINT: Not local server url!!!*/}</div>
+                                                            <FacebookShareButton
+                                                                url={"https://music-tool.azurewebsites.net/scene/" + `${id}`}
+                                                                hashtag={"#BeatDrop"}
+                                                            >
+                                                                <FacebookIcon size={32} round /> Share to Facebook </FacebookShareButton>
+
+                                                            <br></br>
+                                                            <br></br>
+
+                                                            <TwitterShareButton
+                                                                title={"I've just made a Beat Drop project! Come and visit my workspace! \n"}
+                                                                url={"https://music-tool.azurewebsites.net/scene/" + `${id}` + "\n"}
+                                                                hashtags={["BeatDrop", "MusicTool"]}
+                                                            >
+                                                                <TwitterIcon size={32} round /> Share to Twitter </TwitterShareButton>
+
+                                                        </Modal.Body>
                                                         <Modal.Footer>
                                                             <Button variant="primary" onClick={this.handleCloseShare}>
                                                                 Close
