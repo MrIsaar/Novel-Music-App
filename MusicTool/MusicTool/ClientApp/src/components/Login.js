@@ -299,7 +299,7 @@ export class Login extends Component {
                                                             <Modal.Title>My Project</Modal.Title>
                                                         </Modal.Header>
                                                         <Modal.Body>
-
+                                                            <div>{/* HINT: Not local server url!!!*/}</div>
                                                             <FacebookShareButton
                                                                 url={"https://music-tool.azurewebsites.net/scene/" + `${id}`}
                                                                 hashtag={"#BeatDrop"}
