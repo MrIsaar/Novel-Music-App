@@ -11,14 +11,6 @@ import * as PIXI from "pixi.js";
 import Instrument from './Instrument';
 import Toolbar from './Toolbar'
 
-var cannons = [];
-var balls = [];
-var selection = null;
-var drums = [];
-var sounds = [];
-var otherObj = [];
-var allObjects = [];
-
 var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
@@ -27,6 +19,13 @@ var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { no
 let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
 
 export class Scene extends React.Component {
+    cannons = [];
+    balls = [];
+    selection = null;
+    drums = [];
+    sounds = [];
+    otherObj = [];
+
     /**
      * create Scene object
      * @param {any} props
@@ -105,17 +104,17 @@ export class Scene extends React.Component {
             Matter.Bodies.rectangle(0, height / 2, 50, height, { isStatic: true })
         ]);
 
-        sounds.push(<div> <ToneExample /> </div>);
+        this.sounds.push(<div> <ToneExample /> </div>);
 
         // Start engine & renderer
         Engine.run(this.engine);
         document.querySelector("#scene").appendChild(this.app.view);
         this.app.ticker.add((delta) => {
-            cannons.forEach(c => c.draw());
-            balls.forEach(b => b.draw());
-            drums.forEach(d => d.draw());
-            if (selection !== null)
-                selection.draw();
+            this.cannons.forEach(c => c.draw());
+            this.balls.forEach(b => b.draw());
+            this.drums.forEach(d => d.draw());
+            if (this.selection !== null)
+                this.selection.draw();
         });
     }
 
@@ -171,12 +170,12 @@ export class Scene extends React.Component {
     onCollision(event) {
         console.log("collision");
         for (let i = 0; i < event.pairs.length; i++) {
-            for (let j = 0; j < drums.length; j++) {
+            for (let j = 0; j < this.drums.length; j++) {
                 console.log("wtf");
-                if (event.pairs[i].bodyA === drums[j].body || event.pairs[i].bodyB === drums[j].body) {
+                if (event.pairs[i].bodyA === this.drums[j].body || event.pairs[i].bodyB === this.drums[j].body) {
                     console.log("*Meep*");
-                    let sound = drums[j].getSound()
-                    drums[j].synth.triggerAttackRelease(sound.note, sound.length);
+                    let sound = this.drums[j].getSound()
+                    this.drums[j].synth.triggerAttackRelease(sound.note, sound.length);
                     //synth.triggerAttackRelease(sound.note, sound.length);
 
                 }
@@ -198,53 +197,53 @@ export class Scene extends React.Component {
 
         // shift mode - Fire Cannons - to be removed
         if (event.mouse.sourceEvents.mousedown.shiftKey) {
-            for (let i = 0; i < cannons.length; i++) {
-                let ball = cannons[i].fireMarble(-1);
-                balls.push(ball);
+            for (let i = 0; i < this.cannons.length; i++) {
+                let ball = this.cannons[i].fireMarble(-1);
+                this.balls.push(ball);
                 this.addObject(ball);
             }
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
+            if (this.selection != null) {
+                this.selection.destroy({ children: true });
+                this.selection = null;
             }
             return;
         }
 
         if (this.state.selectedTool == "select") {
             // new select object - create new function for this
-            if (selection == null) {
+            if (this.selection == null) {
                 let currSelection = null;
-                for (let i = 0; i < cannons.length && !currSelection; i++) {
-                    if (Matter.Bounds.contains(cannons[i].body.bounds, position))
-                        currSelection = cannons[i];
+                for (let i = 0; i < this.cannons.length && !currSelection; i++) {
+                    if (Matter.Bounds.contains(this.cannons[i].body.bounds, position))
+                        currSelection = this.cannons[i];
                 }
-                for (let i = 0; i < drums.length && !currSelection; i++) {
-                    if (Matter.Bounds.contains(drums[i].body.bounds, position))
-                        currSelection = drums[i];
+                for (let i = 0; i < this.drums.length && !currSelection; i++) {
+                    if (Matter.Bounds.contains(this.drums[i].body.bounds, position))
+                        currSelection = this.drums[i];
                 }
                 if (currSelection != null) {
-                    selection = new Selection(currSelection);
-                    this.app.stage.addChild(selection);
+                    this.selection = new Selection(currSelection);
+                    this.app.stage.addChild(this.selection);
                 }
             }
             // update object depending on selection mode
             else {
-                if (!selection.handleSelection(position.x, position.y)) {
-                    if (selection != null) { // deselect
-                        selection.destroy({ children: true });
-                        selection = null;
+                if (!this.selection.handleSelection(position.x, position.y)) {
+                    if (this.selection != null) { // deselect
+                        this.selection.destroy({ children: true });
+                        this.selection = null;
                     }
                     //Check if another cannon should be selected
                     let currCannon = null;
-                    for (let i = 0; i < cannons.length; i++) {
-                        if (Matter.Bounds.contains(cannons[i].body.bounds, position)) {
-                            currCannon = cannons[i];
+                    for (let i = 0; i < this.cannons.length; i++) {
+                        if (Matter.Bounds.contains(this.cannons[i].body.bounds, position)) {
+                            currCannon = this.cannons[i];
                             break;
                         }
                     }
                     if (currCannon != null) {
-                        selection = new Selection(currCannon);
-                        this.app.stage.addChild(selection);
+                        this.selection = new Selection(currCannon);
+                        this.app.stage.addChild(this.selection);
                     }
                 }
             }
@@ -253,11 +252,11 @@ export class Scene extends React.Component {
         else if (this.state.selectedTool == "cannon") {
             Tone.start();
             let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
-            cannons.push(cannon);
+            this.cannons.push(cannon);
             this.addObject(cannon);
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
+            if (this.selection != null) {
+                this.selection.destroy({ children: true });
+                this.selection = null;
             }
         }
         else { // anything else should be a type of instrument
@@ -277,11 +276,11 @@ export class Scene extends React.Component {
                     undefined,
                     [{ x: 30, y: 20 }, { x: 30, y: -10 }, { x: -30, y: -10 }, { x: -30, y: 20 }]
                 )//<Cannon pos={position} body={null} />;
-                drums.push(instrument);
+                this.drums.push(instrument);
                 this.addObject(instrument);
-                if (selection != null) {
-                    selection.destroy({ children: true });
-                    selection = null;
+                if (this.selection != null) {
+                    this.selection.destroy({ children: true });
+                    this.selection = null;
                 }
             } else if (this.state.selectedTool == 'cymbal') {
                 Tone.start();
@@ -301,11 +300,11 @@ export class Scene extends React.Component {
                 let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), synthrules,
                     { note: 'C2', length: '1n' },
                     [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
-                drums.push(instrument);
+                this.drums.push(instrument);
                 this.addObject(instrument);
-                if (selection != null) {
-                    selection.destroy({ children: true });
-                    selection = null;
+                if (this.selection != null) {
+                    this.selection.destroy({ children: true });
+                    this.selection = null;
                 }
             } else if (this.state.selectedTool == 'cowbell') {
                 Tone.start();
@@ -321,11 +320,11 @@ export class Scene extends React.Component {
                 let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), synthrules,
                     { note: 'C2', length: '1n' },
                     [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
-                drums.push(instrument);
+                this.drums.push(instrument);
                 this.addObject(instrument);
-                if (selection != null) {
-                    selection.destroy({ children: true });
-                    selection = null;
+                if (this.selection != null) {
+                    this.selection.destroy({ children: true });
+                    this.selection = null;
                 }
             }
         }
@@ -340,8 +339,8 @@ export class Scene extends React.Component {
      */
     onMouseMove(event) {
         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-        if (event.source.mouse.button > -1 && selection != null) {
-            selection.handleSelection(position.x, position.y);
+        if (event.source.mouse.button > -1 && this.selection != null) {
+            this.selection.handleSelection(position.x, position.y);
         }
     }
 
@@ -351,8 +350,8 @@ export class Scene extends React.Component {
      */
     onMouseUp(event) {
         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
-        if (selection != null) {
-            selection.cleanMode();
+        if (this.selection != null) {
+            this.selection.cleanMode();
         }
     }
 
@@ -362,17 +361,17 @@ export class Scene extends React.Component {
      * @param {any} fireLayer default -1
      */
     fireBalls(fireLayer = -1) {
-        for (let i = 0; i < cannons.length; i++) {
-            let ball = cannons[i].fireMarble(fireLayer);
+        for (let i = 0; i < this.cannons.length; i++) {
+            let ball = this.cannons[i].fireMarble(fireLayer);
             if (ball == null)
                 continue;
-            balls.push(ball);
+            this.balls.push(ball);
 
             this.addObject(ball);
         }
-        if (selection != null && selection.bodies != undefined) {
-            Matter.Composite.remove(this.engine.world, selection.bodies)
-            selection = null;
+        if (this.selection != null && this.selection.bodies != undefined) {
+            Matter.Composite.remove(this.engine.world, this.selection.bodies)
+            this.selection = null;
         }
     }
 
@@ -398,16 +397,16 @@ export class Scene extends React.Component {
             // create temp object to load object into
             if (mtObject.MTObjType == "MTObj") {
                 newObject = new MTObj(objectNumber, pos, angle, shape, collisionFilter, image);
-                otherObj.push(newObject);
+                this.otherObj.push(newObject);
             }
             else if (mtObject.MTObjType == "Cannon") {
                 //newObject = new Cannon(pos);
                 newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
-                cannons.push(newObject);
+                this.cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
                 newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthrules ,mtObject.sound, shape, image, collisionFilter);
-                drums.push(newObject);
+                this.drums.push(newObject);
             }
             else {
                 console.log("unknown type");
@@ -468,20 +467,20 @@ export class Scene extends React.Component {
     } */
 
     saveCreation() {
-        allObjects = [];
+        let allObjects = [];
         /* cannons */
-        for (let i = 0; i < cannons.length; i++) {
+        for (let i = 0; i < this.cannons.length; i++) {
             //cannons[i].savedObject();
-            allObjects.push(cannons[i]);
+            allObjects.push(this.cannons[i]);
         }
         /* drums   */
-        for (let i = 0; i < drums.length; i++) {
-            allObjects.push(drums[i]);
+        for (let i = 0; i < this.drums.length; i++) {
+            allObjects.push(this.drums[i]);
         }
         
         /* otherObj*/
-        for (let i = 0; i < otherObj.length; i++) {
-            allObjects.push(otherObj[i]);
+        for (let i = 0; i < this.otherObj.length; i++) {
+            allObjects.push(this.otherObj[i]);
         }
         /* sounds  */
         /*for (let i = 0; i < sounds.length; i++) {
