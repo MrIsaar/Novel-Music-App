@@ -84,7 +84,7 @@ export class Instrument extends MTObj {
             MTObjVersion: this.MTObjVersion,
             objectNumber: this.objectNumber,
             position: { x: this.position.x, y: this.position.y }, // changes from pixi position to basic json object
-            angle: this.angle,
+            angle: this.body.angle,
             image: this.image,
             shape: this.shape,
             collisionFilter: this.collisionFilter,
@@ -116,6 +116,7 @@ export class Instrument extends MTObj {
         this.image = savedJSON.image;
         // mebrane vs  metal
         this.synthrules = savedJSON.synthrules; // tone has all by its self
+        this.synthtype = savedJSON.synthtype;
         //this.synth = new Tone.MembraneSynth(this.synthrules).toDestination()
         this.sound = savedJSON.sound;
         if (this.sound[0] == undefined) {

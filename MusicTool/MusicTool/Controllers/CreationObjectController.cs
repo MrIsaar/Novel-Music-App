@@ -45,52 +45,48 @@ namespace MusicTool.Controllers
         // POST: api/creationobject/save/2
         // postman returns 1 if success
         [HttpPost("save/{id}")]
-        public async Task<ActionResult<CreationObject>> SaveCreationObject(int id, [FromBody] CreationObject creationObject)
+        public async Task<ActionResult<List<CreationObject>>> SaveCreationObject(int id, [FromBody] List<CreationObject> creationObjects)
         {
-            if (id != creationObject.CreationID)
+            List < CreationObject > storingObjects = new List<CreationObject> ();
+            foreach (var creationObject in creationObjects)
             {
-                return new BadRequestObjectResult(new { message = "id != CreationID" });
-            }
-            var data = (JObject)JsonConvert.DeserializeObject(creationObject.Json);
-            var objectNumber = data["objectNumber"].Value<int>();
-
-
-            var objectType = data["MTObjType"].Value<string>();
-            if (creationObject.Type != objectType)
-            {
-                return new BadRequestObjectResult(new { message = "object type in saved json does not match type in creation Object" });
-            }
-
-            var res = await _context.CreationObject.Where(p => p.CreationID == creationObject.CreationID && p.CreationObjectID == objectNumber).ToListAsync();
-            
-            if (res != null && res.Count > 0)
-            {
-                if (res.Count > 1)
+                if (id != creationObject.CreationID)
                 {
-                    return new BadRequestObjectResult(new { message = "Multiple objects with same Id in database?" });
+                    continue;
                 }
-                try
+                var data = (JObject)JsonConvert.DeserializeObject(creationObject.Json);
+                var objectNumber = data["objectNumber"].Value<int>();
+
+
+                var objectType = data["MTObjType"].Value<string>();
+                if (creationObject.Type != objectType)
                 {
+                    continue;
+                }
+
+                var res = await _context.CreationObject.Where(p => p.CreationID == creationObject.CreationID && p.CreationObjectID == objectNumber).ToListAsync();
+
+                if (res != null && res.Count > 0)
+                {
+                    if (res.Count > 1)
+                    {
+                        return new BadRequestObjectResult(new { message = "Multiple objects with same Id in database?" });
+                    }
+
                     // TODO: replace with updating the db with new json
-
+                    creationObject.CreationObjectID = res[0].CreationObjectID;
                     res[0].Json = creationObject.Json;
-                    
                 }
-                catch(Exception x)
+                else
                 {
-                    return new StatusCodeResult(418); // the server is a teapot
+                    await _context.CreationObject.AddAsync(creationObject);
                 }
 
-                
-            }
-            else
-            {
-                await _context.CreationObject.AddAsync(creationObject);
-            }
-            
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+                storingObjects.Add(creationObject);
 
-            return creationObject;
+            }
+            return storingObjects;
         }
 
         // auto delete all CreationObjects related to this creationID

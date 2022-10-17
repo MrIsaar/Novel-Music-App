@@ -63,7 +63,7 @@ namespace MusicTool.Controllers
             await _context.Sequencer.AddAsync(sequencer);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return sequencer;
         }
 
         // auto delete all sequencers related to this creationID

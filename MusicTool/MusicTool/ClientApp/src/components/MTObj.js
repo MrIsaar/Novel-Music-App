@@ -30,6 +30,7 @@ export class MTObj extends PIXI.Graphics{
         this.clear();
         this.x = this.position.x;
         this.y = this.position.y;
+        this.angle = this.body.angle * (180 / 3.141592);
         this.beginFill(PIXI.utils.string2hex(this.body.render.fillStyle));
         this.drawPolygon(this.shape);
         this.endFill();

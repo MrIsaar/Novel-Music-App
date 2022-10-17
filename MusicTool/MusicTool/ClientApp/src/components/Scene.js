@@ -154,7 +154,7 @@ export class Scene extends React.Component {
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
                         <button onClick={this.handleSave}>------SAVE------</button>
-                        <button onClick={this.saveObjectsToDB}>------SAVE-Object------</button>
+                        <button id="saveToDBButton" onClick={this.saveObjectsToDB}>------SAVE-Object------</button>
                     </div>
 
                 </div>
@@ -408,34 +408,34 @@ export class Scene extends React.Component {
             else if (mtObject.MTObjType == "Instrument") {
                 switch (mtObject.synthtype) {
                     case "Membrane":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Metal":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MetalSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MetalSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Mono":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MonoSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MonoSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Duo":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.DuoSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.DuoSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "AM":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.AMSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.AMSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Noise":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.NoiseSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.NoiseSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Pluck":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.PluckSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.PluckSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Poly":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.PolySynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.PolySynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     case "Sampler":
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.Sampler(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.Sampler(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
                         break;
                     default: //Synth
-                        newObject = new Instrument(objectNumber, pos, angle, new Tone.Synth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.Synth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
 
 
                 }
@@ -500,32 +500,7 @@ export class Scene extends React.Component {
         }
     } */
 
-    saveCreation() {
-        allObjects = [];
-        /* cannons */
-        for (let i = 0; i < cannons.length; i++) {
-            //cannons[i].savedObject();
-            allObjects.push(cannons[i]);
-        }
-        /* drums   */
-        for (let i = 0; i < drums.length; i++) {
-            allObjects.push(drums[i]);
-        }
-        
-        /* otherObj*/
-        for (let i = 0; i < otherObj.length; i++) {
-            allObjects.push(otherObj[i]);
-        }
-        /* sounds  */
-        /*for (let i = 0; i < sounds.length; i++) {
-
-        }*/
-        /* synth   */
-        /*for (let i = 0; i < synth.length; i++) {
-
-        }*/
-        return allObjects
-    }
+    
 
     handleSave = async () => {
         let CreationID = this.creationID;
@@ -564,43 +539,94 @@ export class Scene extends React.Component {
         // })
     }
 
+    saveCreation() {
+        allObjects = Array(cannons.length + drums.length + otherObj.length);
+
+
+        let json = {};
+        /* cannons */
+        for (let i = 0; i < cannons.length; i++) {
+            let creationObj = {};
+            json = cannons[i].saveObject();
+            creationObj.creationObjectID = undefined;
+            creationObj.type = json.MTObjType;
+            creationObj.json = json;
+            creationObj.creationID = this.creationID;
+            allObjects[i] = creationObj;
+
+        }
+        /* drums   */
+        for (let i = 0; i < drums.length; i++) {
+            let creationObj = {};
+            json = drums[i].saveObject();
+            creationObj.creationObjectID = undefined;
+            creationObj.type = json.MTObjType;
+            creationObj.json = json;
+            creationObj.creationID = this.creationID;
+            allObjects[cannons.length + i] = creationObj;
+
+        }
+        /* otherObj*/
+        for (let i = 0; i < otherObj.length; i++) {
+            let creationObj = {};
+            json = otherObj[i].saveObject();
+            creationObj.creationObjectID = undefined;
+            creationObj.type = json.MTObjType;
+            creationObj.json = json;
+            creationObj.creationID = this.creationID;
+            allObjects[cannons.length + otherObj.length + i] = creationObj;
+
+        }
+
+        return allObjects
+    }
+
     saveObjectsToDB = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let Creation = this.creationFromDB;
         let allObjectsToSave = this.saveCreation();
-        for (let i = 0; i < allObjectsToSave.length; i++) {
-            /*if (allObjectsToSave[i].objectNumber > 0)
-                continue; //TODO: REMOVE TO ENABLE ALL SAVE*/
-            try {
-                let json = allObjectsToSave[i].saveObject();
-                /*json.shape = [{ "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 }];
-                json.angle = 2;
-                json.objectNumber = 10;
-                json.position = { "x": 300, "y": 150 };*/
 
-                let MTObjType = json.MTObjType;
-                let Id = json.objectNumber;
-                let creationObj = {};
-                //console.log(creationObj);
-                creationObj.creationObjectID = undefined;
-                creationObj.type = MTObjType;
-                creationObj.json = json;
-                creationObj.creationID = CreationID;
-                //console.log(creationObj);
-                const saveRes = await http.post('/creationObject/save/' + CreationID, { data: creationObj });
-                // store object id in json so next time it is synced
-                if (saveRes.creationObjectID != Id) {
-                    allObjectsToSave[i].objectNumber = saveRes.creationObjectID;
+        //disable button
+        // saveToDBButton
+        let savebutton = document.getElementById("saveToDBButton");
+        savebutton.disabled = true;
+        const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
+        // store object id in json so next time it is synced
+        if (saveRes.length != allObjectsToSave.length) {
+            console.log("Something went wrong with saving");
+
+        }
+            
+        for (let i = 0; i < saveRes.length; i++) {
+            if (allObjectsToSave[i].json.objectNumber != saveRes[i].creationObjectID && allObjectsToSave[i].type == saveRes[i].type) {
+                if (i < cannons.length) {
+                    cannons[i].creationObjectID = saveRes[i].creationObjectID;
                 }
-
-                console.log(saveRes);
-
-            } catch (ex) {
-                console.log(ex)
+                else if (i < cannons.length + drums.length ) {
+                    drums[i - cannons.length].creationObjectID = saveRes[i].creationObjectID;
+                }
+                else {
+                    otherObj[i - cannons.length - drums.length].creationObjectID = saveRes[i].creationObjectID;
+                }
             }
         }
+
+        console.log(`succesfully saved: `);
+        console.log(saveRes);
+        try {
+            let sequencerObj = this.sequencerSavedState;
+            sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined
+            let saveRes = await http.post('/sequencer/save/' + CreationID, { data: sequencerObj });
+            console.log(`succesfully saved sequencer`);
+        } catch (ex) {
+            console.log(ex)
+        } finally {
+            // enable button
+            savebutton.disabled = false;
+        }
+
     }
 
 } export default Scene;
