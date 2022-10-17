@@ -11,12 +11,14 @@ import * as PIXI from "pixi.js";
 import Instrument from './Instrument';
 import Toolbar from './Toolbar'
 
-var cannons = [];
 var balls = [];
 var selection = null;
-var drums = [];
-var sounds = [];
+
+var cannons  = [];
+var drums    = [];
 var otherObj = [];
+
+var sounds = []; // obsolete i think
 var allObjects = [];
 
 var synth = new Tone.Synth().toDestination();
@@ -153,8 +155,9 @@ export class Scene extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
+                        <button id="saveToDBButton" onClick={() => { this.deleteObject(selection != null ? selection.selected : null); }} >-----DELETE-Object-----</button>
                         <button onClick={this.handleSave}>------SAVE------</button>
-                        <button id="saveToDBButton" onClick={this.saveObjectsToDB}>------SAVE-Object------</button>
+                        <button id="saveToDBButton" onClick={this.saveObjectsToDB}>-----SAVE---Objects----</button>
                     </div>
 
                 </div>
@@ -462,10 +465,64 @@ export class Scene extends React.Component {
      * returns true if object deleted
      *         false if object not found
      */
-    deleteObject(object) {
+    deleteObject(object) { // selected if the 
         //remove with delete
         //remove with backspace
         //remove by drag out of bounds
+        if (object == null) {
+            console.log("nothing selected, nothing deleted");
+            return;
+        }
+        let index = -1;
+        let objectToDelete = null;
+        try {
+            if (object.MTObjType == "MTObj") {
+                index = otherObj.indexOf(object);
+                if (object.objectNumber <= 0) {
+                    otherObj.remove(index);
+                }
+                else {
+                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
+                        .then((res) => {
+                            otherObj.remove(index);
+                            console.log("other");
+                        });
+                }
+            }else if (object.MTObjType == "Cannon") {
+                index = cannons.indexOf(object);
+                if (object.objectNumber <= 0) {
+                    cannons.remove(index);
+                }
+                else {
+                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
+                    .then((res) => {
+                        cannons.remove(index);
+                        console.log("cannon");
+                    });
+                }
+            }else if (object.MTObjType == "Instrument") {
+                index = drums.indexOf(object);
+                if (object.objectNumber <= 0) {
+                    cannons.remove(index);
+                }
+                else {
+                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
+                    .then((res) => {
+                        drums.remove(index);
+                        console.log("drum");
+
+                    });
+                }
+            }else {
+                console.log("something is wrong");
+            }
+            console.log("object removed");
+        }
+        catch (ex) {
+            console.log("could not delete object");
+            console.log(ex);
+        }
+
     }
 
     loadCreation() {
