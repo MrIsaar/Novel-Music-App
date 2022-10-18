@@ -155,7 +155,7 @@ export class Scene extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.fireBalls.bind(this)}>------FIRE------</button>
-                        <button id="saveToDBButton" onClick={() => { this.deleteObject(selection != null ? selection.selected : null); }} >-----DELETE-Object-----</button>
+                        <button id="deleteToDBButton" onClick={() => { this.deleteObject(selection != null ? selection.selected : null); }} >-----DELETE-Object-----</button>
                         <button onClick={this.handleSave}>------SAVE------</button>
                         <button id="saveToDBButton" onClick={this.saveObjectsToDB}>-----SAVE---Objects----</button>
                     </div>
@@ -474,41 +474,42 @@ export class Scene extends React.Component {
             return;
         }
         let index = -1;
-        let objectToDelete = null;
+        
         try {
             if (object.MTObjType == "MTObj") {
                 index = otherObj.indexOf(object);
                 if (object.objectNumber <= 0) {
-                    otherObj.remove(index);
+                    otherObj.pop(index);
+                    
                 }
                 else {
                     http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
                         .then((res) => {
-                            otherObj.remove(index);
+                            otherObj.pop(index);
                             console.log("other");
                         });
                 }
             }else if (object.MTObjType == "Cannon") {
                 index = cannons.indexOf(object);
                 if (object.objectNumber <= 0) {
-                    cannons.remove(index);
+                    cannons.pop(index);
                 }
                 else {
                     http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
                     .then((res) => {
-                        cannons.remove(index);
+                        cannons.pop(index);
                         console.log("cannon");
                     });
                 }
             }else if (object.MTObjType == "Instrument") {
                 index = drums.indexOf(object);
                 if (object.objectNumber <= 0) {
-                    cannons.remove(index);
+                    drums.pop(index);
                 }
                 else {
                     http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
                     .then((res) => {
-                        drums.remove(index);
+                        drums.pop(index);
                         console.log("drum");
 
                     });
@@ -516,6 +517,15 @@ export class Scene extends React.Component {
             }else {
                 console.log("something is wrong");
             }
+            
+            if (selection != null) {
+                selection.destroy({ children: true });
+                selection = null;
+            }
+           /* index = this.engine.world.bodies.indexOf(object.body)
+            this.engine.world.bodies.pop(index)*/
+            Matter.World.remove(this.engine.world,object.body);
+            object.destroy({ children: true });
             console.log("object removed");
         }
         catch (ex) {
@@ -647,8 +657,10 @@ export class Scene extends React.Component {
 
         //disable button
         // saveToDBButton
-        let savebutton = document.getElementById("saveToDBButton");
+        let savebutton = document.getElementById("saveToDBButton"); 
+        let deletebutton = document.getElementById("deleteToDBButton");
         savebutton.disabled = true;
+        deletebutton.disabled = true;
         const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
         // store object id in json so next time it is synced
         if (saveRes.length != allObjectsToSave.length) {
@@ -682,6 +694,7 @@ export class Scene extends React.Component {
         } finally {
             // enable button
             savebutton.disabled = false;
+            deletebutton.disabled = false;
         }
 
     }
