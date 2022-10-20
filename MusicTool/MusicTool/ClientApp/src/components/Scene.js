@@ -21,12 +21,14 @@ var otherObj = [];
 var sounds = []; // obsolete i think
 var allObjects = [];
 
-var synth = new Tone.Synth().toDestination();
 const width = 1000;
 const height = 500;
-var debugLoad = true;
-var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
-let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
+
+const keyboardEvent = null;
+//const MAX_BALLS = 35;
+//var debugLoad = true;
+//var noteList = [{ note: 'A3', length: '8n' }, { note: 'B3', length: '8n' }, { note: 'C4', length: '8n' }, { note: 'D4', length: '8n' }, { note: 'E4', length: '8n' }, { note: 'F4', length: '8n' }, { note: 'G4', length: '8n' }]
+//let savedObject = { "MTObjType": "Instrument", "MTObjVersion": "0.9.0", "pos": { "x": 300, "y": 250 }, "angle": 0, "image": "./PalletImages/1.png", "shape": [{ "x": -25, "y": -10 }, { "x": 25, "y": -10 }, { "x": 20, "y": 10 }, { "x": -20, "y": 10 }], "collisionFilter": { "group": 0, "category": 0xFFFFFFFF, "mask": 0xFFFFFFFF }, "sound": [{ "note": "A3", "length": "8n" }, { "note": "B3", "length": "8n" }, { "note": "C4", "length": "8n" }] };
 
 export class Scene extends React.Component {
     /**
@@ -46,6 +48,7 @@ export class Scene extends React.Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
+        this.onBackSpace = this.onBackSpace.bind(this);
         this.fireBalls = this.fireBalls.bind(this);
 
         let { creationID } = this.props.match.params;
@@ -100,6 +103,23 @@ export class Scene extends React.Component {
         Matter.Events.on(mouseConstraint, "mousemove", this.onMouseMove);
         Matter.Events.on(mouseConstraint, "mouseup", this.onMouseUp);
 
+        let sceneArea = document.getElementById('_Scene');
+       
+        /*sceneArea.on('keydown', function (event) {
+            //console.log(event.keyCode);
+            switch (event.keyCode) {
+                case 8:
+                case 46:
+                    this.onBackSpace();
+                    break;
+
+                //....your actions for the keys .....
+            }
+        });
+
+        sceneArea.focus();*/
+        
+
         // add walls
         World.add(this.engine.world, [
             Matter.Bodies.rectangle(width / 2, 0, width, 50, { isStatic: true }),
@@ -145,12 +165,15 @@ export class Scene extends React.Component {
         }
 
         return (
-            <div id="_Scene" >
+            
+            
+            <div id="_Scene" tabIndex={0} onKeyDown={this.onBackSpace} >
                 <Toolbar
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
                 ></Toolbar>
-                <div ref="scene" id="scene" />
+                
+                <div ref="scene" id="scene"  />
                 <div className="row">
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
@@ -161,8 +184,8 @@ export class Scene extends React.Component {
                     </div>
 
                 </div>
-                <p>alt click to create a cannon, shift click to fire.<br />
-                    click to select cannons to move or rotate</p>
+
+                <p> click to select cannons or instruments to move or rotate</p>
                 {sequencer}
             </div>
         );
@@ -175,9 +198,9 @@ export class Scene extends React.Component {
         console.log("collision");
         for (let i = 0; i < event.pairs.length; i++) {
             for (let j = 0; j < drums.length; j++) {
-                console.log("wtf");
+                
                 if (event.pairs[i].bodyA === drums[j].body || event.pairs[i].bodyB === drums[j].body) {
-                    console.log("*Meep*");
+                    //console.log("*Meep*");
                     let sound = drums[j].getSound()
                     drums[j].synth.triggerAttackRelease(sound.note, sound.length);
                     //synth.triggerAttackRelease(sound.note, sound.length);
@@ -192,28 +215,16 @@ export class Scene extends React.Component {
      *      Mouse down handling
      *
      *      normal click - Select mode
-     *      shift click  - Fire marbles from all cannons  - to be removed with sequencer
+     *      
      *      Alt click    - Create Cannon at location - to be removed with drag and drop
      *
      */
     onMouseDown(event) {
         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
 
-        // shift mode - Fire Cannons - to be removed
-        if (event.mouse.sourceEvents.mousedown.shiftKey) {
-            for (let i = 0; i < cannons.length; i++) {
-                let ball = cannons[i].fireMarble(-1);
-                balls.push(ball);
-                this.addObject(ball);
-            }
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
-            }
-            return;
-        }
+        
 
-        if (this.state.selectedTool == "select") {
+        if (this.state.selectedTool === "select") {
             // new select object - create new function for this
             if (selection == null) {
                 let currSelection = null;
@@ -253,7 +264,7 @@ export class Scene extends React.Component {
             }
         }
 
-        else if (this.state.selectedTool == "cannon") {
+        else if (this.state.selectedTool === "cannon") {
             Tone.start();
             let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
             cannons.push(cannon);
@@ -264,7 +275,7 @@ export class Scene extends React.Component {
             }
         }
         else { // anything else should be a type of instrument
-            if (this.state.selectedTool == 'drum') {
+            if (this.state.selectedTool === 'drum') {
                 Tone.start();
                 console.log('creating instrument');
                 let synthrules = {
@@ -286,7 +297,7 @@ export class Scene extends React.Component {
                     selection.destroy({ children: true });
                     selection = null;
                 }
-            } else if (this.state.selectedTool == 'cymbal') {
+            } else if (this.state.selectedTool === 'cymbal') {
                 Tone.start();
                 console.log('creating instrument')
                 let synthrules = {
@@ -310,7 +321,7 @@ export class Scene extends React.Component {
                     selection.destroy({ children: true });
                     selection = null;
                 }
-            } else if (this.state.selectedTool == 'cowbell') {
+            } else if (this.state.selectedTool === 'cowbell') {
                 Tone.start();
                 let synthrules = {
                     harmonicity: 12,
@@ -353,10 +364,18 @@ export class Scene extends React.Component {
      * sets selection mode to none
      */
     onMouseUp(event) {
-        let position = { x: event.mouse.position.x, y: event.mouse.position.y }
+        
         if (selection != null) {
             selection.cleanMode();
         }
+    }
+
+    onBackSpace(event) {
+        if (event.key == 'Backspace' || event.key == 'Delete') {
+            this.deleteObject(selection != null ? selection.selected : null);
+            
+        }
+        document.getElementById("_Scene").blur();
     }
 
     /**
@@ -373,7 +392,12 @@ export class Scene extends React.Component {
 
             this.addObject(ball);
         }
-        if (selection != null && selection.bodies != undefined) {
+        // remove old balls from world  //appears to just cause lag
+        /*if (balls.length > MAX_BALLS) {
+            
+                this.deleteObject({ MTObjType:"Ball" });
+         }*/
+        if (selection !== null && selection.bodies !== undefined) {
             Matter.Composite.remove(this.engine.world, selection.bodies)
             selection = null;
         }
@@ -399,16 +423,16 @@ export class Scene extends React.Component {
             let image = mtObject.image;
 
             // create temp object to load object into
-            if (mtObject.MTObjType == "MTObj") {
+            if (mtObject.MTObjType === "MTObj") {
                 newObject = new MTObj(objectNumber, pos, angle, shape, collisionFilter, image);
                 otherObj.push(newObject);
             }
-            else if (mtObject.MTObjType == "Cannon") {
+            else if (mtObject.MTObjType === "Cannon") {
                 //newObject = new Cannon(pos);
                 newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 cannons.push(newObject);
             }
-            else if (mtObject.MTObjType == "Instrument") {
+            else if (mtObject.MTObjType === "Instrument") {
                 switch (mtObject.synthtype) {
                     case "Membrane":
                         newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthtype, mtObject.sound, shape, image, collisionFilter);
@@ -473,51 +497,61 @@ export class Scene extends React.Component {
             console.log("nothing selected, nothing deleted");
             return;
         }
+        if (object.MTObjType === "Ball") {
+
+            //short circut because it is the most common deletion
+            // always delete oldest ball
+            object = balls.shift();
+            Matter.World.remove(this.engine.world, object.body);
+            object.destroy({ children: true });
+            return;
+
+        }
         let index = -1;
         
         try {
-            if (object.MTObjType == "MTObj") {
-                index = otherObj.indexOf(object);
-                if (object.objectNumber <= 0) {
-                    otherObj.pop(index);
-                    
-                }
-                else {
-                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
-                        .then((res) => {
-                            otherObj.pop(index);
-                            console.log("other");
-                        });
-                }
-            }else if (object.MTObjType == "Cannon") {
+             if (object.MTObjType === "Cannon") {
                 index = cannons.indexOf(object);
                 if (object.objectNumber <= 0) {
                     cannons.pop(index);
                 }
                 else {
                     http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
-                    .then((res) => {
-                        cannons.pop(index);
-                        console.log("cannon");
-                    });
+                        .then((res) => {
+                            cannons.pop(index);
+                            console.log("cannon deleting");
+                        });
                 }
-            }else if (object.MTObjType == "Instrument") {
+            } else if (object.MTObjType === "Instrument") {
                 index = drums.indexOf(object);
                 if (object.objectNumber <= 0) {
                     drums.pop(index);
                 }
                 else {
                     http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
-                    .then((res) => {
-                        drums.pop(index);
-                        console.log("drum");
+                        .then((res) => {
+                            drums.pop(index);
+                            console.log("drum deleting");
 
-                    });
+                        });
                 }
-            }else {
+            } else if (object.MTObjType === "MTObj") {
+                index = otherObj.indexOf(object);
+                if (object.objectNumber <= 0) {
+                    otherObj.pop(index);
+
+                }
+                else {
+                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
+                        .then((res) => {
+                            otherObj.pop(index);
+                            console.log("other deleting");
+                        });
+                }
+            } else {
                 console.log("something is wrong");
             }
-            
+
             if (selection != null) {
                 selection.destroy({ children: true });
                 selection = null;
@@ -526,7 +560,7 @@ export class Scene extends React.Component {
             this.engine.world.bodies.pop(index)*/
             Matter.World.remove(this.engine.world,object.body);
             object.destroy({ children: true });
-            console.log("object removed");
+            //console.log("object removed");
         }
         catch (ex) {
             console.log("could not delete object");
@@ -652,7 +686,7 @@ export class Scene extends React.Component {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
-        let Creation = this.creationFromDB;
+        //let Creation = this.creationFromDB;
         let allObjectsToSave = this.saveCreation();
 
         //disable button
@@ -663,13 +697,13 @@ export class Scene extends React.Component {
         deletebutton.disabled = true;
         const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
         // store object id in json so next time it is synced
-        if (saveRes.length != allObjectsToSave.length) {
+        if (saveRes.length !== allObjectsToSave.length) {
             console.log("Something went wrong with saving");
 
         }
             
         for (let i = 0; i < saveRes.length; i++) {
-            if (allObjectsToSave[i].json.objectNumber != saveRes[i].creationObjectID && allObjectsToSave[i].type == saveRes[i].type) {
+            if (allObjectsToSave[i].json.objectNumber !== saveRes[i].creationObjectID && allObjectsToSave[i].type === saveRes[i].type) {
                 if (i < cannons.length) {
                     cannons[i].creationObjectID = saveRes[i].creationObjectID;
                 }
@@ -689,6 +723,7 @@ export class Scene extends React.Component {
             sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined
             let saveRes = await http.post('/sequencer/save/' + CreationID, { data: sequencerObj });
             console.log(`succesfully saved sequencer`);
+            console.log(saveRes);
         } catch (ex) {
             console.log(ex)
         } finally {

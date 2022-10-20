@@ -27,6 +27,9 @@ export class MTObj extends PIXI.Graphics{
      *  Draw shape
      */
     draw() {
+        if (this._geometry == null) {
+            return;
+        }
         this.clear();
         this.x = this.position.x;
         this.y = this.position.y;
