@@ -16,7 +16,7 @@ export class Sequencer extends Component {
 
         this._noteMatrix = [];
         this._trackIDs = [];
-        this._trackNames = [];
+        let _trackNames = [];
 
         if (props.savedState) {
             let save = props.savedState;
@@ -24,7 +24,7 @@ export class Sequencer extends Component {
             save.json.tracks.map(t => {
                 this._noteMatrix.push(t.notes);
                 this._trackIDs.push(t.id);
-                this._trackNames.push(t.name);
+                _trackNames.push(t.name);
             })
 
             let maxID = Math.max(...this._trackIDs);
@@ -34,7 +34,8 @@ export class Sequencer extends Component {
                 numTracks: this._noteMatrix.length,
                 currentStepID: 0,
                 lifetimeNumTracks: maxID + 1,
-                loading: props.loading
+                loading: props.loading,
+                trackNames: []
 
             }
         } else {
@@ -44,11 +45,11 @@ export class Sequencer extends Component {
                 numTracks: 4,
                 currentStepID: 0,
                 lifetimeNumTracks: 4,
-                loading: props.loading
-
+                loading: props.loading,
+                trackNames: []
             }
 
-        this.callbacks = props.callbacks;
+            this.callbacks = props.callbacks;
 
             for (let i = 0; i < this.state.numTracks; i++) {
                 let row = [];
@@ -57,14 +58,15 @@ export class Sequencer extends Component {
                 }
                 this._noteMatrix.push(row);
                 this._trackIDs.push(i);
-                this._trackNames.push("Track " + i);
+                _trackNames.push("Track " + i);
             }
         }
+        this.state.trackNames = _trackNames;
 
         this.callback = props.callback;
 
 
-        
+
 
         this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.numSteps), '8n');
         Tone.Transport.start();
@@ -103,21 +105,12 @@ export class Sequencer extends Component {
         let trackIndex = this._trackIDs.indexOf(trackID);
         this._noteMatrix.splice(trackIndex, 1);
         this._trackIDs.splice(trackIndex, 1);
-        this._trackNames.splice(trackIndex, 1);
-        
-        //for (let i = 0; i < this.state.numTracks; i++) {
-        //    if (this._trackIDs[i] != trackID) { // dont copy the track to be removed
-        //        newMatrix.push(this._noteMatrix[i]);
-        //        newTrackIDs.push(this._trackIDs[i]);
-        //        newTrackNames.push(this._trackNames[i]);
-        //    }
-        //}
+        //this._trackNames.splice(trackIndex, 1);
 
-        //this._noteMatrix = newMatrix;
-        //this._trackIDs = newTrackIDs;
-        //this._trackNames = newTrackNames;
-
-        this.setState({numTracks: this.state.numTracks - 1});
+        this.setState(prev => ({
+            numTracks: prev.numTracks - 1,
+            trackNames: prev.trackNames.filter((item, idx) => idx !== trackIndex)
+        }));
     }
 
     removeTrack = this._removeTrack.bind(this);
@@ -129,16 +122,20 @@ export class Sequencer extends Component {
         let row = [...Array(this.state.numSteps)].map((_, i) => { return false; });
         this._noteMatrix.push(row);
         this._trackIDs.push(this.state.lifetimeNumTracks + 1);
-        this._trackNames.push("Track " + this.state.lifetimeNumTracks);
-        this.setState({
+
+        this.setState(prev => ({
             lifetimeNumTracks: this.state.lifetimeNumTracks + 1,
-            numTracks: this.state.numTracks + 1
-        });
+            numTracks: this.state.numTracks + 1,
+            trackNames: prev.trackNames.concat("New Track")
+        }));
 
     }
 
     addTrack = this._addTrack.bind(this);
 
+    /**
+     * Toggles a single note in the note matrix.
+     */
     toggleNote(trackID, step) {
         let trackIdx = this._trackIDs.indexOf(trackID);
         this._noteMatrix[trackIdx][step] = !this._noteMatrix[trackIdx][step];
@@ -147,8 +144,30 @@ export class Sequencer extends Component {
         }
     }
 
-    
+    /**
+     * Updates the given track name
+     */
+    changeTrackName(trackID, name) {
+        let trackIdx = this._trackIDs.indexOf(trackID);
+        this.setState(prev => {
+            const list = prev.trackNames.map((item, j) => {
+                if (j === trackIdx) {
+                    return name;
+                } else {
+                    return item;
+                }
+            });
+            return {
+                trackNames: list
+            };
+        });
 
+    }
+
+
+    /**
+     * Starts the sequencer.
+     * */
     _startSequence() {
         Tone.start();
         if (this._sequencer.state !== 'started') {
@@ -157,6 +176,9 @@ export class Sequencer extends Component {
         Tone.Transport.start();
     }
 
+    /**
+     * Stops the sequencer.
+     * */
     _stopSequence() {
         //Tone.Transport.stop();
         Tone.Transport.pause();
@@ -181,11 +203,12 @@ export class Sequencer extends Component {
                     key={i}
                     trackID={id}
                     currentStepID={this.state.currentStepID}
-                    title={this._trackNames[i]}
+                    trackName={this.state.trackNames[i]}
                     noteCount={this.state.numSteps}
                     onNotes={this._noteMatrix[i]}
                     toggleNote={this.toggleNote.bind(this)}
                     removeTrack={this.removeTrack}
+                    changeTrackName={this.changeTrackName.bind(this)}
                 />
             )
         })
@@ -199,12 +222,9 @@ export class Sequencer extends Component {
                 <div className="col-auto">
                     {tracks}
                 </div>
-                <Button endIcon={<AddBoxIcon />} onClick={this.addTrack}>
-                    Add Track
-                </Button>
-                
-               
-                
+
+
+
                 <div></div>
             </div>
         );

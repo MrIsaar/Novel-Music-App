@@ -1,6 +1,8 @@
 ﻿
 import Matter from "matter-js";
 import MTObj from "./MTObj";
+import * as Tone from 'tone';
+
 
 export class Instrument extends MTObj {
 
