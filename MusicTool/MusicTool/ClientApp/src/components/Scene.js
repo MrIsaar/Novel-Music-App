@@ -206,7 +206,7 @@ export class Scene {
                         sustain: 0
                     }
                 };
-                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth(synthrules).toDestination(), synthrules,
+                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth(synthrules).toDestination(), "Membrane",
                     undefined,
                     [{ x: 30, y: 20 }, { x: 30, y: -10 }, { x: -30, y: -10 }, { x: -30, y: 20 }]
                 )//<Cannon pos={position} body={null} />;
@@ -231,7 +231,7 @@ export class Scene {
                     resonance: 4000,
                     octaves: 1.5
                 };
-                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), synthrules,
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
                     { note: 'C2', length: '1n' },
                     [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
                 this.drums.push(instrument);
@@ -251,7 +251,7 @@ export class Scene {
                     },
                     volume: -15
                 };
-                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), synthrules,
+                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
                     { note: 'C2', length: '1n' },
                     [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
                 this.drums.push(instrument);
@@ -333,8 +333,38 @@ export class Scene {
                 this.cannons.push(newObject);
             }
             else if (mtObject.MTObjType == "Instrument") {
-                newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthrules ,mtObject.sound, shape, image, collisionFilter);
-                this.drums.push(newObject);
+                switch (mtObject.synthtype) {
+                    case "Membrane":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MembraneSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Metal":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MetalSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Mono":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.MonoSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Duo":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.DuoSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "AM":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.AMSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Noise":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.NoiseSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Pluck":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.PluckSynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Poly":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.PolySynth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    case "Sampler":
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.Sampler(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                        break;
+                    default: //Synth
+                        newObject = new Instrument(objectNumber, pos, angle, new Tone.Synth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
+                }
+                drums.push(newObject);
             }
             else {
                 console.log("unknown type");
