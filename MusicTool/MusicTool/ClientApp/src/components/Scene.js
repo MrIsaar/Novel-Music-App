@@ -22,11 +22,10 @@ export class Scene {
     selectedTool = "select";
     drums = [];
     sounds = [];
-    otherObj = [];
 
     /**
      * create Scene object
-     * @param {any} props
+     * @param {any} options
      */
     constructor(options = { objectAdded: () => { }}) {
         Tone.start();
@@ -328,11 +327,7 @@ export class Scene {
             let image = mtObject.image;
 
             // create temp object to load object into
-            if (mtObject.MTObjType == "MTObj") {
-                newObject = new MTObj(objectNumber, pos, angle, shape, collisionFilter, image);
-                this.otherObj.push(newObject);
-            }
-            else if (mtObject.MTObjType == "Cannon") {
+            if (mtObject.MTObjType == "Cannon") {
                 //newObject = new Cannon(pos);
                 newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 this.cannons.push(newObject);
@@ -362,7 +357,7 @@ export class Scene {
      * Does not include temporary simulation objects (e.g. Balls).
      */
     getAllObjects() {
-        return this.cannons.concat(this.drums, this.otherObj);
+        return this.cannons.concat(this.drums);
     }
 
     /**
