@@ -300,8 +300,8 @@ export class Scene {
 
             this.addObject(ball);
         }
-        if (this.selection != null && this.selection.bodies != undefined) {
-            Matter.Composite.remove(this.engine.world, this.selection.bodies)
+        if (this.selection != null) {
+            this.selection.destroy();
             this.selection = null;
         }
     }
