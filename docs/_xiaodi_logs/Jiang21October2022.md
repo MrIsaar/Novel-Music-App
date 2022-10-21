@@ -1,5 +1,5 @@
 ---
-week: 8
+week: 9
 date: 2022-10-21
 ---
 # Log for Week {{page.week}}: 2022-10-14 - 2022-10-21
