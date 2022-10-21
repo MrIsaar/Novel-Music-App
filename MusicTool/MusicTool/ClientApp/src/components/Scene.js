@@ -364,7 +364,7 @@ export class Scene {
                     default: //Synth
                         newObject = new Instrument(objectNumber, pos, angle, new Tone.Synth(mtObject.synthrules).toDestination(), mtObject.synthrules, mtObject.sound, shape, image, collisionFilter);
                 }
-                drums.push(newObject);
+                this.drums.push(newObject);
             }
             else {
                 console.log("unknown type");
