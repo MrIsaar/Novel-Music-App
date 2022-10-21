@@ -7,6 +7,7 @@ date: 2022-10-21
 Time estimate: 6 hours
 
 Update design document. <br> 
+Work on the User Guide. <br> 
 Meet with team to talk about killing features and update due dates.
 
 - Teammates worked with:
