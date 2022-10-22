@@ -4,6 +4,7 @@ import Scene from "./Scene.js";
 import Toolbar from "./Toolbar.js";
 import { Sequencer } from "./Sequencer.js";
 import ToneExample from "./ToneSetup"
+import Matter, { Engine, World, Mouse, MouseConstraint } from "matter-js";
 
 export class MTClient extends React.Component {
     scene;
@@ -64,7 +65,7 @@ export class MTClient extends React.Component {
         }
 
         return (
-            <div id="_Scene" >
+            <div id="_Scene" tabIndex={0} onKeyDown={this.onKeyDown}>
                 <Toolbar
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
@@ -75,7 +76,8 @@ export class MTClient extends React.Component {
                     <div className="col-3">
                         <button onClick={this.scene.fireBalls}>------FIRE------</button>
                         <button onClick={this.handleSave}>------SAVE------</button>
-                        <button onClick={this.saveObjectsToDB}>------SAVE-Object------</button>
+                        <button onClick={this.saveObjectsToDB} id="saveToDBButton">------SAVE-Object------</button>
+                        <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >-----DELETE-Object-----</button>
                     </div>
 
                 </div>
@@ -85,6 +87,28 @@ export class MTClient extends React.Component {
             </div>
         );
     }
+
+    /**
+     * triggers if any key is down
+     * used to delete via the keyboard
+     * @param {any} event
+     */
+    onKeyDown = (event) => {
+        if (event.key == 'Backspace' || event.key == 'Delete') {
+            this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null);
+
+        }
+        else if (event.key == 'a' || event.key == 'b') {
+
+            console.log("you pressed a or b")
+        }
+        else {
+            console.log("you pressed a keyboard button")
+        }
+        document.getElementById("_Scene").blur();
+    }
+
+
 
     loadCreation() {
         fetch('/api/Creations/' + this.creationID)
@@ -153,38 +177,122 @@ export class MTClient extends React.Component {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
-        let Creation = this.creationFromDB;
-        let allObjectsToSave = this.saveCreation();
-        for (let i = 0; i < allObjectsToSave.length; i++) {
-            /*if (allObjectsToSave[i].objectNumber > 0)
-                continue; //TODO: REMOVE TO ENABLE ALL SAVE*/
-            try {
-                let json = allObjectsToSave[i].saveObject();
-                /*json.shape = [{ "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 }];
-                json.angle = 2;
-                json.objectNumber = 10;
-                json.position = { "x": 300, "y": 150 };*/
+        //let Creation = this.creationFromDB;
+        let allObjectsToSave = this.scene.getAllObjects(CreationID);
 
-                let MTObjType = json.MTObjType;
-                let Id = json.objectNumber;
-                let creationObj = {};
-                //console.log(creationObj);
-                creationObj.creationObjectID = undefined;
-                creationObj.type = MTObjType;
-                creationObj.json = json;
-                creationObj.creationID = CreationID;
-                //console.log(creationObj);
-                const saveRes = await http.post('/creationObject/save/' + CreationID, { data: creationObj });
-                // store object id in json so next time it is synced
-                if (saveRes.creationObjectID != Id) {
-                    allObjectsToSave[i].objectNumber = saveRes.creationObjectID;
+        //disable buttons        
+        let savebutton = document.getElementById("saveToDBButton");
+        let deletebutton = document.getElementById("deleteToDBButton");
+        savebutton.disabled = true;
+        deletebutton.disabled = true;
+
+
+        const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
+        // store object id in json so next time it is synced
+        if (saveRes.length !== allObjectsToSave.length) {
+            console.log("Something went wrong with saving");
+
+        }
+
+        for (let i = 0; i < saveRes.length; i++) {
+            if (allObjectsToSave[i].json.objectNumber !== saveRes[i].creationObjectID && allObjectsToSave[i].type === saveRes[i].type) {
+                if (i < this.scene.cannons.length) {
+                    this.scene.cannons[i].creationObjectID = saveRes[i].creationObjectID;
                 }
-
-                console.log(saveRes);
-
-            } catch (ex) {
-                console.log(ex)
+                else if (i < this.scene.cannons.length + this.scene.drums.length) {
+                    this.scene.drums[i - this.scene.cannons.length].creationObjectID = saveRes[i].creationObjectID;
+                }
+                
             }
         }
+
+        console.log(`succesfully saved: `);
+        console.log(saveRes);
+        try {
+            let sequencerObj = this.sequencerSavedState;
+            sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined
+            let saveRes = await http.post('/sequencer/save/' + CreationID, { data: sequencerObj });
+            console.log(`succesfully saved sequencer`);
+            console.log(saveRes);
+        } catch (ex) {
+            console.log(ex)
+        } finally {
+            // enable button
+            savebutton.disabled = false;
+            deletebutton.disabled = false;
+        }
+
+    }
+
+    /**
+     * removes object from known cannon, ball, or instrument lists
+     * returns true if object deleted
+     *         false if object not found
+     */
+    deleteObject = (object) => { // selected if the 
+        //remove with delete
+        //remove with backspace
+        //remove by drag out of bounds
+        if (object == null) {
+            console.log("nothing selected, nothing deleted");
+            return;
+        }
+        if (object.MTObjType === "Ball") {
+
+            //short circut because it is the most common deletion
+            // always delete oldest ball
+            object = this.scene.balls.shift();
+            Matter.World.remove(this.engine.world, object.body);
+            object.destroy({ children: true });
+            return;
+
+        }
+        let index = -1;
+
+        try {
+            if (object.MTObjType === "Cannon") {
+                index = this.scene.cannons.indexOf(object);
+                if (object.objectNumber <= 0) {
+                    this.scene.cannons.pop(index);
+                }
+                else {
+                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
+                        .then((res) => {
+                            this.scene.cannons.pop(index);
+                            console.log("cannon deleting");
+                        });
+                }
+            } else if (object.MTObjType === "Instrument") {
+                index = this.scene.drums.indexOf(object);
+                if (object.objectNumber <= 0) {
+                    this.scene.drums.pop(index);
+                }
+                else {
+                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
+                        .then((res) => {
+                            this.scene.drums.pop(index);
+                            console.log("drum deleting");
+
+                        });
+                }
+            }  else {
+                console.log("something is wrong");
+            }
+
+            if (this.scene.selection != null) {
+                this.scene.selection.destroy({ children: true });
+                this.scene.selection = null;
+            }
+            /* index = this.engine.world.bodies.indexOf(object.body)
+             this.engine.world.bodies.pop(index)*/
+            Matter.World.remove(this.scene.engine.world, object.body);
+            object.destroy({ children: true });
+            //console.log("object removed");
+        }
+        catch (ex) {
+            console.log("could not delete object");
+            console.log(ex);
+        }
+
     }
 }

@@ -8,7 +8,7 @@ import * as Tone from 'tone';
 import * as PIXI from "pixi.js";
 import Instrument from './Instrument';
 
-var synth = new Tone.Synth().toDestination();
+
 const width = 1000;
 const height = 500;
 
@@ -33,7 +33,6 @@ export class Scene {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
-        this.onBackSpace = this.onBackSpace.bind(this);
         this.fireBalls = this.fireBalls.bind(this);
 
         this.init();
@@ -120,9 +119,7 @@ export class Scene {
         console.log("collision");
         for (let i = 0; i < event.pairs.length; i++) {
             for (let j = 0; j < this.drums.length; j++) {
-                console.log("wtf");
                 if (event.pairs[i].bodyA === this.drums[j].body || event.pairs[i].bodyB === this.drums[j].body) {
-                    console.log("*Meep*");
                     let sound = this.drums[j].getSound()
                     this.drums[j].synth.triggerAttackRelease(sound.note, sound.length);
                     //synth.triggerAttackRelease(sound.note, sound.length);
@@ -301,13 +298,7 @@ export class Scene {
         }
     }
 
-    onBackSpace(event) {
-        if (event.key == 'Backspace' || event.key == 'Delete') {
-            this.deleteObject(selection != null ? selection.selected : null);
-            
-        }
-        document.getElementById("_Scene").blur();
-    }
+    
 
     /**
      * Fires balls on fire layer
@@ -406,263 +397,31 @@ export class Scene {
         }
     }
 
+    
+
     /**
      * Return a list containing every object in the scene.
      * 
      * Does not include temporary simulation objects (e.g. Balls).
      */
-    getAllObjects() {
-        return this.cannons.concat(this.drums);
-    }
-
-    /**
-     * removes object from known cannon, ball, or instrument lists
-     * returns true if object deleted
-     *         false if object not found
-     */
-    deleteObject(object) { // selected if the 
-        //remove with delete
-        //remove with backspace
-        //remove by drag out of bounds
-        if (object == null) {
-            console.log("nothing selected, nothing deleted");
-            return;
-        }
-        if (object.MTObjType === "Ball") {
-
-            //short circut because it is the most common deletion
-            // always delete oldest ball
-            object = balls.shift();
-            Matter.World.remove(this.engine.world, object.body);
-            object.destroy({ children: true });
-            return;
-
-        }
-        let index = -1;
-        
-        try {
-             if (object.MTObjType === "Cannon") {
-                index = cannons.indexOf(object);
-                if (object.objectNumber <= 0) {
-                    cannons.pop(index);
-                }
-                else {
-                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
-                        .then((res) => {
-                            cannons.pop(index);
-                            console.log("cannon deleting");
-                        });
-                }
-            } else if (object.MTObjType === "Instrument") {
-                index = drums.indexOf(object);
-                if (object.objectNumber <= 0) {
-                    drums.pop(index);
-                }
-                else {
-                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
-                        .then((res) => {
-                            drums.pop(index);
-                            console.log("drum deleting");
-
-                        });
-                }
-            } else if (object.MTObjType === "MTObj") {
-                index = otherObj.indexOf(object);
-                if (object.objectNumber <= 0) {
-                    otherObj.pop(index);
-
-                }
-                else {
-                    http.delete('/creationobject/' + object.objectNumber, { data: this.creationID })
-                        .then((res) => {
-                            otherObj.pop(index);
-                            console.log("other deleting");
-                        });
-                }
-            } else {
-                console.log("something is wrong");
-            }
-
-            if (selection != null) {
-                selection.destroy({ children: true });
-                selection = null;
-            }
-           /* index = this.engine.world.bodies.indexOf(object.body)
-            this.engine.world.bodies.pop(index)*/
-            Matter.World.remove(this.engine.world,object.body);
-            object.destroy({ children: true });
-            //console.log("object removed");
-        }
-        catch (ex) {
-            console.log("could not delete object");
-            console.log(ex);
-        }
-
-    }
-
-    loadCreation() {
-        fetch('/api/Creations/' + this.creationID)
-            //fetch('/api/Creations/' + 1)
-            .then(res => res.json())
-            .then(data => {
-                console.log("creation data: ", data);
-                console.log("object list: ", data.creationObject);
-                for (let i = 0; i < data.creationObject.length; i++) {
-                    console.log(`DB obj Saved cannon ${i}: `, data.creationObject[i]);
-                    console.log(`DB Saved MTObj cannon ${i}: `, data.creationObject[i].json);
-                    console.log(`DB Saved MTObj.type cannon ${i}: `, data.creationObject[i].json.MTObjType);
-                    console.log(`DB Saved MTObj.position cannon ${i}: `, data.creationObject[i].json.position);
-                    console.log(`DB Saved MTObj.angle cannon ${i}: `, data.creationObject[i].json.angle);
-                    this.loadObject(data.creationObject[i].creationObjectID, data.creationObject[i].json);
-                }
-                this.creationFromDB = data;
-                this.sequencerSavedState = data.sequencer;
-                this.setState({
-                    loading: false,
-                    sequencerData: data.sequencer
-                });
-
-                //this.loadObjects(data.creationObject);
-            });
-    }
-
-    /*loadObjects(objs) {
-        for (let i = 0; i < objs.length; i++) {
-            this.loadObject(objs[i]);
-        }
-    } */
-
-    
-
-    handleSave = async () => {
-        let CreationID = this.creationID;
-        let UserID = http.getUserId();
-        let AccessLevel = 2;
-        let Creation = this.creationFromDB;
-
-        try {
-            // Should store access before creation!
-            // save access
-            const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
-            // TODO: other db save post here are samples for saving creation, creationobject and sequencer
-            // CHECK Postman for more details on JSON_string <- MUST be in type of string
-
-            // save creations
-            // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
-            // await http.post('/creations/save/' + CreationID, { data: { CreationID, JSON_string })
-
-            // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
-            // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
-
-            // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
-            // json = '{ "MTObjType": "Cannon", "MTObjVersion": "1.0.0","objectNumber":"2", "position": { "x": 300, "y": 150 }, "angle": 2, "image": null, "shape": [ { "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 } ], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "fireLayer": 1, "power": 20, "marbleSize": 20, "marbleColor": "rand", "marbleCollisionFilter": { "group": -1, "category": 4294967295, "mask": 4294967295 } }';
-
-            console.log(res);
-            console.log('save access successful');
-        } catch (ex) {
-            console.log(ex)
-        }
-
-        // .then((res) => {
-        //     console.log(res);
-        //     console.log('save access successful');
-        // }).catch((ex) => {
-        //     console.log('not successful')
-        // })
-    }
-
-    saveCreation() {
-        allObjects = Array(cannons.length + drums.length + otherObj.length);
-
-
+    getAllObjects(creationID) {
+        let allObjects = this.cannons.concat(this.drums);
+       
         let json = {};
         /* cannons */
-        for (let i = 0; i < cannons.length; i++) {
+        for (let i = 0; i < allObjects.length; i++) {
+
             let creationObj = {};
-            json = cannons[i].saveObject();
+            json = allObjects[i].saveObject();
             creationObj.creationObjectID = undefined;
             creationObj.type = json.MTObjType;
             creationObj.json = json;
-            creationObj.creationID = this.creationID;
+            creationObj.creationID = creationID;
             allObjects[i] = creationObj;
-
         }
-        /* drums   */
-        for (let i = 0; i < drums.length; i++) {
-            let creationObj = {};
-            json = drums[i].saveObject();
-            creationObj.creationObjectID = undefined;
-            creationObj.type = json.MTObjType;
-            creationObj.json = json;
-            creationObj.creationID = this.creationID;
-            allObjects[cannons.length + i] = creationObj;
-
-        }
-        /* otherObj*/
-        for (let i = 0; i < otherObj.length; i++) {
-            let creationObj = {};
-            json = otherObj[i].saveObject();
-            creationObj.creationObjectID = undefined;
-            creationObj.type = json.MTObjType;
-            creationObj.json = json;
-            creationObj.creationID = this.creationID;
-            allObjects[cannons.length + otherObj.length + i] = creationObj;
-
-        }
-
-        return allObjects
+        return allObjects;
     }
 
-    saveObjectsToDB = async () => {
-        let CreationID = this.creationID;
-        let UserID = http.getUserId();
-        let AccessLevel = 2;
-        //let Creation = this.creationFromDB;
-        let allObjectsToSave = this.saveCreation();
-
-        //disable button
-        // saveToDBButton
-        let savebutton = document.getElementById("saveToDBButton"); 
-        let deletebutton = document.getElementById("deleteToDBButton");
-        savebutton.disabled = true;
-        deletebutton.disabled = true;
-        const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
-        // store object id in json so next time it is synced
-        if (saveRes.length !== allObjectsToSave.length) {
-            console.log("Something went wrong with saving");
-
-        }
-            
-        for (let i = 0; i < saveRes.length; i++) {
-            if (allObjectsToSave[i].json.objectNumber !== saveRes[i].creationObjectID && allObjectsToSave[i].type === saveRes[i].type) {
-                if (i < cannons.length) {
-                    cannons[i].creationObjectID = saveRes[i].creationObjectID;
-                }
-                else if (i < cannons.length + drums.length ) {
-                    drums[i - cannons.length].creationObjectID = saveRes[i].creationObjectID;
-                }
-                else {
-                    otherObj[i - cannons.length - drums.length].creationObjectID = saveRes[i].creationObjectID;
-                }
-            }
-        }
-
-        console.log(`succesfully saved: `);
-        console.log(saveRes);
-        try {
-            let sequencerObj = this.sequencerSavedState;
-            sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined
-            let saveRes = await http.post('/sequencer/save/' + CreationID, { data: sequencerObj });
-            console.log(`succesfully saved sequencer`);
-            console.log(saveRes);
-        } catch (ex) {
-            console.log(ex)
-        } finally {
-            // enable button
-            savebutton.disabled = false;
-            deletebutton.disabled = false;
-        }
-
-    }
+    
 
 } export default Scene;
