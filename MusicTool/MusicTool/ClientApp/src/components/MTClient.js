@@ -154,7 +154,7 @@ export class MTClient extends React.Component {
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let Creation = this.creationFromDB;
-        let allObjectsToSave = this.scene.getAllObjects();
+        let allObjectsToSave = this.saveCreation();
         for (let i = 0; i < allObjectsToSave.length; i++) {
             /*if (allObjectsToSave[i].objectNumber > 0)
                 continue; //TODO: REMOVE TO ENABLE ALL SAVE*/

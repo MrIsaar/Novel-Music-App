@@ -163,24 +163,28 @@ export class Login extends Component {
     handleProjectList = (deletedCreationID) => {
         const { projectList } = this.state;
         this.setProjectList([])
-        http.get('/access/getCreationID/with_userID/' + http.getUserId()).then((res) => {
-            res.map(i => {
-                //console.log(i)
-                // get name based on creationID
-                http.get('/creations/' + i).then((res) => {
-                    // console.log(res.name)
-                    // add { id: 'i', name: 'name' } to projectList
-                    if (i != deletedCreationID)
-                        this.addItem({ id: '' + i, name: '' + res.name })
-                }).catch((ex) => {
-                    console.log('Get name not successful')
+        http.get('/access/getCreationID/with_userID/' + http.getUserId())
+            .then((res) => {
+                res.map(i => {
+                    //console.log(i)
+                    // get name based on creationID
+                    http.get('/creations/' + i)
+                        .then((res) => {
+                            // console.log(res.name)
+                            // add { id: 'i', name: 'name' } to projectList
+                            if (i != deletedCreationID)
+                                this.addItem({ id: '' + i, name: '' + res.name })
+                        })
+                        .catch((ex) => {
+                            console.log('Get name not successful')
+                        })
                 })
+                //console.log(res.length)
+                //console.log(http.getUserId())
             })
-            //console.log(res.length)
-            //console.log(http.getUserId())
-        }).catch((ex) => {
-            console.log('Get CreationID list not successful')
-        })
+            .catch((ex) => {
+                console.log('Get CreationID list not successful')
+            })
         // console.log(projectList)
         http.setProjectList(projectList)
     }
@@ -202,6 +206,21 @@ export class Login extends Component {
         http.setUserId(null)
         http.setUserEmail(null)
         http.setProjectList(null)
+    }
+
+    createNewProject = () => {
+        console.log("new creation in progress");
+        let newProjectButton = document.getElementById("createNewProjectButton");
+        newProjectButton.disabled = true;
+        http.get('/Creations/new')
+            .then((res) => {
+                
+                console.log(res);
+                newProjectButton.disabled = false;
+                this.handleProjectList(-1);
+            })
+            .catch((ex) => { console.log("new creation error"); newProjectButton.disabled = false; });
+        
     }
 
 
@@ -249,7 +268,7 @@ export class Login extends Component {
 
                                                 <td>{id}</td>
 
-                                                <td><a href={"/scene/" + {id}} className="btn btn-primary">
+                                                <td><a href={"/scene/" + id} className="btn btn-primary">
                                                     Go to Project
                                                 </a></td>
 
@@ -384,9 +403,10 @@ export class Login extends Component {
                             <br></br>
 
                             <div>{/* TODO: change link*/}</div>
-                            <a href="/scene/1" className="btn btn-primary">
+                            <button id="createNewProjectButton" onClick={() => { this.createNewProject();  }}
+                                className="btn btn-primary">
                                 Create A New Project
-                            </a>
+                            </button>
 
                             <br></br>
 

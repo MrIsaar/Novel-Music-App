@@ -107,7 +107,7 @@ namespace MusicTool.Controllers
             _context.CreationObject.Remove(res);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
     }
 }
