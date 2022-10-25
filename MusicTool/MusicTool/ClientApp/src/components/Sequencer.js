@@ -127,10 +127,10 @@ export class Sequencer extends Component {
     _addTrack() {
         let row = [...Array(this.state.numSteps)].map((_, i) => { return false; });
         this._noteMatrix.push(row);
-        this._trackIDs.push(this.state.lifetimeNumTracks + 1);
-        this._trackNames.push("Track " + this.state.lifetimeNumTracks);
+        this._trackIDs.push(this.state.numTracks + 1);
+        this._trackNames.push("Track " + (this.state.numTracks + 1));
         this.setState({
-            lifetimeNumTracks: this.state.lifetimeNumTracks + 1,
+            lifetimeNumTracks: this.state.numTracks + 1,
             numTracks: this.state.numTracks + 1
         });
 
