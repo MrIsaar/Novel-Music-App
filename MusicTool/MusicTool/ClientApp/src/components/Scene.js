@@ -218,7 +218,7 @@ export class Scene {
                         sustain: 0
                     }
                 };
-                let instrument = new Instrument(-1, position, 1, new Tone.MembraneSynth(synthrules).toDestination(), "Membrane",
+                let instrument = new Instrument(-1, position, 0, new Tone.MembraneSynth(synthrules).toDestination(), "Membrane",
                     undefined,
                     [{ x: 30, y: 20 }, { x: 30, y: -10 }, { x: -30, y: -10 }, { x: -30, y: 20 }]
                 )//<Cannon pos={position} body={null} />;
@@ -243,7 +243,7 @@ export class Scene {
                     resonance: 4000,
                     octaves: 1.5
                 };
-                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
+                let instrument = new Instrument(-1, position, 0, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
                     { note: 'C2', length: '1n' },
                     [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
                 this.drums.push(instrument);
@@ -263,7 +263,7 @@ export class Scene {
                     },
                     volume: -15
                 };
-                let instrument = new Instrument(-1, position, 1, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
+                let instrument = new Instrument(-1, position, 0, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
                     { note: 'C2', length: '1n' },
                     [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
                 this.drums.push(instrument);
