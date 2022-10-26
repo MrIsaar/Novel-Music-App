@@ -1,6 +1,7 @@
 ﻿import Matter from "matter-js";
 import MTObj from "./MTObj";
 import Ball from "./Ball";
+import * as PIXI from "pixi.js";
 
 // Cannon rendering constants
 const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { x: -30, y: 0 }];
@@ -72,6 +73,39 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
          Matter.Body.setVelocity(ball.body, dv)
          return ball;
+     }
+
+     /**
+      * provides tragectory for balls fired from this cannon assuming the position of the cannon is (0,0)
+      * @param {object} gravity acceleration of gravity from matter world.gravity with {x,y,scale}
+      * @param {float} scale scale for how much power effects
+      * @param {int} points number of points to output
+      */
+     getTragectory(gravity,scale, points) {
+         let velocityInital = { x: this.power * Math.cos(this.rotation) * scale.x, y: this.power * Math.sin(this.rotation) * scale.y };
+         let acceleration = gravity
+         let positionInital = { x: this.position.x, y: this.position.y };
+         // pixi will handle intial position
+         // y = ax^2 + bx + c
+         const out = [];
+         
+         for (let t = 0; t < points; t++) {
+             let point = {x: 0, y: 0};
+             point.x = acceleration.x * t * t + velocityInital.x * t;
+             point.y = acceleration.y * t * t + velocityInital.y * t;// x = vt
+             out.push(point); // y = at^2 + vt
+         }
+         //  
+         return out;
+         
+
+         /*const quadratic = new PIXI.Graphics();
+         quadratic.lineStyle(5, 0xAA0000, 1);
+         let powerScale = this.power * 1.6
+         quadratic.quadraticCurveTo(powerScale * dv.x, powerScale * dv.y, powerScale *  2 * dv.x,  0);
+         quadratic.position.x = this.position.x;
+         quadratic.position.y = this.position.y;
+         return quadratic;*/
      }
 
     /**
