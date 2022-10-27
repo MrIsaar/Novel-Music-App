@@ -402,7 +402,6 @@ export class Login extends Component {
 
                             <br></br>
 
-                            <div>{/* TODO: change link*/}</div>
                             <button id="createNewProjectButton" onClick={() => { this.createNewProject();  }}
                                 className="btn btn-primary">
                                 Create A New Project
