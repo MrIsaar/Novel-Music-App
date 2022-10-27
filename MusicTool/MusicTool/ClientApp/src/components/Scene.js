@@ -117,11 +117,14 @@ export class Scene {
 
                     // Matter.body.update(body,delta,timescale,correction)
 
-                    let tragectoryPoints = this.selection.selected.getTragectory(this.engine.world.gravity, { x: 1.8, y: 2.3 }, 35);
+                    let tragectoryPoints = this.selection.selected.getTragectory(this.engine.world.gravity, { x: 1, y: 1 }, 35);
                     let wasNull = false;
                     if (this.tragectory === null) {
                         this.tragectory = new PIXI.Graphics();
                         wasNull = true;
+                    }
+                    else {
+                        this.tragectory.clear();
                     }
                     this.tragectory.lineStyle(2, 0xa0ffa0, 1);
                     this.tragectory.position.x = this.selection.selected.position.x;

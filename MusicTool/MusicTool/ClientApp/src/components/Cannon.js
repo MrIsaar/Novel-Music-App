@@ -81,8 +81,12 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
       * @param {float} scale scale for how much power effects
       * @param {int} points number of points to output
       */
-     getTragectory(gravity,scale, points) {
-         let velocityInital = { x: this.power * Math.cos(this.rotation) * scale.x, y: this.power * Math.sin(this.rotation) * scale.y };
+     getTragectory(gravity, scale, points) {
+         let normalizedAngleVec = { x: Math.cos(this.rotation), y: Math.sin(this.rotation) };
+         let denom = Math.abs(normalizedAngleVec.x + normalizedAngleVec.y)
+         normalizedAngleVec.x = normalizedAngleVec.x / denom;
+         normalizedAngleVec.y = normalizedAngleVec.y / denom;
+         let velocityInital = { x: this.power * normalizedAngleVec.x * scale.x, y: this.power * normalizedAngleVec.y * scale.y };
          let acceleration = gravity
          let positionInital = { x: this.position.x, y: this.position.y };
          // pixi will handle intial position
