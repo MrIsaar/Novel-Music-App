@@ -162,9 +162,21 @@ export class MTClient extends React.Component {
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let Creation = this.creationFromDB;
+        let isOwner = false;
 
-        // check if current user is the owner (must logged in)
+        // check whether current user is the owner of project
         if (UserID != null) {
+            let list = http.getProjectList();
+            // check if creationID is contained
+            list.map(({ id, name }) => {
+                // check if creationID is contained
+                if (`${id}` == `${CreationID}`) {
+                    isOwner = true;
+                }
+            })
+        }
+
+        if (isOwner) {
             try {
                 // Should store access before creation!
                 // save access
@@ -204,9 +216,21 @@ export class MTClient extends React.Component {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
+        let isOwner = false;
 
-        // check if current user is the owner (must logged in)
+        // check whether current user is the owner of project
         if (UserID != null) {
+            let list = http.getProjectList();
+            // check if creationID is contained
+            list.map(({ id, name }) => {
+                // check if creationID is contained
+                if (`${id}` == `${CreationID}`) {
+                    isOwner = true;
+                }
+            })
+        }
+
+        if (isOwner) {
             //let Creation = this.creationFromDB;
             let allObjectsToSave = this.scene.getAllObjects(CreationID);
 
@@ -258,6 +282,7 @@ export class MTClient extends React.Component {
 
     }
 
+    // handle the close/show pop-up box
     handleCloseReminderBox_CannotSave = () => this.setShowReminderBox_CannotSave(false);
     handleShowReminderBox_CannotSave = () => this.setShowReminderBox_CannotSave(true);
 
@@ -268,9 +293,22 @@ export class MTClient extends React.Component {
      */
     deleteObject = (object) => {
         let UserID = http.getUserId();
+        let CreationID = this.creationID;
+        let isOwner = false;
 
-        // check if current user is the owner (must logged in)
+        // check whether current user is the owner of project
         if (UserID != null) {
+            let list = http.getProjectList();
+            // check if creationID is contained
+            list.map(({ id, name }) => {
+                // check if creationID is contained
+                if (`${id}` == `${CreationID}`) {
+                    isOwner = true;
+                }
+            })
+        }
+
+        if (isOwner) {
             // selected if the
             //remove with delete
             //remove with backspace
