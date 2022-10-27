@@ -67,7 +67,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         }
 
         var ball = new Ball(this.position, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
-
+        ball.body.frictionAir = 0;
         //set velocity
         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
         console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
@@ -82,10 +82,10 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
       * @param {int} points number of points to output
       */
      getTragectory(gravity, scale, points) {
-         let normalizedAngleVec = { x: Math.cos(this.rotation), y: Math.sin(this.rotation) };
-         let denom = Math.abs(normalizedAngleVec.x + normalizedAngleVec.y)
+         let normalizedAngleVec = { x: Math.cos(this.rotation) * scale.angle, y: Math.sin(this.rotation) * scale.angle };
+         /*let denom = Math.abs(normalizedAngleVec.x + normalizedAngleVec.y)
          normalizedAngleVec.x = normalizedAngleVec.x / denom;
-         normalizedAngleVec.y = normalizedAngleVec.y / denom;
+         normalizedAngleVec.y = normalizedAngleVec.y / denom;*/
          let velocityInital = { x: this.power * normalizedAngleVec.x * scale.x, y: this.power * normalizedAngleVec.y * scale.y };
          let acceleration = gravity
          let positionInital = { x: this.position.x, y: this.position.y };
@@ -93,7 +93,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
          // y = ax^2 + bx + c
          const out = [];
          
-         for (let t = 0; t < points; t++) {
+         for (let t = 1; t < points; t++) {
              let point = {x: 0, y: 0};
              point.x = acceleration.x * t * t + velocityInital.x * t;
              point.y = acceleration.y * t * t + velocityInital.y * t;// x = vt

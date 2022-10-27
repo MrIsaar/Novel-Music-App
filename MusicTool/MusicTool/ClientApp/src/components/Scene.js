@@ -116,28 +116,34 @@ export class Scene {
                 if (this.selection.selected.MTObjType === 'Cannon') {
 
                     // Matter.body.update(body,delta,timescale,correction)
-
-                    let tragectoryPoints = this.selection.selected.getTragectory(this.engine.world.gravity, { x: 1, y: 1 }, 35);
+                    let scale = { x: 2.9, y: 2.5 };
+                    let angleDelta = 0.1;
+                    let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, angle: 1 - angleDelta }, 35) };
                     let wasNull = false;
                     if (this.tragectory === null) {
-                        this.tragectory = new PIXI.Graphics();
+                        this.tragectory = [new PIXI.Graphics(),new PIXI.Graphics()];
                         wasNull = true;
                     }
                     else {
-                        this.tragectory.clear();
+                        this.tragectory[0].clear();
+                        this.tragectory[1].clear();
                     }
-                    this.tragectory.lineStyle(2, 0xa0ffa0, 1);
-                    this.tragectory.position.x = this.selection.selected.position.x;
-                    this.tragectory.position.y = this.selection.selected.position.y;
+                    for (let j = 0; j < 2; j++) {
+                        this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
+                        this.tragectory[j].position.x = this.selection.selected.position.x;
+                        this.tragectory[j].position.y = this.selection.selected.position.y;
 
-                    this.tragectory.moveTo(0, 0);
-                    for (let i = 0; i < tragectoryPoints.length; i++) {
-                        this.tragectory.lineTo(tragectoryPoints[i].x, tragectoryPoints[i].y );
-                    }       
-
-                    if (wasNull)
-                        this.app.stage.addChild(this.tragectory);
-                    
+                        this.tragectory[j].moveTo(0, 0);
+                        for (let i = 0; i < tragectoryPoints.top.length; i++) {
+                            this.tragectory[j].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
+                            this.tragectory[j].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
+                        }
+                        if (wasNull)
+                            this.app.stage.addChild(this.tragectory[j]);
+                    }
+                } else if (this.tragectory !== null) {
+                    this.tragectory[0].clear();
+                    this.tragectory[1].clear();
                 }
             }
         });
