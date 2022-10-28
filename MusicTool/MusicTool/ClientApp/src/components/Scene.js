@@ -22,6 +22,8 @@ export class Scene {
     selectedTool = "select";
     tragectory = null
 
+    selectedNote = "C2";
+
     /**
      * create Scene object
      * @param {any} options
@@ -281,7 +283,7 @@ export class Scene {
                     octaves: 1.5
                 };
                 let instrument = new Instrument(-1, position, 0, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
-                    { note: 'C2', length: '1n' },
+                    { note: document.getElementById("notes").value, length: '1n' },
                     [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
                 this.drums.push(instrument);
                 this.addObject(instrument);
@@ -301,7 +303,7 @@ export class Scene {
                     volume: -15
                 };
                 let instrument = new Instrument(-1, position, 0, new Tone.MetalSynth(synthrules).toDestination(), "Metal",
-                    { note: 'C2', length: '1n' },
+                    { note: document.getElementById("notes").value, length: '1n' },
                     [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
                 this.drums.push(instrument);
                 this.addObject(instrument);

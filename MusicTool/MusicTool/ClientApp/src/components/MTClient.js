@@ -85,7 +85,17 @@ export class MTClient extends React.Component {
                         <button onClick={this.handleSave}>------SAVE------</button>
                         <button onClick={this.saveObjectsToDB} id="saveToDBButton">------SAVE-Object------</button>
                         <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >-----DELETE-Object-----</button>
+                        <div>
 
+                            <label for="notes">Choose a note:</label>
+
+                            <select name="notes" id="notes">
+                                <option value="C2">C2</option>
+                                <option value="D2">D2</option>
+                                <option value="E2">E2</option>
+                                <option value="F2">F2</option>
+                            </select>
+                        </div>
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Reminder</Modal.Title>
