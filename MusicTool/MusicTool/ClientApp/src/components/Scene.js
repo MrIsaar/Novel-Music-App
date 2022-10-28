@@ -116,9 +116,9 @@ export class Scene {
                 if (this.selection.selected.MTObjType === 'Cannon') {
 
                     // Matter.body.update(body,delta,timescale,correction)
-                    let scale = { x: 2.9, y: 2.5 };
-                    let angleDelta = 0.1;
-                    let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, angle: 1 - angleDelta }, 35) };
+                    let scale = { x: 2.9, y: 2.83 , g: 1.15};
+                    let angleDelta = 0.02;
+                    let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
                     let wasNull = false;
                     if (this.tragectory === null) {
                         this.tragectory = [new PIXI.Graphics(),new PIXI.Graphics()];

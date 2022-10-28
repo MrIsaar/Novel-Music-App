@@ -87,8 +87,9 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
          normalizedAngleVec.x = normalizedAngleVec.x / denom;
          normalizedAngleVec.y = normalizedAngleVec.y / denom;*/
          let velocityInital = { x: this.power * normalizedAngleVec.x * scale.x, y: this.power * normalizedAngleVec.y * scale.y };
-         let acceleration = gravity
-         let positionInital = { x: this.position.x, y: this.position.y };
+         let acceleration = { x: gravity.x * scale.g, y: gravity.y * scale.g }
+         
+         
          // pixi will handle intial position
          // y = ax^2 + bx + c
          const out = [];
