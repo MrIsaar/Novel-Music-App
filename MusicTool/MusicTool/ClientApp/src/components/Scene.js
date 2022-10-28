@@ -15,10 +15,12 @@ const height = 500;
 export class Scene {
     cannons = [];
     balls = [];
-    selection = null;
-    selectedTool = "select";
     drums = [];
     sounds = [];
+
+    selection = null;
+    selectedTool = "select";
+    tragectory = null
 
     /**
      * create Scene object
@@ -75,7 +77,7 @@ export class Scene {
         Matter.Events.on(mouseConstraint, "mousemove", this.onMouseMove);
         Matter.Events.on(mouseConstraint, "mouseup", this.onMouseUp);
 
-        let sceneArea = document.getElementById('_Scene');
+        //let sceneArea = document.getElementById('_Scene');
        
         /*sceneArea.on('keydown', function (event) {
             //console.log(event.keyCode);
@@ -107,8 +109,43 @@ export class Scene {
             this.cannons.forEach(c => c.draw());
             this.balls.forEach(b => b.draw());
             this.drums.forEach(d => d.draw());
-            if (this.selection !== null)
+            if (this.selection !== null) {
                 this.selection.draw();
+
+
+                if (this.selection.selected.MTObjType === 'Cannon') {
+
+                    // Matter.body.update(body,delta,timescale,correction)
+                    let scale = { x: 2.9, y: 2.83 , g: 1.15};
+                    let angleDelta = 0.02;
+                    let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
+                    let wasNull = false;
+                    if (this.tragectory === null) {
+                        this.tragectory = [new PIXI.Graphics(),new PIXI.Graphics()];
+                        wasNull = true;
+                    }
+                    else {
+                        this.tragectory[0].clear();
+                        this.tragectory[1].clear();
+                    }
+                    for (let j = 0; j < 2; j++) {
+                        this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
+                        this.tragectory[j].position.x = this.selection.selected.position.x;
+                        this.tragectory[j].position.y = this.selection.selected.position.y;
+
+                        this.tragectory[j].moveTo(0, 0);
+                        for (let i = 0; i < tragectoryPoints.top.length; i++) {
+                            this.tragectory[j].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
+                            this.tragectory[j].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
+                        }
+                        if (wasNull)
+                            this.app.stage.addChild(this.tragectory[j]);
+                    }
+                } else if (this.tragectory !== null) {
+                    this.tragectory[0].clear();
+                    this.tragectory[1].clear();
+                }
+            }
         });
     }
 
