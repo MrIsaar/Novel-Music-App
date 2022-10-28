@@ -94,6 +94,11 @@ export class MTClient extends React.Component {
                                 <option value="D2">D2</option>
                                 <option value="E2">E2</option>
                                 <option value="F2">F2</option>
+                                <option value="F2">G2</option>
+                                <option value="F2">A2</option>
+                                <option value="F2">B2</option>
+                                <option value="F2">C3</option>
+
                             </select>
                         </div>
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
