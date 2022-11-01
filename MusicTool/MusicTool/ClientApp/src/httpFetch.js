@@ -73,6 +73,9 @@ class HttpFetch {
 
   getIDToDelete = () => this.getValue('IDToDelete')
   setIDToDelete = (id) => this.setValue('IDToDelete', id)
+
+  getSequencerMatrix = () => this.getValue('SequencerMatrix')
+  setSequencerMatrix = (matrix) => this.setValue('SequencerMatrix', matrix)
 }
 
 export default new HttpFetch()

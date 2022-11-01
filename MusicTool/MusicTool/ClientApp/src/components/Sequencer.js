@@ -5,6 +5,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import Button from '@mui/material/Button';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import http from '../httpFetch';
 
 
 
@@ -78,7 +79,7 @@ export class Sequencer extends Component {
     }
 
     _tick(time, idx) {
-        console.log(`time: ${time}, step: ${idx}`)
+        console.log(`time: ${time}, step: ${idx}`) 
         let step = idx % this.state.numSteps;
         for (let track = 0; track < this.state.numTracks; track++) {
             if (this._noteMatrix[track][step]) {
@@ -86,6 +87,7 @@ export class Sequencer extends Component {
             }
         }
         this.setState({ currentStepID: step });
+        http.setSequencerMatrix(this._noteMatrix);
         //this.forceUpdate();
     }
 
