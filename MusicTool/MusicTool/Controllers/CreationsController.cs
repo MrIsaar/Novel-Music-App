@@ -32,8 +32,8 @@ namespace MusicTool.Controllers
             return await _context.Creation.ToListAsync();
         }
         // GET: api/Creations/new
-        [HttpGet("new")]
-        public async Task<ActionResult<Creation>> NewCreation()
+        [HttpGet("new/{id}")]
+        public async Task<ActionResult<Creation>> NewCreation(int id)
         {
             var context = _context;
             int cID = -1;
@@ -77,7 +77,7 @@ namespace MusicTool.Controllers
 
                 Access a = new Access();
                 a.CreationID = cID;
-                a.UserID = "1";
+                a.UserID = "" + id;
                 a.AccessLevel = AccessLevel.Owner;
                 context.Access.Add(a);
 

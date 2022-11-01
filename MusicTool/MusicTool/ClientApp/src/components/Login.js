@@ -212,7 +212,7 @@ export class Login extends Component {
         console.log("new creation in progress");
         let newProjectButton = document.getElementById("createNewProjectButton");
         newProjectButton.disabled = true;
-        http.get('/Creations/new')
+        http.get('/Creations/new/' + http.getUserId())
             .then((res) => {
                 
                 console.log(res);
