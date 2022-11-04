@@ -75,6 +75,7 @@ export class MTClient extends React.Component {
                     savedState={this.sequencerSavedState}
                     loading={this.state.loading}
                     callback={callback}
+                    selectedTrack={this.state.selectedTrack}
                 />
         }
 
