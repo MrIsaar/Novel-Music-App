@@ -6,7 +6,7 @@ date: 2022-11-4
 
 Time estimate: 4 Hours
 
-- Progress on Project Layers (W3)
+- Progress on Prebuilt Instrument (W2)
 
 # Teammates worked with:
 N/A
