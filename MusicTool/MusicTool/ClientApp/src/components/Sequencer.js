@@ -188,6 +188,7 @@ export class Sequencer extends Component {
                     toggleNote={this.toggleNote.bind(this)}
                     removeTrack={this.removeTrack}
                     selected={id === this.props.selectedTrack}
+                    onSelect={() => this.props.onSelectedTrackChange(id)}
                 />
             )
         })

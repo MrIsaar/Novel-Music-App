@@ -76,6 +76,7 @@ export class MTClient extends React.Component {
                     loading={this.state.loading}
                     callback={callback}
                     selectedTrack={this.state.selectedTrack}
+                    onSelectedTrackChange={this.setSelectedTrack}
                 />
         }
 
