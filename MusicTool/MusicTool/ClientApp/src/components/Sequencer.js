@@ -105,6 +105,11 @@ export class Sequencer extends Component {
         this._noteMatrix.splice(trackIndex, 1);
         this._trackIDs.splice(trackIndex, 1);
         this._trackNames.splice(trackIndex, 1);
+
+        // If this was the selected track, reset selected track to default.
+        if (trackID === this.props.selectedTrack) {
+            this.props.onSelectedTrackChange();
+        }
         
         //for (let i = 0; i < this.state.numTracks; i++) {
         //    if (this._trackIDs[i] != trackID) { // dont copy the track to be removed
