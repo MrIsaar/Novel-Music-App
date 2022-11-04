@@ -20,6 +20,7 @@ export class Scene {
 
     selection = null;
     selectedTool = "select";
+    selectedTrack = -1;
     tragectory = null
 
     selectedNote = "C2";
@@ -236,7 +237,7 @@ export class Scene {
 
         else if (this.selectedTool == "cannon") {
             Tone.start();
-            let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
+            let cannon = new Cannon(-1, position, 0, 20, this.selectedTrack);//<Cannon pos={position} body={null} />;
             this.cannons.push(cannon);
             this.addObject(cannon);
             if (this.selection != null) {
