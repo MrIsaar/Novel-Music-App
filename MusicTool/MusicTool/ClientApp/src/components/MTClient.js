@@ -16,6 +16,7 @@ export class MTClient extends React.Component {
         super(props);
 
         this.setSelectedTool = this.setSelectedTool.bind(this);
+        this.setSelectedTrack = this.setSelectedTrack.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.saveObjectsToDB = this.saveObjectsToDB.bind(this);
 
@@ -23,6 +24,7 @@ export class MTClient extends React.Component {
             loading: true,
             sequencerData: {},
             selectedTool: 'select',
+            selectedTrack: null,
             showReminderBox_CannotSave: false
         };
 
@@ -39,6 +41,11 @@ export class MTClient extends React.Component {
         this.setState({ selectedTool: tool });
         this.scene.selectedTool = tool;
         console.log(`Selected Tool: ${tool}`)
+    }
+
+    setSelectedTrack(trackID = -1) {
+        this.setState({ selectedTrack: trackID });
+        this.scene.selectedTrack = trackID;
     }
 
     setShowReminderBox_CannotSave = (showReminderBox_CannotSave) => {
