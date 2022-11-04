@@ -7,7 +7,8 @@ date: 2022-11-04
 Time estimate: 4 hours
 
 Use http to track sequencer nodes that prepare for binding cannons. <br> 
-Debug to fix new page creation problems.
+Debug to fix new page creation problems. <br> 
+Update the user guide.
 
 - Teammates worked with:
   - ...
