@@ -94,10 +94,24 @@ export class MTClient extends React.Component {
                                 <option value="D2">D2</option>
                                 <option value="E2">E2</option>
                                 <option value="F2">F2</option>
-                                <option value="F2">G2</option>
-                                <option value="F2">A2</option>
-                                <option value="F2">B2</option>
-                                <option value="F2">C3</option>
+                                <option value="G2">G2</option>
+                                <option value="A2">A2</option>
+                                <option value="B2">B2</option>
+                                <option value="C3">C3</option>
+                                <option value="D3">D3</option>
+                                <option value="E3">E3</option>
+                                <option value="F3">F3</option>
+                                <option value="G3">G3</option>
+                                <option value="A3">A3</option>
+                                <option value="B3">B3</option>
+                                <option value="C4">C4</option>
+                                <option value="D4">D4</option>
+                                <option value="E4">E4</option>
+                                <option value="F4">F4</option>
+                                <option value="G4">G4</option>
+                                <option value="A4">A4</option>
+                                <option value="B4">B4</option>
+                                
 
                             </select>
                         </div>
