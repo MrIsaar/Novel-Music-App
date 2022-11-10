@@ -99,7 +99,6 @@ export class Login extends Component {
             console.log('Cannot login')
         }
     }
- 
 
     // 1. delete all projects
     // 2. delete account in Users db
@@ -115,12 +114,12 @@ export class Login extends Component {
                 http.delete('/access/' + id, { data: id })
                 // delete from Creation table along with CreationObject and Sequencer
                 http.delete('/creations/' + id, { data: id })
-            }).catch((ex) => {
-                console.log('Delete projects not successful')
-                window.location.reload()
             })
 
             // delete account in Users db
+            if (email == null) {
+                email = http.getUserEmail()
+            }
             http.delete('/user/delete', { data: { email } }).then((res) => {
                 http.setUserId(null)
                 http.setUserEmail(null)
