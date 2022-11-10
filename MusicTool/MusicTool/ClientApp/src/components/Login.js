@@ -349,7 +349,13 @@ export class Login extends Component {
                                     <>
                                         {projectList.map(({ id, name }) => (
                                             <tr>
-                                                <td>{name}</td>
+                                                <td>
+                                                    <EditText
+                                                        name={id}
+                                                        onSave={this.handleSave_Name}
+                                                        placeholder={name}
+                                                    />
+                                                </td>
 
                                                 <td>{id}</td>
 
