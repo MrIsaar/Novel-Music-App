@@ -101,10 +101,26 @@ export class Login extends Component {
     }
  
 
-    // delete account in Users db
+    // 1. delete all projects
+    // 2. delete account in Users db
     handleDelete = () => {
         const { email } = this.state;
         try {
+            http.getProjectList().map((id, name) => {
+                // console.log(id)
+                // console.log(id.id)
+                id = '' + `${id.id}`
+                id = id * 1
+                // delete from Access table
+                http.delete('/access/' + id, { data: id })
+                // delete from Creation table along with CreationObject and Sequencer
+                http.delete('/creations/' + id, { data: id })
+            }).catch((ex) => {
+                console.log('Delete projects not successful')
+                window.location.reload()
+            })
+
+            // delete account in Users db
             http.delete('/user/delete', { data: { email } }).then((res) => {
                 http.setUserId(null)
                 http.setUserEmail(null)
@@ -116,7 +132,7 @@ export class Login extends Component {
                 this.setIsLogin(false)
                 this.setIsSignup(false)
                 this.setProjectList([])
-                console.log('Delete account successful')
+                console.log('Delete account in Users db successful')
             }).catch((ex) => {
                 console.log('Delete account not successful')
                 window.location.reload()
