@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FacebookShareButton, TwitterShareButton } from "react-share";
 import { FacebookIcon, TwitterIcon } from "react-share";
+import { EditText} from 'react-edit-text';
 
 export class Login extends Component {
     constructor(props) {
@@ -238,6 +239,15 @@ export class Login extends Component {
         
     }
 
+    // update project name in Creation db
+    // param: name -> creationID, value -> newProjName, previousValue -> oldProjName
+    handleSave_Name = ({ name, value, previousValue }) => {
+        // alert(name + ' saved as: ' + value + ' (prev: ' + previousValue + ')');
+        // update Creation db
+        value = value + ''
+        http.post('/creations/newName/' + name, { data: value})
+    };
+
 
     render() {
         const { isLogin, email, password, isLoading, error, showReminder, showReminder_DeleteProj, showShare, projectList } = this.state;
@@ -279,11 +289,17 @@ export class Login extends Component {
                                     <>
                                         {http.getProjectList().map(({ id, name }) => (
                                             <tr>
-                                                <td>{name}</td>
+                                                <td>
+                                                    <EditText
+                                                        name={id}
+                                                        onSave={this.handleSave_Name}
+                                                        placeholder={name}
+                                                    />
+                                                </td>
 
                                                 <td>{id}</td>
 
-                                                <td><a href={"/scene/" + id} className="btn btn-primary">
+                                                <td><a href={"/scene/" + `${id}`} className="btn btn-primary">
                                                     Go to Project
                                                 </a></td>
 
