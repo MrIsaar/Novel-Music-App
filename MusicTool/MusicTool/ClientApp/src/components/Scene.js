@@ -102,7 +102,7 @@ export class Scene {
             Matter.Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
             Matter.Bodies.rectangle(0, height / 2, 50, height, { isStatic: true })
         ]);
-
+        
         this.sounds.push(<div> <ToneExample /> </div>);
 
         // Start engine & renderer
@@ -116,39 +116,52 @@ export class Scene {
 
 
                 if (this.selection.selected.MTObjType === 'Cannon') {
-
-                    // Matter.body.update(body,delta,timescale,correction)
-                    let scale = { x: 2.9, y: 2.83 , g: 1.15};
-                    let angleDelta = 0.02;
-                    let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
-                    let wasNull = false;
-                    if (this.tragectory === null) {
-                        this.tragectory = [new PIXI.Graphics(),new PIXI.Graphics()];
-                        wasNull = true;
-                    }
-                    else {
-                        this.tragectory[0].clear();
-                        this.tragectory[1].clear();
-                    }
-                    for (let j = 0; j < 2; j++) {
-                        this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
-                        this.tragectory[j].position.x = this.selection.selected.position.x;
-                        this.tragectory[j].position.y = this.selection.selected.position.y;
-
-                        this.tragectory[j].moveTo(0, 0);
-                        for (let i = 0; i < tragectoryPoints.top.length; i++) {
-                            this.tragectory[j].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
-                            this.tragectory[j].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
-                        }
-                        if (wasNull)
-                            this.app.stage.addChild(this.tragectory[j]);
-                    }
+                    this.drawTrajectory()
+                    
                 } else if (this.tragectory !== null) {
-                    this.tragectory[0].clear();
-                    this.tragectory[1].clear();
+                    for (let i = 0; i < this.tragectory.length; i++)
+                        this.tragectory[i].clear();
+                    
                 }
             }
         });
+    }
+
+    drawTrajectory() {
+        // Matter.body.update(body,delta,timescale,correction)
+        let scale = { x: 2.9, y: 2.83, g: 1.15 };
+        let angleDelta = 0.01;
+        let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
+        let wasNull = false;
+        if (this.tragectory === null) {
+            this.tragectory = [new PIXI.Graphics(), new PIXI.Graphics()];
+            wasNull = true;
+        }
+        else {
+            this.tragectory[0].clear();
+            this.tragectory[1].clear();
+        }
+        for (let j = 0; j < 2; j++) {
+            this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
+            this.tragectory[j].position.x = this.selection.selected.position.x;
+            this.tragectory[j].position.y = this.selection.selected.position.y;
+
+            this.tragectory[j].moveTo(0, 0);
+
+            if (wasNull)
+                this.app.stage.addChild(this.tragectory[j]);
+        }
+        let timePoints = [];
+        for (let i = 0; i < tragectoryPoints.top.length; i++) {
+            if (i % 8 == 7) {
+                timePoints.push(tragectoryPoints.top[i]);
+                timePoints.push(tragectoryPoints.bottom[i]);
+            }
+            
+            this.tragectory[0].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
+            this.tragectory[1].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
+        }
+
     }
 
     /**
@@ -217,6 +230,10 @@ export class Scene {
                     if (this.selection != null) { // deselect
                         this.selection.destroy({ children: true });
                         this.selection = null;
+                        if (this.tragectory !== null) {
+                            for (let i = 0; i < this.tragectory.length; i++)
+                                this.tragectory[i].clear();
+                        }
                     }
                     //Check if another cannon should be selected
                     let currCannon = null;
@@ -357,6 +374,20 @@ export class Scene {
             this.selection.destroy();
             this.selection = null;
         }
+    }
+
+    /**
+     * change the value of gravity,  
+     **/
+    updateGravity(y = 1, x = 0) {
+        
+        this.engine.world.gravity.x = x;
+        this.engine.world.gravity.y = y;
+        
+    }
+
+    getGravity() {
+        return this.engine.world.gravity;
     }
 
     addObject(object) {

@@ -95,7 +95,9 @@ export class MTClient extends React.Component {
                                 <option value="E2">E2</option>
                                 <option value="F2">F2</option>
                                 <option value="G2">G2</option>
+                                <option value="G#2">G#2</option>
                                 <option value="A2">A2</option>
+                                <option value="A#2">A#2</option>
                                 <option value="B2">B2</option>
                                 <option value="C3">C3</option>
                                 <option value="D3">D3</option>
@@ -115,6 +117,20 @@ export class MTClient extends React.Component {
 
                             </select>
                         </div>
+                        <div>
+                            <div>
+                                <label for="gX" id="gXlabel">gravity X: 0</label>
+                                <br />
+                                <input type="range" id="gX" name="gX" min="-2" max="2" step="0.25" defaultValue="0" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`; this.scene.updateGravity(y, x) }}  />
+                            </div>
+                            <div>
+                                <label for="gY" id="gYlabel">gravity Y: 1</label>
+                                <br/>
+                                <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x )}} />
+                                
+                            </div>
+                        </div>
+
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Reminder</Modal.Title>
