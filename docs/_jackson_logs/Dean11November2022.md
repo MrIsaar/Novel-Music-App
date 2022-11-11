@@ -6,7 +6,7 @@ date: 2022-11-11
 
 Time estimate: 4 Hours
 
-- Reconfiguring Azure hosting (no associated feature)
+- Reconfiguring Azure hosting (B5)
 
 # Teammates worked with:
 N/A
