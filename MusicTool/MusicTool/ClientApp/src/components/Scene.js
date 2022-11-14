@@ -71,7 +71,7 @@ export class Scene {
                     collisionFilter: { group: 0, category: 0, mask: 0 }
                 }
             });
-        World.add(this.engine.world, mouseConstraint);
+        //World.add(this.engine.world, mouseConstraint);
 
         // Set event handlers
         Matter.Events.on(this.engine, "collisionStart", this.onCollision);
@@ -123,6 +123,10 @@ export class Scene {
                         this.tragectory[i].clear();
                     
                 }
+            } else if (this.tragectory !== null) {
+                for (let i = 0; i < this.tragectory.length; i++)
+                    this.tragectory[i].clear();
+
             }
         });
     }
