@@ -31,6 +31,7 @@ export class MTClient extends React.Component {
         this.scene = new Scene({
             objectAdded: () => this.setSelectedTool("select")
         });
+        this.sequencer = null
 
         this.creationFromDB = null;
     }
@@ -59,11 +60,11 @@ export class MTClient extends React.Component {
         let callback = this.scene.fireBalls;
         //let callback = this.fireBalls;
 
-        let sequencer;
+        
         if (this.state.loading) {
-            sequencer = <h1>Loading...</h1>;
+            this.sequencer = <h1>Loading...</h1>;
         } else {
-            sequencer =
+            this.sequencer =
                 <Sequencer
                     savedState={this.sequencerSavedState}
                     loading={this.state.loading}
@@ -72,7 +73,7 @@ export class MTClient extends React.Component {
         }
 
         return (
-            <div id="_Scene" tabIndex={0} onKeyDown={this.onKeyDown}>
+            <div id="_Scene" tabIndex={0} onKeyUp={this.onKeyDown}>
                 <Toolbar
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
@@ -149,7 +150,8 @@ export class MTClient extends React.Component {
                 </div>
                 <p>alt click to create a cannon, shift click to fire.<br />
                     click to select cannons to move or rotate</p>
-                {sequencer}
+
+                {this.sequencer}
             </div>
         );
     }
@@ -163,6 +165,32 @@ export class MTClient extends React.Component {
         if (event.key == 'Backspace' || event.key == 'Delete') {
             this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null);
 
+        }
+        else if (event.key == 'c' && event.ctrlKey) {
+            console.log("copy selected");
+            if (this.scene.selection != null) {
+                let copy = this.scene.selection.selected;
+                console.log(copy);
+                this.scene.copiedObject = copy;
+            }
+            else {
+                console.log("Nothing selected");
+            }
+
+        }
+        else if (event.key == 'v' && event.ctrlKey) {
+            console.log("paste selected");
+            if (this.scene.copiedObject != null) {
+                let pasteObj = this.scene.copiedObject.saveObject();
+                console.log(pasteObj);
+                pasteObj.objectNumber = -1;
+                pasteObj.position.x += 20;
+                pasteObj.position.y += 20;
+                this.scene.loadObject(this.creationObjectID, pasteObj);
+            }
+            else {
+                console.log("Nothing to copy");
+            }
         }
         else if (event.key == 'a' || event.key == 'b') {
 
@@ -262,6 +290,7 @@ export class MTClient extends React.Component {
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let isOwner = false;
+        
 
         // check whether current user is the owner of project
         if (UserID != null) {
@@ -307,6 +336,8 @@ export class MTClient extends React.Component {
 
             console.log(`succesfully saved: `);
             console.log(saveRes);
+            console.log(this.sequencer);
+            console.log(this.sequencer.props);
             try {
                 let sequencerObj = this.sequencerSavedState;
                 sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined

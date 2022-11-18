@@ -20,6 +20,8 @@ export class Scene {
 
     selection = null;
     selectedTool = "select";
+    copiedObject = null;
+
     trajectory = null
 
     selectedNote = "C2";
