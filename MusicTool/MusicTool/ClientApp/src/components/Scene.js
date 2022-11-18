@@ -137,12 +137,12 @@ export class Scene {
                         this.tragectory[j].position.y = this.selection.selected.position.y;
 
                         this.tragectory[j].moveTo(0, 0);
-                        for (let i = 0; i < tragectoryPoints.top.length; i++) {
-                            this.tragectory[j].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
-                            this.tragectory[j].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
-                        }
                         if (wasNull)
                             this.app.stage.addChild(this.tragectory[j]);
+                    }
+                    for (let i = 0; i < tragectoryPoints.top.length; i++) {
+                        this.tragectory[0].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
+                        this.tragectory[1].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
                     }
                 } else if (this.tragectory !== null) {
                     this.tragectory[0].clear();
