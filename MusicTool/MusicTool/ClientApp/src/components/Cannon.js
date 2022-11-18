@@ -81,7 +81,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
       * @param {float} scale scale for how much power effects
       * @param {int} points number of points to output
       */
-     getTragectory(gravity, scale, points) {
+     getTrajectory(gravity, scale, points) {
          let normalizedAngleVec = { x: Math.cos(this.rotation) * scale.angle, y: Math.sin(this.rotation) * scale.angle };
          /*let denom = Math.abs(normalizedAngleVec.x + normalizedAngleVec.y)
          normalizedAngleVec.x = normalizedAngleVec.x / denom;
