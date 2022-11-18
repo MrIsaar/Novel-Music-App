@@ -199,6 +199,7 @@ export class MTClient extends React.Component {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
+        this.loadCreation();
         let Creation = this.creationFromDB;
         let isOwner = false;
 

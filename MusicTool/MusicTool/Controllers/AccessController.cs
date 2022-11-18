@@ -61,10 +61,13 @@ namespace MusicTool.Controllers
                 return new BadRequestObjectResult(new { message = "AccessLevel is empty." });
             }
 
-            var res = await _context.Access.Where(p => p.CreationID == access.CreationID).ToListAsync();
-            if (res != null && res.Count > 0)
+            var res = await _context.Access.Where(p => p.CreationID == access.CreationID).FirstOrDefaultAsync();
+            if (res != null)
             {
-                return new BadRequestObjectResult(new { message = "CreationID already exists." });
+                // return new BadRequestObjectResult(new { message = "CreationID already exists." });
+                // remove old data if ID already exists
+                _context.Access.Remove(res);
+                await _context.SaveChangesAsync();
             }
 
             await _context.Access.AddAsync(access);
@@ -74,7 +77,7 @@ namespace MusicTool.Controllers
             if (res2 == null || String.IsNullOrEmpty(res2.CreationID.ToString()))
             {
                 // pop message
-                return new BadRequestObjectResult(new { message = "Invalid CreationID, try again." });
+                return new BadRequestObjectResult(new { message = "Can't find CreationID, save fail! Try again." });
             }
             return res2;
         }
