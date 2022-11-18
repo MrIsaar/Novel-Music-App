@@ -21,7 +21,6 @@ export class Scene {
     selection = null;
     selectedTool = "select";
     selectedTrack = -1;
-    tragectory = null
 
     selectedNote = "C2";
 
@@ -114,40 +113,6 @@ export class Scene {
             this.drums.forEach(d => d.draw());
             if (this.selection !== null) {
                 this.selection.draw();
-
-
-                if (this.selection.selected.MTObjType === 'Cannon') {
-
-                    // Matter.body.update(body,delta,timescale,correction)
-                    let scale = { x: 2.9, y: 2.83 , g: 1.15};
-                    let angleDelta = 0.02;
-                    let tragectoryPoints = { top: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTragectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
-                    let wasNull = false;
-                    if (this.tragectory === null) {
-                        this.tragectory = [new PIXI.Graphics(),new PIXI.Graphics()];
-                        wasNull = true;
-                    }
-                    else {
-                        this.tragectory[0].clear();
-                        this.tragectory[1].clear();
-                    }
-                    for (let j = 0; j < 2; j++) {
-                        this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
-                        this.tragectory[j].position.x = this.selection.selected.position.x;
-                        this.tragectory[j].position.y = this.selection.selected.position.y;
-
-                        this.tragectory[j].moveTo(0, 0);
-                        if (wasNull)
-                            this.app.stage.addChild(this.tragectory[j]);
-                    }
-                    for (let i = 0; i < tragectoryPoints.top.length; i++) {
-                        this.tragectory[0].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
-                        this.tragectory[1].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
-                    }
-                } else if (this.tragectory !== null) {
-                    this.tragectory[0].clear();
-                    this.tragectory[1].clear();
-                }
             }
         });
     }
@@ -237,7 +202,7 @@ export class Scene {
 
         else if (this.selectedTool == "cannon") {
             Tone.start();
-            let cannon = new Cannon(-1, position, 0, 20, this.selectedTrack);//<Cannon pos={position} body={null} />;
+            let cannon = new Cannon(-1, position, 0, 20, this.selectedTrack, this.engine.gravity);//<Cannon pos={position} body={null} />;
             this.cannons.push(cannon);
             this.addObject(cannon);
             if (this.selection != null) {
@@ -383,7 +348,7 @@ export class Scene {
             // create temp object to load object into
             if (mtObject.MTObjType == "Cannon") {
                 //newObject = new Cannon(pos);
-                newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
+                newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, this.engine.gravity, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 this.cannons.push(newObject);
             }
             else if (mtObject.MTObjType === "Instrument") {
