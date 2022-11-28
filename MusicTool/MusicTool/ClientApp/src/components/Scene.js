@@ -119,13 +119,16 @@ export class Scene {
 
                 if (this.selection.selected.MTObjType === 'Cannon') {
                     this.drawTrajectory()
+                    document.getElementById('power').value = this.selection.selected.power;
                     
                 } else if (this.trajectory !== null) {
+                    document.getElementById('power').value = 1;
                     for (let i = 0; i < this.trajectory.length; i++)
                         this.trajectory[i].clear();
                     
                 }
             } else if (this.trajectory !== null) {
+                document.getElementById('power').value = 1;
                 for (let i = 0; i < this.trajectory.length; i++)
                     this.trajectory[i].clear();
 
@@ -237,6 +240,7 @@ export class Scene {
                         this.selection.destroy({ children: true });
                         this.selection = null;
                         if (this.trajectory !== null) {
+                            document.getElementById('power').value = 1;
                             for (let i = 0; i < this.trajectory.length; i++)
                                 this.trajectory[i].clear();
                         }

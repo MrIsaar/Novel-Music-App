@@ -41,7 +41,11 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      */
     updateFirelayer(newLayer) {
         this.fireOn = newLayer;
-    }
+     }
+
+     updatePower(power) {
+         this.power = power;
+     }
 
     /**
      *     firelayer must match fireOn value for cannon

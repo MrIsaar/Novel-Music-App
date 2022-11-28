@@ -83,8 +83,8 @@ export class MTClient extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.scene.fireBalls}>------FIRE------</button>
-                        <button onClick={this.handleSave}>------SAVE------</button>
-                        <button onClick={this.saveObjectsToDB} id="saveToDBButton">------SAVE-Object------</button>
+                        <button onClick={this.handleSave} id="saveToDBButton">------SAVE------</button>
+                        
                         <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >-----DELETE-Object-----</button>
                         <div>
 
@@ -129,6 +129,19 @@ export class MTClient extends React.Component {
                                 <br/>
                                 <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x )}} />
                                 
+                            </div>
+                            <div>
+                                <label for="power" id="powerlabel">power:</label>
+                                <br />
+                                <input type="range" id="power" name="power" min="1" max="25" step="1" defaultValue="1" onMouseMove={() => {
+                                    if (this.scene.selection != null && this.scene.selection.selected.MTObjType == "Cannon") {
+                                        let power = document.getElementById('power').value;
+                                    
+                                        this.scene.selection.selected.updatePower(power);
+
+                                    }
+                                }} />
+
                             </div>
                            
                         </div>
@@ -212,7 +225,13 @@ export class MTClient extends React.Component {
         document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`;
         document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`;
 
-     
+        if (this.scene.selection != null && this.scene.selection.selected.MTObjType == "Cannon") {
+            document.getElementById('power').value = this.scene.selection.selected.power;
+        }
+        else
+            document.getElementById('power').value = 1;
+        let power = document.getElementById('power').value;
+        
     }
     
 
@@ -255,6 +274,11 @@ export class MTClient extends React.Component {
         let Creation = this.creationFromDB;
         let isOwner = false;
 
+        let savebutton = document.getElementById("saveToDBButton");
+        let deletebutton = document.getElementById("deleteToDBButton");
+        savebutton.disabled = true;
+        deletebutton.disabled = true;
+
         // check whether current user is the owner of project
         if (UserID != null) {
             let list = http.getProjectList();
@@ -289,7 +313,10 @@ export class MTClient extends React.Component {
                 // json = '{ "MTObjType": "Cannon", "MTObjVersion": "1.0.0","objectNumber":"2", "position": { "x": 300, "y": 150 }, "angle": 2, "image": null, "shape": [ { "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 } ], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "fireLayer": 1, "power": 20, "marbleSize": 20, "marbleColor": "rand", "marbleCollisionFilter": { "group": -1, "category": 4294967295, "mask": 4294967295 } }';
 
                 console.log(res);
+
                 console.log('save access successful');
+                this.saveObjectsToDB();
+
             } catch (ex) {
                 console.log(ex)
             }
@@ -304,6 +331,8 @@ export class MTClient extends React.Component {
         else {
             this.handleShowReminderBox_CannotSave();
         }
+        savebutton.disabled = false;
+        deletebutton.disabled = false;
     }
 
     saveObjectsToDB = async () => {
@@ -330,10 +359,7 @@ export class MTClient extends React.Component {
             let allObjectsToSave = this.scene.getAllObjects(CreationID);
 
             //disable buttons        
-            let savebutton = document.getElementById("saveToDBButton");
-            let deletebutton = document.getElementById("deleteToDBButton");
-            savebutton.disabled = true;
-            deletebutton.disabled = true;
+           
 
 
             const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
@@ -369,8 +395,7 @@ export class MTClient extends React.Component {
                 console.log(ex)
             } finally {
                 // enable button
-                savebutton.disabled = false;
-                deletebutton.disabled = false;
+                
             }
         }
         else {
