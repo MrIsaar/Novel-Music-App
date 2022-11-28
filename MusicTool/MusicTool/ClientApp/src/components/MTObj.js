@@ -9,7 +9,7 @@ export class MTObj extends PIXI.Graphics{
      * @param {any} shape shape of the object, defaulted to a square
      * @param {any} angle angle in radians
      */
-    constructor(objectNumber,pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
+    constructor(objectNumber,pos, angle = 0, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], collisionFilter = { group: 0, category: 0, mask: 0 }, image = null, restitution = 0) {
         super()
         this.objectNumber = objectNumber;
         this.shape = shape;
@@ -112,7 +112,6 @@ export class MTObj extends PIXI.Graphics{
         this.position = savedJSON.position;
         this.angle = savedJSON.angle;
         this.image = savedJSON.image;
-        
         return previousBody;
     }
 }

@@ -130,6 +130,7 @@ export class MTClient extends React.Component {
                                 <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x )}} />
                                 
                             </div>
+                           
                         </div>
 
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
@@ -203,6 +204,18 @@ export class MTClient extends React.Component {
     }
 
 
+    updateControls() {
+        document.getElementById('gX').value = this.scene.getGravity().x;
+        document.getElementById('gY').value = this.scene.getGravity().y;
+        let x = document.getElementById('gX').value;
+        let y = document.getElementById('gY').value;
+        document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`;
+        document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`;
+
+     
+    }
+    
+
 
     loadCreation() {
         fetch('/api/Creations/' + this.creationID)
@@ -210,7 +223,11 @@ export class MTClient extends React.Component {
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
+                
+                this.scene.updateGravity(data.worldRules.gravity.y, data.worldRules.gravity.x);
+                this.updateControls();
                 console.log("object list: ", data.creationObject);
+
                 for (let i = 0; i < data.creationObject.length; i++) {
                     console.log(`DB obj Saved cannon ${i}: `, data.creationObject[i]);
                     console.log(`DB Saved MTObj cannon ${i}: `, data.creationObject[i].json);
@@ -225,6 +242,7 @@ export class MTClient extends React.Component {
                     loading: false,
                     sequencerData: data.sequencer
                 });
+                
 
                 //this.loadObjects(data.creationObject);
             });
@@ -253,13 +271,16 @@ export class MTClient extends React.Component {
             try {
                 // Should store access before creation!
                 // save access
-                const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
+                //const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
                 // TODO: other db save post here are samples for saving creation, creationobject and sequencer
                 // CHECK Postman for more details on JSON_string <- MUST be in type of string
 
                 // save creations
                 // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
-                // await http.post('/creations/save/' + CreationID, { data: { CreationID, JSON_string })
+                Creation.worldRules = { gravity: this.scene.getGravity()};
+                Creation.sequencer = this.sequencerSavedState;
+                Creation.sequencer.sequencerID = undefined;// DB controller doesnt like if it is defined
+                const res = await http.post('/creations/save/' + CreationID, { data: Creation });
 
                 // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
                 // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
