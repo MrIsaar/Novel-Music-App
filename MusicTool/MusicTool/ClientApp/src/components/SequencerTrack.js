@@ -12,7 +12,9 @@ export const SequencerTrack = ({
     noteCount,
     onNotes,
     toggleNote,
-    removeTrack
+    removeTrack,
+    selected,
+    onSelect
 }) => {
      
     const notes = [...Array(noteCount)].map((el, i) => {
@@ -33,12 +35,12 @@ export const SequencerTrack = ({
     })
 
     return (
-        <div className="sequencer-track">
+        <div className={`sequencer-track ${selected ? "text-primary" : ""}`} onClick={onSelect}>
             <header className="track_title">{title}</header>
             <main className="track_notes">
                 {notes}
             </main>
-            <IconButton aria-label="delete" color="primary" onClick={() => removeTrack(trackID)}>
+            <IconButton aria-label="delete" color="primary" onClick={(e) => { removeTrack(trackID); e.stopPropagation(); }}>
                 <DeleteIcon />
             </IconButton>
         </div>

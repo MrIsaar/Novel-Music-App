@@ -20,9 +20,13 @@ export class Scene {
 
     selection = null;
     selectedTool = "select";
+
     copiedObject = null;
 
     trajectory = null
+
+    selectedTrack = -1;
+
 
     selectedNote = "C2";
 
@@ -116,7 +120,6 @@ export class Scene {
             if (this.selection !== null) {
                 this.selection.draw();
 
-
                 if (this.selection.selected.MTObjType === 'Cannon') {
                     this.drawTrajectory()
                     document.getElementById('power').value = this.selection.selected.power;
@@ -131,6 +134,7 @@ export class Scene {
                 document.getElementById('power').value = 1;
                 for (let i = 0; i < this.trajectory.length; i++)
                     this.trajectory[i].clear();
+
 
             }
         });
@@ -263,7 +267,7 @@ export class Scene {
 
         else if (this.selectedTool == "cannon") {
             Tone.start();
-            let cannon = new Cannon(-1, position)//<Cannon pos={position} body={null} />;
+            let cannon = new Cannon(-1, position, 0, 20, this.selectedTrack, this.engine.gravity);//<Cannon pos={position} body={null} />;
             this.cannons.push(cannon);
             this.addObject(cannon);
             if (this.selection != null) {
@@ -423,7 +427,7 @@ export class Scene {
             // create temp object to load object into
             if (mtObject.MTObjType == "Cannon") {
                 //newObject = new Cannon(pos);
-                newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
+                newObject = new Cannon(objectNumber, pos, angle, mtObject.power, mtObject.fireLayer, this.engine.gravity, mtObject.marbleColor, mtObject.marbleSize, mtObject.marbleCollisionFilter, shape, collisionFilter, image);
                 this.cannons.push(newObject);
             }
             else if (mtObject.MTObjType === "Instrument") {

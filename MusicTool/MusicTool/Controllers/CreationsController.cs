@@ -186,6 +186,24 @@ namespace MusicTool.Controllers
             return res;
         }
 
+        // POST: api/Creations/newName/5
+        [HttpPost("newName/{id}")]
+        public async Task<ActionResult<Creation>> PostNewName(int id, [FromBody] String newName)
+        {
+            var res = await _context.Creation.Where((p => p.CreationID == id)).FirstOrDefaultAsync();
+            if (res == null)
+            {
+                // pop message
+                return new BadRequestObjectResult(new { message = "Fail to get creation" });
+            }
+
+            res.Name = newName;
+            _context.Entry(res).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return res;
+        }
+
         // POST: api/Creations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

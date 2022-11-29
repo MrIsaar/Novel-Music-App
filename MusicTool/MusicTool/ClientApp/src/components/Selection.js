@@ -8,6 +8,8 @@ const THRESHOLD_ALPHA = 0.05;
 const CROSSBAR_WIDTH = 5;
 
 export class Selection extends PIXI.Graphics {
+    tragectory = null
+
     /**
      * 
      * @param {any} selected object such as cannon or instrument with selected.body, selected.position, selected.angle
@@ -116,6 +118,34 @@ export class Selection extends PIXI.Graphics {
         this.drawCircle(0, 0, this.translationThreshold);
         this.drawCircle(0, 0, this.rotationThreshold);
         this.endFill();
+
+        if (this.selected.MTObjType === 'Cannon') {
+
+            // Matter.body.update(body,delta,timescale,correction)
+            let scale = { x: 2.9, y: 2.83, g: 1.15 };
+            let angleDelta = 0.02;
+            let tragectoryPoints = { top: this.selected.getTragectory({ x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selected.getTragectory({ x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
+            let wasNull = false;
+            if (this.tragectory === null) {
+                this.tragectory = [new PIXI.Graphics(), new PIXI.Graphics()];
+                wasNull = true;
+            }
+            else {
+                this.tragectory[0].clear();
+                this.tragectory[1].clear();
+            }
+            for (let j = 0; j < 2; j++) {
+                this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
+
+                this.tragectory[j].moveTo(0, 0);
+                if (wasNull)
+                    this.addChild(this.tragectory[j]);
+            }
+            for (let i = 0; i < tragectoryPoints.top.length; i++) {
+                this.tragectory[0].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
+                this.tragectory[1].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
+            }
+        }
     }
 
 }

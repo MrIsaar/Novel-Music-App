@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import http from '../httpFetch';
-
+import { EditText } from 'react-edit-text';
 
 
 export class Sequencer extends Component {
@@ -48,7 +48,7 @@ export class Sequencer extends Component {
 
             }
 
-        this.callbacks = props.callbacks;
+            this.callbacks = props.callbacks;
 
             for (let i = 0; i < this.state.numTracks; i++) {
                 let row = [];
@@ -105,6 +105,11 @@ export class Sequencer extends Component {
         this._noteMatrix.splice(trackIndex, 1);
         this._trackIDs.splice(trackIndex, 1);
         this._trackNames.splice(trackIndex, 1);
+
+        // If this was the selected track, reset selected track to default.
+        if (trackID === this.props.selectedTrack) {
+            this.props.onSelectedTrackChange();
+        }
         
         //for (let i = 0; i < this.state.numTracks; i++) {
         //    if (this._trackIDs[i] != trackID) { // dont copy the track to be removed
@@ -165,6 +170,14 @@ export class Sequencer extends Component {
     }
 
 
+    // update track's name
+    // param: name -> trackID, value -> newName, previousValue -> oldName
+    handleSave_Name = ({ name, value, previousValue }) => {
+        // alert(name + ' saved as: ' + value + ' (prev: ' + previousValue + ')');
+        this._trackNames[name] = value
+    };
+
+
     render() {
 
         if (this.props.loading) {
@@ -182,11 +195,20 @@ export class Sequencer extends Component {
                     key={i}
                     trackID={id}
                     currentStepID={this.state.currentStepID}
-                    title={this._trackNames[i]}
+                    // title={this._trackNames[i]}
+                    title={(
+                        <EditText
+                            name={'' + i}
+                            onSave={this.handleSave_Name}
+                            placeholder={this._trackNames[i]}
+                        />
+                    )}
                     noteCount={this.state.numSteps}
                     onNotes={this._noteMatrix[i]}
                     toggleNote={this.toggleNote.bind(this)}
                     removeTrack={this.removeTrack}
+                    selected={id === this.props.selectedTrack}
+                    onSelect={() => this.props.onSelectedTrackChange(id)}
                 />
             )
         })
