@@ -87,19 +87,7 @@ export class Scene {
 
         //let sceneArea = document.getElementById('_Scene');
        
-        /*sceneArea.on('keydown', function (event) {
-            //console.log(event.keyCode);
-            switch (event.keyCode) {
-                case 8:
-                case 46:
-                    this.onBackSpace();
-                    break;
-
-                //....your actions for the keys .....
-            }
-        });
-
-        sceneArea.focus();*/
+       
         
 
         // add walls
@@ -225,14 +213,20 @@ export class Scene {
             if (this.selection == null) {
                 let currSelection = null;
                 for (let i = 0; i < this.cannons.length && !currSelection; i++) {
-                    if (Matter.Bounds.contains(this.cannons[i].body.bounds, position))
+                    if (Matter.Bounds.contains(this.cannons[i].body.bounds, position)) {
                         currSelection = this.cannons[i];
+                    }
+                        
                 }
                 for (let i = 0; i < this.drums.length && !currSelection; i++) {
-                    if (Matter.Bounds.contains(this.drums[i].body.bounds, position))
+                    if (Matter.Bounds.contains(this.drums[i].body.bounds, position)) {
                         currSelection = this.drums[i];
+                    }
+                        
                 }
                 if (currSelection != null) {
+                    
+                    
                     this.selection = new Selection(currSelection);
                     this.app.stage.addChild(this.selection);
                 }
@@ -245,6 +239,7 @@ export class Scene {
                         this.selection = null;
                         if (this.trajectory !== null) {
                             document.getElementById('power').value = 1;
+
                             for (let i = 0; i < this.trajectory.length; i++)
                                 this.trajectory[i].clear();
                         }

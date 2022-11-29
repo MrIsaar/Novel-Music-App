@@ -81,7 +81,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      }
 
      /**
-      * provides tragectory for balls fired from this cannon assuming the position of the cannon is (0,0)
+      * provides trajectory for balls fired from this cannon assuming the position of the cannon is (0,0)
       * @param {float} scale scale for how much power effects
       * @param {int} points number of points to output
       */

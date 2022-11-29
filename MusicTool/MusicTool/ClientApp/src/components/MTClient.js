@@ -87,73 +87,65 @@ export class MTClient extends React.Component {
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
                 ></Toolbar>
+                <div id="instrumentSettings">
+                    <label for="notes">Choose a note:</label>
+
+                    <select name="notes" id="notes">
+                        <option value="C2">C2</option>
+                        <option value="D2">D2</option>
+                        <option value="E2">E2</option>
+                        <option value="F2">F2</option>
+                        <option value="G2">G2</option>
+                        <option value="G#2">G#2</option>
+                        <option value="A2">A2</option>
+                        <option value="A#2">A#2</option>
+                        <option value="B2">B2</option>
+                        <option value="C3">C3</option>
+                        <option value="D3">D3</option>
+                        <option value="E3">E3</option>
+                        <option value="F3">F3</option>
+                        <option value="G3">G3</option>
+                        <option value="A3">A3</option>
+                        <option value="B3">B3</option>
+                        <option value="C4">C4</option>
+                        <option value="D4">D4</option>
+                        <option value="E4">E4</option>
+                        <option value="F4">F4</option>
+                        <option value="G4">G4</option>
+                        <option value="A4">A4</option>
+                        <option value="B4">B4</option>
+                    </select>
+                </div>
                 <div ref="scene" id="scene" />
                 <div className="row">
-                    <div className="col-3"><ToneExample /> </div>
+            
+
+                    
+                    <div className="col">
+                        {this.sequencer}
+                    </div>
                     <div className="col-3">
-                        <button onClick={this.scene.fireBalls}>------FIRE------</button>
-                        <button onClick={this.handleSave} id="saveToDBButton">------SAVE------</button>
-                        
-                        <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >-----DELETE-Object-----</button>
-                        <div>
 
-                            <label for="notes">Choose a note:</label>
+                        <button onClick={this.handleSave} id="saveToDBButton">SAVE-CREATION</button>
 
-                            <select name="notes" id="notes">
-                                <option value="C2">C2</option>
-                                <option value="D2">D2</option>
-                                <option value="E2">E2</option>
-                                <option value="F2">F2</option>
-                                <option value="G2">G2</option>
-                                <option value="G#2">G#2</option>
-                                <option value="A2">A2</option>
-                                <option value="A#2">A#2</option>
-                                <option value="B2">B2</option>
-                                <option value="C3">C3</option>
-                                <option value="D3">D3</option>
-                                <option value="E3">E3</option>
-                                <option value="F3">F3</option>
-                                <option value="G3">G3</option>
-                                <option value="A3">A3</option>
-                                <option value="B3">B3</option>
-                                <option value="C4">C4</option>
-                                <option value="D4">D4</option>
-                                <option value="E4">E4</option>
-                                <option value="F4">F4</option>
-                                <option value="G4">G4</option>
-                                <option value="A4">A4</option>
-                                <option value="B4">B4</option>
-                                
-
-                            </select>
-                        </div>
-                        <div>
-                            <div>
-                                <label for="gX" id="gXlabel">gravity X: 0</label>
-                                <br />
-                                <input type="range" id="gX" name="gX" min="-2" max="2" step="0.25" defaultValue="0" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`; this.scene.updateGravity(y, x) }}  />
-                            </div>
-                            <div>
-                                <label for="gY" id="gYlabel">gravity Y: 1</label>
-                                <br/>
-                                <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x )}} />
-                                
-                            </div>
-                            <div>
-                                <label for="power" id="powerlabel">power:</label>
+                        <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >DELETE-OBJECT</button>
+                        <div >
+                           
+                            <div id="cannonSettings">
+                                <label for="power" id="powerlabel">Cannon power:</label>
                                 <br />
                                 <input type="range" id="power" name="power" min="1" max="25" step="1" defaultValue="1" onMouseMove={() => {
                                     if (this.scene.selection != null && this.scene.selection.selected.MTObjType == "Cannon") {
                                         let power = document.getElementById('power').value;
-                                    
+
                                         this.scene.selection.selected.updatePower(power);
 
                                     }
                                 }} />
 
                             </div>
-                           
                         </div>
+
 
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
                             <Modal.Header closeButton>
@@ -169,12 +161,27 @@ export class MTClient extends React.Component {
                             </Modal.Footer>
                         </Modal>
                     </div>
+                    <div className="col-3">
+                        <div>
+                            <label for="gX" id="gXlabel">gravity X: 0</label>
+                            <br />
+                            <input type="range" id="gX" name="gX" min="-2" max="2" step="0.25" defaultValue="0" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`; this.scene.updateGravity(y, x) }} />
+                        </div>
+                        <div>
+                            <label for="gY" id="gYlabel">gravity Y: 1</label>
+                            <br />
+                            <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x) }} />
+
+                        </div>
+                        
+
+                    </div>
 
                 </div>
-                <p>alt click to create a cannon, shift click to fire.<br />
-                    click to select cannons to move or rotate</p>
+                
+                
 
-                {this.sequencer}
+                
             </div>
         );
     }
