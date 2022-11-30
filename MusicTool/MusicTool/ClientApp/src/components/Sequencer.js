@@ -59,6 +59,7 @@ export class Sequencer extends Component {
                 this._trackIDs.push(i);
                 this._trackNames.push("Track " + i);
             }
+            http.setTrackNames(this._trackNames);
         }
 
         this.callback = props.callback;
@@ -140,7 +141,7 @@ export class Sequencer extends Component {
             lifetimeNumTracks: this.state.numTracks + 1,
             numTracks: this.state.numTracks + 1
         });
-
+        http.setSequencerMatrix(this._noteMatrix);
     }
 
     addTrack = this._addTrack.bind(this);
@@ -175,6 +176,8 @@ export class Sequencer extends Component {
     handleSave_Name = ({ name, value, previousValue }) => {
         // alert(name + ' saved as: ' + value + ' (prev: ' + previousValue + ')');
         this._trackNames[name] = value
+        // update
+        http.setTrackNames(this._trackNames);
     };
 
 

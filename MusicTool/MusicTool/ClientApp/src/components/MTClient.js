@@ -287,6 +287,8 @@ export class MTClient extends React.Component {
             console.log(saveRes);
             try {
                 let sequencerObj = this.sequencerSavedState;
+                // update sequencer based on web local storage
+                this.updateSequencerObj(sequencerObj);
                 sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined
                 let saveRes = await http.post('/sequencer/save/' + CreationID, { data: sequencerObj });
                 console.log(`succesfully saved sequencer`);
@@ -303,6 +305,31 @@ export class MTClient extends React.Component {
             this.handleShowReminderBox_CannotSave();
         }
 
+    }
+
+    updateSequencerObj(sequencerObj) {
+        let names = http.getTrackNames();
+        let matrix = http.getSequencerMatrix();
+        let len = matrix.length;
+
+        if (names == null) {
+            names = [];
+            for (let i = 0; i < len; i++) {
+                names[i] = "track" + (i + 1);
+            }
+        }
+        else {
+            for (let i = 0; i < len; i++) {
+                if (names[i] == null)
+                    names[i] = "track" + (i + 1);
+            }
+        }
+
+        for (let i = 0; i < len; i++) {
+            sequencerObj.json.tracks[i] = { name: names[i], id: i + 1, notes: matrix[i] };
+        }
+
+        // console.log(sequencerObj.json.tracks);
     }
 
     // handle the close/show pop-up box
