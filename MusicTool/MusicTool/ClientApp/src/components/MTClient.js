@@ -17,7 +17,6 @@ export class MTClient extends React.Component {
 
         this.setSelectedTool = this.setSelectedTool.bind(this);
         this.setSelectedTrack = this.setSelectedTrack.bind(this);
-        this.handleSave = this.handleSave.bind(this);
         this.saveObjectsToDB = this.saveObjectsToDB.bind(this);
 
         this.state = {
@@ -91,8 +90,7 @@ export class MTClient extends React.Component {
                     <div className="col-3"><ToneExample /> </div>
                     <div className="col-3">
                         <button onClick={this.scene.fireBalls}>------FIRE------</button>
-                        <button onClick={this.handleSave}>------SAVE------</button>
-                        <button onClick={this.saveObjectsToDB} id="saveToDBButton">------SAVE-Object------</button>
+                        <button onClick={this.saveObjectsToDB} id="saveToDBButton">------SAVE------</button>
                         <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >-----DELETE-Object-----</button>
                         <div>
 
@@ -195,46 +193,6 @@ export class MTClient extends React.Component {
             });
     }
 
-    handleSave = async () => {
-        let CreationID = this.creationID + "";
-        let UserID = http.getUserId() + "";
-        let AccessLevel = 2;
-        this.loadCreation();
-        //let Creation = this.creationFromDB;
-        let isOwner = false;
-
-        // check whether current user is the owner of project
-        if (UserID != null) {
-            let list = http.getProjectList();
-            // check if creationID is contained
-            list.map(({ id, name }) => {
-                // check if creationID is contained
-                if (`${id}` == `${CreationID}`) {
-                    isOwner = true;
-                }
-            })
-        }
-
-        if (isOwner) {
-            try {
-                // Should store access before creation!
-                // save access
-                let access = { "creationID": CreationID, "userID": UserID, "accessLevel": AccessLevel };
-                const res = await http.post('/Access/save/' + CreationID, { data: access })
-
-                // TODO: save sequencer
-
-                console.log(res);
-                console.log('save access successful');
-            } catch (ex) {
-                console.log(ex)
-            }
-        }
-        else {
-            this.handleShowReminderBox_CannotSave();
-        }
-    }
-
     saveObjectsToDB = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
@@ -254,6 +212,14 @@ export class MTClient extends React.Component {
         }
 
         if (isOwner) {
+            // save access
+            let CreationID_str = CreationID + "";
+            let UserID_str = UserID + "";
+            let access = { "creationID": CreationID_str, "userID": UserID_str, "accessLevel": AccessLevel };
+            const res = await http.post('/Access/save/' + CreationID, { data: access })
+            console.log('save access successful ');
+            console.log(res);
+
             //let Creation = this.creationFromDB;
             let allObjectsToSave = this.scene.getAllObjects(CreationID);
 
