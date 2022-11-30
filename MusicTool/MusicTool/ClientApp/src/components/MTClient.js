@@ -196,11 +196,11 @@ export class MTClient extends React.Component {
     }
 
     handleSave = async () => {
-        let CreationID = this.creationID;
-        let UserID = http.getUserId();
+        let CreationID = this.creationID + "";
+        let UserID = http.getUserId() + "";
         let AccessLevel = 2;
         this.loadCreation();
-        let Creation = this.creationFromDB;
+        //let Creation = this.creationFromDB;
         let isOwner = false;
 
         // check whether current user is the owner of project
@@ -219,32 +219,16 @@ export class MTClient extends React.Component {
             try {
                 // Should store access before creation!
                 // save access
-                const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
-                // TODO: other db save post here are samples for saving creation, creationobject and sequencer
-                // CHECK Postman for more details on JSON_string <- MUST be in type of string
+                let access = { "creationID": CreationID, "userID": UserID, "accessLevel": AccessLevel };
+                const res = await http.post('/Access/save/' + CreationID, { data: access })
 
-                // save creations
-                // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
-                // await http.post('/creations/save/' + CreationID, { data: { CreationID, JSON_string })
-
-                // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
-                // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
-
-                // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
-                // json = '{ "MTObjType": "Cannon", "MTObjVersion": "1.0.0","objectNumber":"2", "position": { "x": 300, "y": 150 }, "angle": 2, "image": null, "shape": [ { "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 } ], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "fireLayer": 1, "power": 20, "marbleSize": 20, "marbleColor": "rand", "marbleCollisionFilter": { "group": -1, "category": 4294967295, "mask": 4294967295 } }';
+                // TODO: save sequencer
 
                 console.log(res);
                 console.log('save access successful');
             } catch (ex) {
                 console.log(ex)
             }
-
-            // .then((res) => {
-            //     console.log(res);
-            //     console.log('save access successful');
-            // }).catch((ex) => {
-            //     console.log('not successful')
-            // })
         }
         else {
             this.handleShowReminderBox_CannotSave();

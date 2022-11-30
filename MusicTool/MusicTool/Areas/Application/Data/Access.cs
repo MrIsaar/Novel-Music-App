@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
@@ -19,7 +20,8 @@ public class Access
     public string UserID { get; set; }
     public int CreationID { get; set; }
     public AccessLevel AccessLevel { get; set; }
-    public virtual Creation Creation { get; set; }
+    /*[JsonIgnore]
+    public virtual Creation? Creation { get; set; }*/
 
 }
 
