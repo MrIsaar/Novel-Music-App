@@ -27,7 +27,8 @@ export class ToneExample extends Component {
         
         return (
             <div>
-                <h1>ToneDemo</h1>
+                <br></br><br></br><br></br><br></br>
+                <h1>Workspace</h1>
             </div>
         );
 
