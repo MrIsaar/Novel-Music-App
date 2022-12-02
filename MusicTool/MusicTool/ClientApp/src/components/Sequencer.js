@@ -80,7 +80,7 @@ export class Sequencer extends Component {
     }
 
     _tick(time, idx) {
-        console.log(`time: ${time}, step: ${idx}`) 
+        //console.log(`time: ${time}, step: ${idx}`) 
         let step = idx % this.state.numSteps;
         for (let track = 0; track < this.state.numTracks; track++) {
             if (this._noteMatrix[track][step]) {
