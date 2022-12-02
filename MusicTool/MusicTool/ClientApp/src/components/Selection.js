@@ -8,7 +8,7 @@ const THRESHOLD_ALPHA = 0.05;
 const CROSSBAR_WIDTH = 5;
 
 export class Selection extends PIXI.Graphics {
-    tragectory = null
+    trajectory = null
 
     /**
      * 
@@ -124,26 +124,26 @@ export class Selection extends PIXI.Graphics {
             // Matter.body.update(body,delta,timescale,correction)
             let scale = { x: 2.9, y: 2.83, g: 1.15 };
             let angleDelta = 0.02;
-            let tragectoryPoints = { top: this.selected.getTragectory({ x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selected.getTragectory({ x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
+            let trajectoryPoints = { top: this.selected.getTrajectory({ x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selected.getTrajectory({ x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
             let wasNull = false;
-            if (this.tragectory === null) {
-                this.tragectory = [new PIXI.Graphics(), new PIXI.Graphics()];
+            if (this.trajectory === null) {
+                this.trajectory = [new PIXI.Graphics(), new PIXI.Graphics()];
                 wasNull = true;
             }
             else {
-                this.tragectory[0].clear();
-                this.tragectory[1].clear();
+                this.trajectory[0].clear();
+                this.trajectory[1].clear();
             }
             for (let j = 0; j < 2; j++) {
-                this.tragectory[j].lineStyle(2, 0xadf8e6, 1);
+                this.trajectory[j].lineStyle(2, 0xadf8e6, 1);
 
-                this.tragectory[j].moveTo(0, 0);
+                this.trajectory[j].moveTo(0, 0);
                 if (wasNull)
-                    this.addChild(this.tragectory[j]);
+                    this.addChild(this.trajectory[j]);
             }
-            for (let i = 0; i < tragectoryPoints.top.length; i++) {
-                this.tragectory[0].lineTo(tragectoryPoints.top[i].x, tragectoryPoints.top[i].y);
-                this.tragectory[1].lineTo(tragectoryPoints.bottom[i].x, tragectoryPoints.bottom[i].y);
+            for (let i = 0; i < trajectoryPoints.top.length; i++) {
+                this.trajectory[0].lineTo(trajectoryPoints.top[i].x, trajectoryPoints.top[i].y);
+                this.trajectory[1].lineTo(trajectoryPoints.bottom[i].x, trajectoryPoints.bottom[i].y);
             }
         }
     }

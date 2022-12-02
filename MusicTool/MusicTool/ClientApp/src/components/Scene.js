@@ -20,7 +20,13 @@ export class Scene {
 
     selection = null;
     selectedTool = "select";
+
+    copiedObject = null;
+
+    trajectory = null
+
     selectedTrack = -1;
+
 
     selectedNote = "C2";
 
@@ -71,7 +77,7 @@ export class Scene {
                     collisionFilter: { group: 0, category: 0, mask: 0 }
                 }
             });
-        World.add(this.engine.world, mouseConstraint);
+        //World.add(this.engine.world, mouseConstraint);
 
         // Set event handlers
         Matter.Events.on(this.engine, "collisionStart", this.onCollision);
@@ -81,19 +87,7 @@ export class Scene {
 
         //let sceneArea = document.getElementById('_Scene');
        
-        /*sceneArea.on('keydown', function (event) {
-            //console.log(event.keyCode);
-            switch (event.keyCode) {
-                case 8:
-                case 46:
-                    this.onBackSpace();
-                    break;
-
-                //....your actions for the keys .....
-            }
-        });
-
-        sceneArea.focus();*/
+       
         
 
         // add walls
@@ -102,7 +96,7 @@ export class Scene {
             Matter.Bodies.rectangle(width / 2, height, width, 50, { isStatic: true }),
             Matter.Bodies.rectangle(0, height / 2, 50, height, { isStatic: true })
         ]);
-
+        
         this.sounds.push(<div> <ToneExample /> </div>);
 
         // Start engine & renderer
@@ -113,8 +107,62 @@ export class Scene {
             this.drums.forEach(d => d.draw());
             if (this.selection !== null) {
                 this.selection.draw();
+
+                if (this.selection.selected.MTObjType === 'Cannon') {
+                    this.drawTrajectory()
+                    document.getElementById('power').value = this.selection.selected.power;
+                    
+                } else if (this.trajectory !== null) {
+                    document.getElementById('power').value = 1;
+                    for (let i = 0; i < this.trajectory.length; i++)
+                        this.trajectory[i].clear();
+                    
+                }
+            } else if (this.trajectory !== null) {
+                document.getElementById('power').value = 1;
+                for (let i = 0; i < this.trajectory.length; i++)
+                    this.trajectory[i].clear();
+
+
             }
         });
+    }
+
+    drawTrajectory() {
+        // Matter.body.update(body,delta,timescale,correction)
+        let scale = { x: 2.9, y: 2.83, g: 1.15 };
+        let angleDelta = 0.01;
+        let trajectoryPoints = { top: this.selection.selected.getTrajectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 + angleDelta }, 35), bottom: this.selection.selected.getTrajectory(this.engine.world.gravity, { x: scale.x, y: scale.y, g: scale.g, angle: 1 - angleDelta }, 35) };
+        let wasNull = false;
+        if (this.trajectory === null) {
+            this.trajectory = [new PIXI.Graphics(), new PIXI.Graphics()];
+            wasNull = true;
+        }
+        else {
+            this.trajectory[0].clear();
+            this.trajectory[1].clear();
+        }
+        for (let j = 0; j < 2; j++) {
+            this.trajectory[j].lineStyle(2, 0xadf8e6, 1);
+            this.trajectory[j].position.x = this.selection.selected.position.x;
+            this.trajectory[j].position.y = this.selection.selected.position.y;
+
+            this.trajectory[j].moveTo(0, 0);
+
+            if (wasNull)
+                this.app.stage.addChild(this.trajectory[j]);
+        }
+        let timePoints = [];
+        for (let i = 0; i < trajectoryPoints.top.length; i++) {
+            if (i % 8 == 7) {
+                timePoints.push(trajectoryPoints.top[i]);
+                timePoints.push(trajectoryPoints.bottom[i]);
+            }
+            
+            this.trajectory[0].lineTo(trajectoryPoints.top[i].x, trajectoryPoints.top[i].y);
+            this.trajectory[1].lineTo(trajectoryPoints.bottom[i].x, trajectoryPoints.bottom[i].y);
+        }
+
     }
 
     /**
@@ -165,14 +213,20 @@ export class Scene {
             if (this.selection == null) {
                 let currSelection = null;
                 for (let i = 0; i < this.cannons.length && !currSelection; i++) {
-                    if (Matter.Bounds.contains(this.cannons[i].body.bounds, position))
+                    if (Matter.Bounds.contains(this.cannons[i].body.bounds, position)) {
                         currSelection = this.cannons[i];
+                    }
+                        
                 }
                 for (let i = 0; i < this.drums.length && !currSelection; i++) {
-                    if (Matter.Bounds.contains(this.drums[i].body.bounds, position))
+                    if (Matter.Bounds.contains(this.drums[i].body.bounds, position)) {
                         currSelection = this.drums[i];
+                    }
+                        
                 }
                 if (currSelection != null) {
+                    
+                    
                     this.selection = new Selection(currSelection);
                     this.app.stage.addChild(this.selection);
                 }
@@ -183,6 +237,12 @@ export class Scene {
                     if (this.selection != null) { // deselect
                         this.selection.destroy({ children: true });
                         this.selection = null;
+                        if (this.trajectory !== null) {
+                            document.getElementById('power').value = 1;
+
+                            for (let i = 0; i < this.trajectory.length; i++)
+                                this.trajectory[i].clear();
+                        }
                     }
                     //Check if another cannon should be selected
                     let currCannon = null;
@@ -323,6 +383,20 @@ export class Scene {
             this.selection.destroy();
             this.selection = null;
         }
+    }
+
+    /**
+     * change the value of gravity,  
+     **/
+    updateGravity(y = 1, x = 0) {
+        
+        this.engine.world.gravity.x = x;
+        this.engine.world.gravity.y = y;
+        
+    }
+
+    getGravity() {
+        return this.engine.world.gravity;
     }
 
     addObject(object) {

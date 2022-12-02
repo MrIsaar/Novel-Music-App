@@ -32,6 +32,7 @@ export class MTClient extends React.Component {
         this.scene = new Scene({
             objectAdded: () => this.setSelectedTool("select")
         });
+        this.sequencer = null
 
         this.creationFromDB = null;
     }
@@ -65,11 +66,11 @@ export class MTClient extends React.Component {
         let callback = this.scene.fireBalls;
         //let callback = this.fireBalls;
 
-        let sequencer;
+        
         if (this.state.loading) {
-            sequencer = <h1>Loading...</h1>;
+            this.sequencer = <h1>Loading...</h1>;
         } else {
-            sequencer =
+            this.sequencer =
                 <Sequencer
                     savedState={this.sequencerSavedState}
                     loading={this.state.loading}
@@ -80,53 +81,73 @@ export class MTClient extends React.Component {
         }
 
         return (
-            <div id="_Scene" tabIndex={0} onKeyDown={this.onKeyDown}>
+            <div id="_Scene" tabIndex={0} onKeyUp={this.onKeyDown}>
                 <Toolbar
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
                 ></Toolbar>
+                <div id="instrumentSettings">
+                    <label for="notes">Choose a note:</label>
+
+                    <select name="notes" id="notes">
+                        <option value="C2">C2</option>
+                        <option value="D2">D2</option>
+                        <option value="E2">E2</option>
+                        <option value="F2">F2</option>
+                        <option value="G2">G2</option>
+                        <option value="G#2">G#2</option>
+                        <option value="A2">A2</option>
+                        <option value="A#2">A#2</option>
+                        <option value="B2">B2</option>
+                        <option value="C3">C3</option>
+                        <option value="D3">D3</option>
+                        <option value="E3">E3</option>
+                        <option value="F3">F3</option>
+                        <option value="G3">G3</option>
+                        <option value="A3">A3</option>
+                        <option value="B3">B3</option>
+                        <option value="C4">C4</option>
+                        <option value="D4">D4</option>
+                        <option value="E4">E4</option>
+                        <option value="F4">F4</option>
+                        <option value="G4">G4</option>
+                        <option value="A4">A4</option>
+                        <option value="B4">B4</option>
+                    </select>
+                </div>
                 <div ref="scene" id="scene" />
                 <div className="row">
-                    <div className="col-3"><ToneExample /> </div>
+            
+
+                    
+                    <div className="col">
+                        {this.sequencer}
+                    </div>
                     <div className="col-3">
-                        <br></br>
-                        <Button variant="primary"  onClick={this.scene.fireBalls}>------FIRE------</Button>
-                        <br></br><br></br>
-                        <Button variant="primary" onClick={this.saveObjectsToDB} id="saveToDBButton">------SAVE------</Button>
-                        <br></br><br></br>
-                        <Button variant="primary"  onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >-----DELETE-Object-----</Button>
-                        <br></br><br></br>
-                        <div>
 
-                            <label for="notes">Choose a note:</label>
-                            <br></br>
-                            <select name="notes" id="notes">
-                                <option value="C2">C2</option>
-                                <option value="D2">D2</option>
-                                <option value="E2">E2</option>
-                                <option value="F2">F2</option>
-                                <option value="G2">G2</option>
-                                <option value="A2">A2</option>
-                                <option value="B2">B2</option>
-                                <option value="C3">C3</option>
-                                <option value="D3">D3</option>
-                                <option value="E3">E3</option>
-                                <option value="F3">F3</option>
-                                <option value="G3">G3</option>
-                                <option value="A3">A3</option>
-                                <option value="B3">B3</option>
-                                <option value="C4">C4</option>
-                                <option value="D4">D4</option>
-                                <option value="E4">E4</option>
-                                <option value="F4">F4</option>
-                                <option value="G4">G4</option>
-                                <option value="A4">A4</option>
-                                <option value="B4">B4</option>
-                                
 
-                            </select>
+                        <button onClick={this.handleSave} id="saveToDBButton">SAVE-CREATION</button>
+
+                        <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >DELETE-OBJECT</button>
+                        <div >
+                           
+                            <div id="cannonSettings">
+                                <label for="power" id="powerlabel">Cannon power:</label>
+                                <br />
+                                <input type="range" id="power" name="power" min="1" max="25" step="1" defaultValue="1" onMouseMove={() => {
+                                    if (this.scene.selection != null && this.scene.selection.selected.MTObjType == "Cannon") {
+                                        let power = document.getElementById('power').value;
+
+                                        this.scene.selection.selected.updatePower(power);
+
+                                    }
+                                }} />
+
+                            </div>
                         </div>
-                        <br></br>
+
+
+
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Reminder</Modal.Title>
@@ -141,11 +162,27 @@ export class MTClient extends React.Component {
                             </Modal.Footer>
                         </Modal>
                     </div>
+                    <div className="col-3">
+                        <div>
+                            <label for="gX" id="gXlabel">gravity X: 0</label>
+                            <br />
+                            <input type="range" id="gX" name="gX" min="-2" max="2" step="0.25" defaultValue="0" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`; this.scene.updateGravity(y, x) }} />
+                        </div>
+                        <div>
+                            <label for="gY" id="gYlabel">gravity Y: 1</label>
+                            <br />
+                            <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x) }} />
+
+                        </div>
+                        
+
+                    </div>
 
                 </div>
-                <p>alt click to create a cannon, shift click to fire.<br />
-                    click to select cannons to move or rotate</p>
-                {sequencer}
+                
+                
+
+                
             </div>
         );
     }
@@ -160,6 +197,32 @@ export class MTClient extends React.Component {
             this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null);
 
         }
+        else if (event.key == 'c' && event.ctrlKey) {
+            console.log("copy selected");
+            if (this.scene.selection != null) {
+                let copy = this.scene.selection.selected;
+                console.log(copy);
+                this.scene.copiedObject = copy;
+            }
+            else {
+                console.log("Nothing selected");
+            }
+
+        }
+        else if (event.key == 'v' && event.ctrlKey) {
+            console.log("paste selected");
+            if (this.scene.copiedObject != null) {
+                let pasteObj = this.scene.copiedObject.saveObject();
+                console.log(pasteObj);
+                pasteObj.objectNumber = -1;
+                pasteObj.position.x += 20;
+                pasteObj.position.y += 20;
+                this.scene.loadObject(this.creationObjectID, pasteObj);
+            }
+            else {
+                console.log("Nothing to copy");
+            }
+        }
         else if (event.key == 'a' || event.key == 'b') {
 
             console.log("you pressed a or b")
@@ -171,6 +234,24 @@ export class MTClient extends React.Component {
     }
 
 
+    updateControls() {
+        document.getElementById('gX').value = this.scene.getGravity().x;
+        document.getElementById('gY').value = this.scene.getGravity().y;
+        let x = document.getElementById('gX').value;
+        let y = document.getElementById('gY').value;
+        document.getElementById('gXlabel').innerHTML = `gravity X: ${x}`;
+        document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`;
+
+        if (this.scene.selection != null && this.scene.selection.selected.MTObjType == "Cannon") {
+            document.getElementById('power').value = this.scene.selection.selected.power;
+        }
+        else
+            document.getElementById('power').value = 1;
+        let power = document.getElementById('power').value;
+        
+    }
+    
+
 
     loadCreation() {
         fetch('/api/Creations/' + this.creationID)
@@ -178,7 +259,11 @@ export class MTClient extends React.Component {
             .then(res => res.json())
             .then(data => {
                 console.log("creation data: ", data);
+                
+                this.scene.updateGravity(data.worldRules.gravity.y, data.worldRules.gravity.x);
+                this.updateControls();
                 console.log("object list: ", data.creationObject);
+
                 for (let i = 0; i < data.creationObject.length; i++) {
                     console.log(`DB obj Saved cannon ${i}: `, data.creationObject[i]);
                     console.log(`DB Saved MTObj cannon ${i}: `, data.creationObject[i].json);
@@ -193,16 +278,89 @@ export class MTClient extends React.Component {
                     loading: false,
                     sequencerData: data.sequencer
                 });
+                
 
                 //this.loadObjects(data.creationObject);
             });
     }
+
+
+    handleSave = async () => {
+        let CreationID = this.creationID;
+        let UserID = http.getUserId();
+        let AccessLevel = 2;
+        this.loadCreation();
+        let Creation = this.creationFromDB;
+        let isOwner = false;
+
+        let savebutton = document.getElementById("saveToDBButton");
+        let deletebutton = document.getElementById("deleteToDBButton");
+        savebutton.disabled = true;
+        deletebutton.disabled = true;
+
+        // check whether current user is the owner of project
+        if (UserID != null) {
+            let list = http.getProjectList();
+            // check if creationID is contained
+            list.map(({ id, name }) => {
+                // check if creationID is contained
+                if (`${id}` == `${CreationID}`) {
+                    isOwner = true;
+                }
+            })
+        }
+
+        if (isOwner) {
+            try {
+                // Should store access before creation!
+                // save access
+                //const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
+                // TODO: other db save post here are samples for saving creation, creationobject and sequencer
+                // CHECK Postman for more details on JSON_string <- MUST be in type of string
+
+                // save creations
+                // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
+                Creation.worldRules = { gravity: this.scene.getGravity()};
+                Creation.sequencer = this.sequencerSavedState;
+                Creation.sequencer.sequencerID = undefined;// DB controller doesnt like if it is defined
+                const res = await http.post('/creations/save/' + CreationID, { data: Creation });
+
+                // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
+                // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
+
+                // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
+                // json = '{ "MTObjType": "Cannon", "MTObjVersion": "1.0.0","objectNumber":"2", "position": { "x": 300, "y": 150 }, "angle": 2, "image": null, "shape": [ { "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 } ], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "fireLayer": 1, "power": 20, "marbleSize": 20, "marbleColor": "rand", "marbleCollisionFilter": { "group": -1, "category": 4294967295, "mask": 4294967295 } }';
+
+                console.log(res);
+
+                console.log('save access successful');
+                this.saveObjectsToDB();
+
+            } catch (ex) {
+                console.log(ex)
+            }
+
+            // .then((res) => {
+            //     console.log(res);
+            //     console.log('save access successful');
+            // }).catch((ex) => {
+            //     console.log('not successful')
+            // })
+        }
+        else {
+            this.handleShowReminderBox_CannotSave();
+        }
+        savebutton.disabled = false;
+        deletebutton.disabled = false;
+    }
+
 
     saveObjectsToDB = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
         let AccessLevel = 2;
         let isOwner = false;
+        
 
         // check whether current user is the owner of project
         if (UserID != null) {
@@ -229,10 +387,7 @@ export class MTClient extends React.Component {
             let allObjectsToSave = this.scene.getAllObjects(CreationID);
 
             //disable buttons        
-            let savebutton = document.getElementById("saveToDBButton");
-            let deletebutton = document.getElementById("deleteToDBButton");
-            savebutton.disabled = true;
-            deletebutton.disabled = true;
+           
 
 
             const saveRes = await http.post('/creationObject/save/' + CreationID, { data: allObjectsToSave });
@@ -256,6 +411,8 @@ export class MTClient extends React.Component {
 
             console.log(`succesfully saved: `);
             console.log(saveRes);
+            console.log(this.sequencer);
+            console.log(this.sequencer.props);
             try {
                 let sequencerObj = this.sequencerSavedState;
                 // update sequencer based on web local storage
@@ -268,8 +425,7 @@ export class MTClient extends React.Component {
                 console.log(ex)
             } finally {
                 // enable button
-                savebutton.disabled = false;
-                deletebutton.disabled = false;
+                
             }
         }
         else {

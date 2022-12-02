@@ -42,7 +42,11 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      */
     updateFirelayer(newLayer) {
         this.fireOn = newLayer;
-    }
+     }
+
+     updatePower(power) {
+         this.power = power;
+     }
 
     /**
      *     firelayer must match fireOn value for cannon
@@ -77,11 +81,13 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      }
 
      /**
-      * provides tragectory for balls fired from this cannon assuming the position of the cannon is (0,0)
+      * provides trajectory for balls fired from this cannon assuming the position of the cannon is (0,0)
       * @param {float} scale scale for how much power effects
       * @param {int} points number of points to output
       */
-     getTragectory(scale, points) {
+     getTrajectory(gravity, scale, points) {
+
+
          let normalizedAngleVec = { x: Math.cos(this.rotation) * scale.angle, y: Math.sin(this.rotation) * scale.angle };
          /*let denom = Math.abs(normalizedAngleVec.x + normalizedAngleVec.y)
          normalizedAngleVec.x = normalizedAngleVec.x / denom;
