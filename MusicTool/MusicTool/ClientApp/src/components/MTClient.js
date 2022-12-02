@@ -126,9 +126,12 @@ export class MTClient extends React.Component {
                     <div className="col-3">
 
 
-                        <button onClick={this.handleSave} id="saveToDBButton">SAVE-CREATION</button>
+                        <Button variant="primary" onClick={this.handleSave} id="saveToDBButton">SAVE-CREATION</Button>
 
-                        <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >DELETE-OBJECT</button>
+                        <br></br>
+                        <br></br>
+
+                        <Button variant="primary" onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >DELETE-OBJECT</Button>
                         <div >
                            
                             <div id="cannonSettings">
