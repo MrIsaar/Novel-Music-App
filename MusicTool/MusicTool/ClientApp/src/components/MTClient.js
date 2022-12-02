@@ -135,6 +135,7 @@ export class MTClient extends React.Component {
                         <div >
                            
                             <div id="cannonSettings">
+                                <br></br>
                                 <label for="power" id="powerlabel">Cannon power:</label>
                                 <br />
                                 <input type="range" id="power" name="power" min="1" max="25" step="1" defaultValue="1" onMouseMove={() => {
