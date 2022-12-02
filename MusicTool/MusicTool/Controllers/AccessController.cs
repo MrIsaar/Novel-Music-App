@@ -64,14 +64,17 @@ namespace MusicTool.Controllers
             var res = await _context.Access.Where(p => p.CreationID == access.CreationID).FirstOrDefaultAsync();
             if (res != null)
             {
+                // do nothing if ID already exists
                 // return new BadRequestObjectResult(new { message = "CreationID already exists." });
                 // remove old data if ID already exists
-                _context.Access.Remove(res);
+                /*_context.Access.Remove(res);
+                await _context.SaveChangesAsync();*/
+            }
+            else
+            {
+                await _context.Access.AddAsync(access);
                 await _context.SaveChangesAsync();
             }
-
-            await _context.Access.AddAsync(access);
-            await _context.SaveChangesAsync();
 
             var res2 = await _context.Access.Where((p => p.CreationID == access.CreationID)).FirstOrDefaultAsync();
             if (res2 == null || String.IsNullOrEmpty(res2.CreationID.ToString()))

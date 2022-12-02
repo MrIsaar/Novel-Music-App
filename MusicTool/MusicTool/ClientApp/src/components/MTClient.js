@@ -17,7 +17,6 @@ export class MTClient extends React.Component {
 
         this.setSelectedTool = this.setSelectedTool.bind(this);
         this.setSelectedTrack = this.setSelectedTrack.bind(this);
-        this.handleSave = this.handleSave.bind(this);
         this.saveObjectsToDB = this.saveObjectsToDB.bind(this);
 
         this.state = {
@@ -126,6 +125,7 @@ export class MTClient extends React.Component {
                     </div>
                     <div className="col-3">
 
+
                         <button onClick={this.handleSave} id="saveToDBButton">SAVE-CREATION</button>
 
                         <button onClick={() => { this.deleteObject(this.scene.selection != null ? this.scene.selection.selected : null); }} id="deleteToDBButton" >DELETE-OBJECT</button>
@@ -145,6 +145,7 @@ export class MTClient extends React.Component {
 
                             </div>
                         </div>
+
 
 
                         <Modal show={this.state.showReminderBox_CannotSave} onHide={this.handleCloseReminderBox_CannotSave}>
@@ -283,6 +284,7 @@ export class MTClient extends React.Component {
             });
     }
 
+
     handleSave = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
@@ -352,6 +354,7 @@ export class MTClient extends React.Component {
         deletebutton.disabled = false;
     }
 
+
     saveObjectsToDB = async () => {
         let CreationID = this.creationID;
         let UserID = http.getUserId();
@@ -372,6 +375,14 @@ export class MTClient extends React.Component {
         }
 
         if (isOwner) {
+            // save access
+            let CreationID_str = CreationID + "";
+            let UserID_str = UserID + "";
+            let access = { "creationID": CreationID_str, "userID": UserID_str, "accessLevel": AccessLevel };
+            const res = await http.post('/Access/save/' + CreationID, { data: access })
+            console.log('save access successful ');
+            console.log(res);
+
             //let Creation = this.creationFromDB;
             let allObjectsToSave = this.scene.getAllObjects(CreationID);
 
@@ -404,6 +415,8 @@ export class MTClient extends React.Component {
             console.log(this.sequencer.props);
             try {
                 let sequencerObj = this.sequencerSavedState;
+                // update sequencer based on web local storage
+                this.updateSequencerObj(sequencerObj);
                 sequencerObj.sequencerID = undefined;// DB controller doesnt like if it is defined
                 let saveRes = await http.post('/sequencer/save/' + CreationID, { data: sequencerObj });
                 console.log(`succesfully saved sequencer`);
@@ -419,6 +432,31 @@ export class MTClient extends React.Component {
             this.handleShowReminderBox_CannotSave();
         }
 
+    }
+
+    updateSequencerObj(sequencerObj) {
+        let names = http.getTrackNames();
+        let matrix = http.getSequencerMatrix();
+        let len = matrix.length;
+
+        if (names == null) {
+            names = [];
+            for (let i = 0; i < len; i++) {
+                names[i] = "track" + (i + 1);
+            }
+        }
+        else {
+            for (let i = 0; i < len; i++) {
+                if (names[i] == null)
+                    names[i] = "track" + (i + 1);
+            }
+        }
+
+        for (let i = 0; i < len; i++) {
+            sequencerObj.json.tracks[i] = { name: names[i], id: i + 1, notes: matrix[i] };
+        }
+
+        // console.log(sequencerObj.json.tracks);
     }
 
     // handle the close/show pop-up box

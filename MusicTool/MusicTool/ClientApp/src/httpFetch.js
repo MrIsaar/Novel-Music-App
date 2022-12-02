@@ -76,6 +76,9 @@ class HttpFetch {
 
   getSequencerMatrix = () => this.getValue('SequencerMatrix')
   setSequencerMatrix = (matrix) => this.setValue('SequencerMatrix', matrix)
+
+  getTrackNames = () => this.getValue('TrackNames')
+  setTrackNames = (names) => this.setValue('TrackNames', names)
 }
 
 export default new HttpFetch()
