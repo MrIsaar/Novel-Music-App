@@ -86,8 +86,10 @@ export class MTClient extends React.Component {
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
                 ></Toolbar>
+
+                <br></br>
                 <div id="instrumentSettings">
-                    <label for="notes">Choose a note:</label>
+                    <label for="notes">Choose a note: &nbsp;</label>
 
                     <select name="notes" id="notes">
                         <option value="C2">C2</option>
@@ -115,7 +117,11 @@ export class MTClient extends React.Component {
                         <option value="B4">B4</option>
                     </select>
                 </div>
+                <br></br>
+
                 <div ref="scene" id="scene" />
+                <br></br>
+
                 <div className="row">
             
 
@@ -123,6 +129,7 @@ export class MTClient extends React.Component {
                     <div className="col">
                         {this.sequencer}
                     </div>
+
                     <div className="col-3">
 
 
