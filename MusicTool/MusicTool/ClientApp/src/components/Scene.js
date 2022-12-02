@@ -338,6 +338,22 @@ export class Scene {
                     this.selection = null;
                 }
             }
+            else if (this.selectedTool == 'electronic') {
+                Tone.start();
+                let synthrules = {
+                    portamento: 0.01
+                    
+                };
+                let instrument = new Instrument(-1, position, 0, new Tone.Synth(synthrules).toDestination(), "Synth",
+                    { note: document.getElementById("notes").value, length: '8n' },
+                    [{ x: -10, y: 10 }, { x: 10, y: 10 }, { x: 30, y: -5 }, { x: 25, y: -15 }, { x: -25, y: -15 }, { x: -30, y: -5 }])
+                this.drums.push(instrument);
+                this.addObject(instrument);
+                if (this.selection != null) {
+                    this.selection.destroy({ children: true });
+                    this.selection = null;
+                }
+            }
         }
     }
 

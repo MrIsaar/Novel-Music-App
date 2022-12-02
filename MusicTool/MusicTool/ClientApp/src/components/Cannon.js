@@ -71,7 +71,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
             color = this.marbleColor;
         }
 
-        var ball = new Ball(this.position, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
+        var ball = new Ball(this.body.position, this.marbleSize, this.marbleCollisionFilter,this.fireLayer,color);
         ball.body.frictionAir = 0;
         //set velocity
         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };

@@ -31,6 +31,7 @@ export default function Toolbar(props) {
                 <FormControlLabel value="drum" control={<Radio />} label="Drum" />
                 <FormControlLabel value="cymbal" control={<Radio />} label="Cymbal" />
                 <FormControlLabel value="cowbell" control={<Radio />} label="Cowbell" />
+                <FormControlLabel value="electronic" control={<Radio />} label="Electronic" />
             </RadioGroup>
         </FormControl>
     );
