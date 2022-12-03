@@ -2,6 +2,8 @@
 import http from "../httpFetch";
 import Scene from "./Scene.js";
 import Toolbar from "./Toolbar.js";
+import Cannon from "./Cannon.js";
+import CannonMenu from "./CannonMenu";
 import { Sequencer } from "./Sequencer.js";
 import ToneExample from "./ToneSetup"
 import Matter, { Engine, World, Mouse, MouseConstraint } from "matter-js";
@@ -15,26 +17,38 @@ export class MTClient extends React.Component {
     constructor(props) {
         super(props);
 
+        this.setTracks = this.setTracks.bind(this);
         this.setSelectedTool = this.setSelectedTool.bind(this);
         this.setSelectedTrack = this.setSelectedTrack.bind(this);
         this.saveObjectsToDB = this.saveObjectsToDB.bind(this);
+        this.setSelectedObj = this.setSelectedObj.bind(this);
 
         this.state = {
             loading: true,
             sequencerData: {},
+            tracks: [],
             selectedTool: 'select',
             selectedTrack: null,
+            selectedObj: null,
             showReminderBox_CannotSave: false
         };
 
         let { creationID } = this.props.match.params;
         this.creationID = creationID;
         this.scene = new Scene({
-            objectAdded: () => this.setSelectedTool("select")
+            objectAdded: () => this.setSelectedTool("select"),
+            selectionUpdate: this.setSelectedObj
         });
         this.sequencer = null
 
         this.creationFromDB = null;
+    }
+
+    setTracks(names, ids) {
+        let tracks = [];
+        for (let i = 0; i < names.length && i < ids.length; i++)
+            tracks.push({ name: names[i], id: ids[i] });
+        this.setState({ tracks: tracks });
     }
 
     setSelectedTool(tool) {
@@ -46,6 +60,10 @@ export class MTClient extends React.Component {
     setSelectedTrack(trackID = -1) {
         this.setState({ selectedTrack: trackID });
         this.scene.selectedTrack = trackID;
+    }
+
+    setSelectedObj(selection = null) {
+        this.setState({ selectedObj: selection });
     }
 
     setShowReminderBox_CannotSave = (showReminderBox_CannotSave) => {
@@ -77,8 +95,13 @@ export class MTClient extends React.Component {
                     callback={callback}
                     selectedTrack={this.state.selectedTrack}
                     onSelectedTrackChange={this.setSelectedTrack}
+                    tracksChanged={this.setTracks}
                 />
         }
+
+        let objMenu = null;
+        if (this.state.selectedObj?.selected instanceof Cannon)
+            objMenu = (<CannonMenu selection={this.state.selectedObj} tracks={this.state.tracks} />);
 
         return (
             <div id="_Scene" tabIndex={0} onKeyUp={this.onKeyDown}>
@@ -121,6 +144,8 @@ export class MTClient extends React.Component {
 
                 <div ref="scene" id="scene" />
                 <br></br>
+
+                {objMenu}
 
                 <div className="row">
             
@@ -183,17 +208,9 @@ export class MTClient extends React.Component {
                             <label for="gY" id="gYlabel">gravity Y: 1</label>
                             <br />
                             <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x) }} />
-
                         </div>
-                        
-
                     </div>
-
                 </div>
-                
-                
-
-                
             </div>
         );
     }
