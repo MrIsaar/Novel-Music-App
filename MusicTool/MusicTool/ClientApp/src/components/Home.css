@@ -1,0 +1,10 @@
+﻿html, body, div{
+    height: 100%;
+}
+
+iframe {
+    width: 100%;
+    resize: both;
+    overflow: auto;
+    min-height: 85%;
+}
