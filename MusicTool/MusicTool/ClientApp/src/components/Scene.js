@@ -34,10 +34,16 @@ export class Scene {
      * create Scene object
      * @param {any} options
      */
-    constructor(options = { objectAdded: () => { }}) {
+    constructor(
+        options = {
+            objectAdded: () => { },
+            selectionUpdate: (selection) => { }
+        }
+    ) {
         Tone.start();
 
         this.objectAdded = options.objectAdded;
+        this.selectionUpdate = options.selectionUpdate;
 
         this.onCollision = this.onCollision.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -201,10 +207,7 @@ export class Scene {
                 this.balls.push(ball);
                 this.addObject(ball);
             }
-            if (this.selection != null) {
-                this.selection.destroy({ children: true });
-                this.selection = null;
-            }
+            this.deselectObject();
             return;
         }
 
@@ -225,18 +228,14 @@ export class Scene {
                         
                 }
                 if (currSelection != null) {
-                    
-                    
-                    this.selection = new Selection(currSelection);
-                    this.app.stage.addChild(this.selection);
+                    this.selectObject(currSelection);
                 }
             }
             // update object depending on selection mode
             else {
                 if (!this.selection.handleSelection(position.x, position.y)) {
                     if (this.selection != null) { // deselect
-                        this.selection.destroy({ children: true });
-                        this.selection = null;
+                        this.deselectObject();
                         if (this.trajectory !== null) {
                             document.getElementById('power').value = 1;
 
@@ -253,8 +252,7 @@ export class Scene {
                         }
                     }
                     if (currCannon != null) {
-                        this.selection = new Selection(currCannon);
-                        this.app.stage.addChild(this.selection);
+                        this.selectObject(currCannon);
                     }
                 }
             }
@@ -265,10 +263,7 @@ export class Scene {
             let cannon = new Cannon(-1, position, 0, 20, this.selectedTrack, this.engine.gravity);//<Cannon pos={position} body={null} />;
             this.cannons.push(cannon);
             this.addObject(cannon);
-            if (this.selection != null) {
-                this.selection.destroy({ children: true });
-                this.selection = null;
-            }
+            this.deselectObject();
         }
         else { // anything else should be a type of instrument
             if (this.selectedTool == 'drum') {
@@ -289,10 +284,7 @@ export class Scene {
                 )//<Cannon pos={position} body={null} />;
                 this.drums.push(instrument);
                 this.addObject(instrument);
-                if (this.selection != null) {
-                    this.selection.destroy({ children: true });
-                    this.selection = null;
-                }
+                this.deselectObject();
             } else if (this.selectedTool == 'cymbal') {
                 Tone.start();
                 console.log('creating instrument')
@@ -313,10 +305,7 @@ export class Scene {
                     [{ x: 10, y: 0 }, { x: 20, y: 5 }, { x: -20, y: 5 }, { x: -10, y: 0 }])
                 this.drums.push(instrument);
                 this.addObject(instrument);
-                if (this.selection != null) {
-                    this.selection.destroy({ children: true });
-                    this.selection = null;
-                }
+                this.deselectObject();
             } else if (this.selectedTool == 'cowbell') {
                 Tone.start();
                 let synthrules = {
@@ -333,10 +322,7 @@ export class Scene {
                     [{ x: 15, y: 20 }, { x: 10, y: -20 }, { x: -10, y: -20 }, { x: -15, y: 20 }])
                 this.drums.push(instrument);
                 this.addObject(instrument);
-                if (this.selection != null) {
-                    this.selection.destroy({ children: true });
-                    this.selection = null;
-                }
+                this.deselectObject();
             }
             else if (this.selectedTool == 'electronic') {
                 Tone.start();
@@ -349,10 +335,7 @@ export class Scene {
                     [{ x: -10, y: 10 }, { x: 10, y: 10 }, { x: 30, y: -5 }, { x: 25, y: -15 }, { x: -25, y: -15 }, { x: -30, y: -5 }])
                 this.drums.push(instrument);
                 this.addObject(instrument);
-                if (this.selection != null) {
-                    this.selection.destroy({ children: true });
-                    this.selection = null;
-                }
+                this.deselectObject();
             }
         }
     }
@@ -364,7 +347,8 @@ export class Scene {
     onMouseMove(event) {
         let position = { x: event.mouse.position.x, y: event.mouse.position.y }
         if (event.source.mouse.button > -1 && this.selection != null) {
-            this.selection.handleSelection(position.x, position.y);
+            if (this.selection.handleSelection(position.x, position.y))
+                this.selectionUpdate(this.selection);
         }
     }
 
@@ -395,10 +379,21 @@ export class Scene {
 
             this.addObject(ball);
         }
-        if (this.selection != null) {
-            this.selection.destroy();
-            this.selection = null;
-        }
+        this.deselectObject();
+    }
+
+    selectObject(obj) {
+        this.selection = new Selection(obj, 100, this.selectionUpdate );
+        this.app.stage.addChild(this.selection);
+        this.selectionUpdate(this.selection);
+    }
+
+    deselectObject() {
+        if (this.selection === null) return;
+
+        this.selection.destroy();
+        this.selection = null;
+        this.selectionUpdate(this.selection);
     }
 
     /**
