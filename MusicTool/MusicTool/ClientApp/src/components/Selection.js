@@ -14,8 +14,9 @@ export class Selection extends PIXI.Graphics {
      * 
      * @param {any} selected object such as cannon or instrument with selected.body, selected.position, selected.angle
      */
-    constructor(selected, size = 100) {
+    constructor(selected, size = 100, selectionUpdate = (selection) => { }) {
         super();
+        this.selectionUpdate = selectionUpdate;
         this.selected = selected
         this.position = this.selected.position;
         this.size = size < 40 ? 40 : size;
@@ -47,14 +48,16 @@ export class Selection extends PIXI.Graphics {
             }
         }
         if (this.mode === "translate") {
-            this.updateBodyPosition(x, y)
+            this.updateBodyPosition(x, y);
         }
         else if (this.mode === "rotate") {
-            this.updateBodyAngle(x, y)
+            let angle = this.getRelativeAngleFromPoint(x, y);
+            this.updateBodyAngle(angle);
         }
         else {
             return false;
         }
+
         return true;
     }
 
@@ -71,6 +74,8 @@ export class Selection extends PIXI.Graphics {
      * @param {any} y position
      */
     updateBodyPosition(x, y) {
+        if (!x || !y) return;
+
         let dx = x - this.selected.body.position.x;
         let dy = y - this.selected.body.position.y;
         let dp = { x: dx, y: dy }
@@ -79,11 +84,38 @@ export class Selection extends PIXI.Graphics {
         this.selected.position = this.selected.body.position;
 
         this.position = this.selected.position;
+        this.selectionUpdate(this);
     }
     /***
     * updates angle and scales cannon relative to center of body
     */
-    updateBodyAngle(x, y) {
+    updateBodyAngle(angle) {
+        if (!angle) return;
+
+        Matter.Body.setAngle(this.selected.body, angle)
+        this.selected.rotation = this.selected.body.angle;
+        this.selectionUpdate(this);
+
+    }
+
+    /**
+     * Update the value of the given param. value must not be falsy.
+     * @param {any} param
+     * @param {any} value
+     */
+    updateSelectedParam(param, value) {
+        if (!value) return;
+
+        this.selected[param] = value;
+        this.selectionUpdate(this);
+    }
+
+    /**
+     * Calculates the angle of the given point relative to the selected object.
+     * @param {any} x
+     * @param {any} y
+     */
+    getRelativeAngleFromPoint(x, y) {
         let dx = x - this.selected.body.position.x;
         let dy = y - this.selected.body.position.y;
         let angle = 0;
@@ -98,9 +130,9 @@ export class Selection extends PIXI.Graphics {
             angle = 3.1415 + angle
         }
 
-        Matter.Body.setAngle(this.selected.body, angle)
-        this.selected.rotation = this.selected.body.angle;
-        console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);
+        //console.log(`angle:${this.selected.body.angle}, dx:${dx}, dy:${dy}, calc:${Math.atan(dy / dx)}`);
+
+        return angle;
     }
 
     /**

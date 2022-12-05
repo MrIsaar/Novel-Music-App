@@ -75,7 +75,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
         ball.body.frictionAir = 0;
         //set velocity
         let dv = { x: this.power * Math.cos(this.rotation), y: this.power * Math.sin(this.rotation) };
-        console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
+        //console.log(`dv: ${dv.x} pox: ${ball.body.position.x}`)
          Matter.Body.setVelocity(ball.body, dv)
          return ball;
      }

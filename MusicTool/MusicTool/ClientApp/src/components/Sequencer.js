@@ -63,9 +63,9 @@ export class Sequencer extends Component {
         }
 
         this.callback = props.callback;
+        this.tracksChanged = props.tracksChanged || (() => { });
 
-
-        
+        this.tracksChanged(this._trackNames, this._trackIDs);
 
         this._sequencer = new Tone.Sequence(this._tick.bind(this), this._indexArray(this.state.numSteps), '8n');
         Tone.Transport.start();
@@ -80,7 +80,7 @@ export class Sequencer extends Component {
     }
 
     _tick(time, idx) {
-        console.log(`time: ${time}, step: ${idx}`) 
+        //console.log(`time: ${time}, step: ${idx}`) 
         let step = idx % this.state.numSteps;
         for (let track = 0; track < this.state.numTracks; track++) {
             if (this._noteMatrix[track][step]) {
@@ -124,7 +124,8 @@ export class Sequencer extends Component {
         //this._trackIDs = newTrackIDs;
         //this._trackNames = newTrackNames;
 
-        this.setState({numTracks: this.state.numTracks - 1});
+        this.setState({ numTracks: this.state.numTracks - 1 });
+        this.tracksChanged(this._trackNames, this._trackIDs);
     }
 
     removeTrack = this._removeTrack.bind(this);
@@ -142,6 +143,7 @@ export class Sequencer extends Component {
             numTracks: this.state.numTracks + 1
         });
         http.setSequencerMatrix(this._noteMatrix);
+        this.tracksChanged(this._trackNames, this._trackIDs);
     }
 
     addTrack = this._addTrack.bind(this);
@@ -178,6 +180,7 @@ export class Sequencer extends Component {
         this._trackNames[name] = value
         // update
         http.setTrackNames(this._trackNames);
+        this.tracksChanged(this._trackNames, this._trackIDs);
     };
 
 

@@ -2,6 +2,8 @@
 import http from "../httpFetch";
 import Scene from "./Scene.js";
 import Toolbar from "./Toolbar.js";
+import Cannon from "./Cannon.js";
+import CannonMenu from "./CannonMenu";
 import { Sequencer } from "./Sequencer.js";
 import ToneExample from "./ToneSetup"
 import Matter, { Engine, World, Mouse, MouseConstraint } from "matter-js";
@@ -15,26 +17,38 @@ export class MTClient extends React.Component {
     constructor(props) {
         super(props);
 
+        this.setTracks = this.setTracks.bind(this);
         this.setSelectedTool = this.setSelectedTool.bind(this);
         this.setSelectedTrack = this.setSelectedTrack.bind(this);
         this.saveObjectsToDB = this.saveObjectsToDB.bind(this);
+        this.setSelectedObj = this.setSelectedObj.bind(this);
 
         this.state = {
             loading: true,
             sequencerData: {},
+            tracks: [],
             selectedTool: 'select',
             selectedTrack: null,
+            selectedObj: null,
             showReminderBox_CannotSave: false
         };
 
         let { creationID } = this.props.match.params;
         this.creationID = creationID;
         this.scene = new Scene({
-            objectAdded: () => this.setSelectedTool("select")
+            objectAdded: () => this.setSelectedTool("select"),
+            selectionUpdate: this.setSelectedObj
         });
         this.sequencer = null
 
         this.creationFromDB = null;
+    }
+
+    setTracks(names, ids) {
+        let tracks = [];
+        for (let i = 0; i < names.length && i < ids.length; i++)
+            tracks.push({ name: names[i], id: ids[i] });
+        this.setState({ tracks: tracks });
     }
 
     setSelectedTool(tool) {
@@ -46,6 +60,10 @@ export class MTClient extends React.Component {
     setSelectedTrack(trackID = -1) {
         this.setState({ selectedTrack: trackID });
         this.scene.selectedTrack = trackID;
+    }
+
+    setSelectedObj(selection = null) {
+        this.setState({ selectedObj: selection });
     }
 
     setShowReminderBox_CannotSave = (showReminderBox_CannotSave) => {
@@ -77,8 +95,13 @@ export class MTClient extends React.Component {
                     callback={callback}
                     selectedTrack={this.state.selectedTrack}
                     onSelectedTrackChange={this.setSelectedTrack}
+                    tracksChanged={this.setTracks}
                 />
         }
+
+        let objMenu = null;
+        if (this.state.selectedObj?.selected instanceof Cannon)
+            objMenu = (<CannonMenu selection={this.state.selectedObj} tracks={this.state.tracks} />);
 
         return (
             <div id="_Scene" tabIndex={0} onKeyUp={this.onKeyDown}>
@@ -86,8 +109,10 @@ export class MTClient extends React.Component {
                     onChange={this.setSelectedTool.bind(this)}
                     value={this.state.selectedTool}
                 ></Toolbar>
+
+                <br></br>
                 <div id="instrumentSettings">
-                    <label for="notes">Choose a note:</label>
+                    <label for="notes">Choose a note: &nbsp;</label>
 
                     <select name="notes" id="notes">
                         <option value="C2">C2</option>
@@ -115,7 +140,13 @@ export class MTClient extends React.Component {
                         <option value="B4">B4</option>
                     </select>
                 </div>
+                <br></br>
+
                 <div ref="scene" id="scene" />
+                <br></br>
+
+                {objMenu}
+
                 <div className="row">
             
 
@@ -123,6 +154,7 @@ export class MTClient extends React.Component {
                     <div className="col">
                         {this.sequencer}
                     </div>
+
                     <div className="col-3">
 
 
@@ -135,6 +167,7 @@ export class MTClient extends React.Component {
                         <div >
                            
                             <div id="cannonSettings">
+                                <br></br>
                                 <label for="power" id="powerlabel">Cannon power:</label>
                                 <br />
                                 <input type="range" id="power" name="power" min="1" max="25" step="1" defaultValue="1" onMouseMove={() => {
@@ -175,17 +208,9 @@ export class MTClient extends React.Component {
                             <label for="gY" id="gYlabel">gravity Y: 1</label>
                             <br />
                             <input type="range" id="gY" name="gY" min="-2" max="2" step="0.25" defaultValue="1" onMouseMove={() => { let x = document.getElementById('gX').value; let y = document.getElementById('gY').value; document.getElementById('gYlabel').innerHTML = `gravity Y: ${y}`; this.scene.updateGravity(y, x) }} />
-
                         </div>
-                        
-
                     </div>
-
                 </div>
-                
-                
-
-                
             </div>
         );
     }
@@ -315,25 +340,19 @@ export class MTClient extends React.Component {
 
         if (isOwner) {
             try {
-                // Should store access before creation!
                 // save access
-                //const res = await http.post('/access/save/' + CreationID, { data: { CreationID, UserID: `${UserID}`, AccessLevel, Creation } })
-                // TODO: other db save post here are samples for saving creation, creationobject and sequencer
-                // CHECK Postman for more details on JSON_string <- MUST be in type of string
+                let CreationID_str = CreationID + "";
+                let UserID_str = UserID + "";
+                let access = { "creationID": CreationID_str, "userID": UserID_str, "accessLevel": AccessLevel };
+                const res1 = await http.post('/Access/save/' + CreationID, { data: access })
+                console.log('save access successful ');
+                console.log(res1);
 
                 // save creations
-                // e.g.string JSON = "name": "TestCreation3","worldRules": {"gravity": 1,"background": "blue"},"creationDate": .... ...., "creationID": 3
                 Creation.worldRules = { gravity: this.scene.getGravity()};
                 Creation.sequencer = this.sequencerSavedState;
                 Creation.sequencer.sequencerID = undefined;// DB controller doesnt like if it is defined
                 const res = await http.post('/creations/save/' + CreationID, { data: Creation });
-
-                // e.g. string JSON = "json": {"tracks": [{"name": "track1","notes": [true,true,true,false,false,false]},{"name": "track2","notes": [true,false,false,true,false,false]}]},"creationID": 2
-                // await http.post('/sequencer/save/' + CreationID, { data: { CreationID, JSON_string} })
-
-                // e.g. string JSON = "json": {"type": "drum","x": 0,"y": 0,"radius": 10,"color": "green"},"type": "drum","creationID": 4
-                // json = '{ "MTObjType": "Cannon", "MTObjVersion": "1.0.0","objectNumber":"2", "position": { "x": 300, "y": 150 }, "angle": 2, "image": null, "shape": [ { "x": -20, "y": -10 }, { "x": 70, "y": 0 }, { "x": -20, "y": 10 }, { "x": -40, "y": 0 } ], "collisionFilter": { "group": 0, "category": 0, "mask": 0 }, "fireLayer": 1, "power": 20, "marbleSize": 20, "marbleColor": "rand", "marbleCollisionFilter": { "group": -1, "category": 4294967295, "mask": 4294967295 } }';
-
                 console.log(res);
 
                 console.log('save access successful');
@@ -342,13 +361,6 @@ export class MTClient extends React.Component {
             } catch (ex) {
                 console.log(ex)
             }
-
-            // .then((res) => {
-            //     console.log(res);
-            //     console.log('save access successful');
-            // }).catch((ex) => {
-            //     console.log('not successful')
-            // })
         }
         else {
             this.handleShowReminderBox_CannotSave();
@@ -378,13 +390,6 @@ export class MTClient extends React.Component {
         }
 
         if (isOwner) {
-            // save access
-            let CreationID_str = CreationID + "";
-            let UserID_str = UserID + "";
-            let access = { "creationID": CreationID_str, "userID": UserID_str, "accessLevel": AccessLevel };
-            const res = await http.post('/Access/save/' + CreationID, { data: access })
-            console.log('save access successful ');
-            console.log(res);
 
             //let Creation = this.creationFromDB;
             let allObjectsToSave = this.scene.getAllObjects(CreationID);
@@ -460,6 +465,7 @@ export class MTClient extends React.Component {
         }
 
         // console.log(sequencerObj.json.tracks);
+        http.sessionClear();
     }
 
     // handle the close/show pop-up box

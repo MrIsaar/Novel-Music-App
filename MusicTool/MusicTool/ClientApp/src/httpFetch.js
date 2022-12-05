@@ -62,6 +62,29 @@ class HttpFetch {
     }
   }
 
+    setValue_session = (key, value) => {
+        if (!key) {
+            return;
+        }
+        if (value) {
+            sessionStorage.setItem(key, JSON.stringify(value));
+        } else {
+            sessionStorage.removeItem(key);
+        }
+    }
+
+    getValue_session = (key) => {
+        const value = sessionStorage.getItem(key);
+        if (!value) {
+            return null;
+        }
+        try {
+            return JSON.parse(value);
+        } catch (ex) {
+            return value;
+        }
+    }
+
   getUserId = () => this.getValue('userId')
   setUserId = (id) => this.setValue('userId', id)
 
@@ -74,11 +97,13 @@ class HttpFetch {
   getIDToDelete = () => this.getValue('IDToDelete')
   setIDToDelete = (id) => this.setValue('IDToDelete', id)
 
-  getSequencerMatrix = () => this.getValue('SequencerMatrix')
-  setSequencerMatrix = (matrix) => this.setValue('SequencerMatrix', matrix)
+  getSequencerMatrix = () => this.getValue_session('SequencerMatrix')
+  setSequencerMatrix = (matrix) => this.setValue_session('SequencerMatrix', matrix)
 
-  getTrackNames = () => this.getValue('TrackNames')
-  setTrackNames = (names) => this.setValue('TrackNames', names)
+  getTrackNames = () => this.getValue_session('TrackNames')
+  setTrackNames = (names) => this.setValue_session('TrackNames', names)
+
+  sessionClear = () => sessionStorage.clear();
 }
 
 export default new HttpFetch()
