@@ -11,11 +11,12 @@ export class Instrument extends MTObj {
      * @param {any} image
      * @param {any} sound default to C4, if passed a list it will play list in order
      */
-    constructor(objectNumber,pos, angle = 0, synth,synthtype, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], image = null, collisionFilter = { group: 0, category: 0xffffffff, mask: 0xffffffff })
+    constructor(objectNumber,pos, angle = 0, synth,synthtype, sound = { note: 'C4', length: '8n' }, shape = [{ x: 20, y: 20 }, { x: 20, y: -20 }, { x: -20, y: -20 }, { x: -20, y: 20 }], color='red', image = null, collisionFilter = { group: 0, category: 0xffffffff, mask: 0xffffffff })
     {
-        super(objectNumber,pos, angle, shape, collisionFilter, image);
+        super(objectNumber,pos, angle, shape, color, collisionFilter, image);
         this.MTObjType = 'Instrument';
-        
+
+        this.color = color;
         this.synth = synth;
         this.synthrules = synth.get();
         this.synthtype = synthtype;
@@ -87,6 +88,7 @@ export class Instrument extends MTObj {
             angle: this.body.angle,
             image: this.image,
             shape: this.shape,
+            color: this.color,
             collisionFilter: this.collisionFilter,
             sound: this.sound,
             synthrules: this.synthrules,
@@ -107,8 +109,9 @@ export class Instrument extends MTObj {
         this.MTObjType = 'Instrument';
         let previousBody = this.body;
         this.shape = savedJSON.shape;
+        this.color = savedJSON.color;
         this.collisionFilter = savedJSON.collisionFilter;
-        this.body = Matter.Bodies.fromVertices(savedJSON.position.x, savedJSON.position.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: 'red' }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
+        this.body = Matter.Bodies.fromVertices(savedJSON.position.x, savedJSON.position.y, this.shape, { angle: savedJSON.angle, render: { fillStyle: this.color }, isStatic: true, collisionFilter: savedJSON.collisionFilter });
         this.updateAngle(savedJSON.angle);
         this.updatePosition(savedJSON.position);
         this.changeCollisionFilter(savedJSON.collisionFilter);

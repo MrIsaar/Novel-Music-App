@@ -19,7 +19,7 @@ const CANNON_SHAPE = [{ x: -20, y: 20 }, { x: 40, y: 0 }, { x: -20, y: -20 }, { 
      * @param {any} marbleCollisionFilter default is all
      */
      constructor(objectNumber, pos, angle = 0, power = 20, fireLayer = -1, gravity, marbleColor = "rand", marbleSize = 20, marbleCollisionFilter = { group: -1, category: 0xFFFFFFFF, mask: 0xFFFFFFFF }, shape = CANNON_SHAPE, collisionFilter = { group: 0, category: 0, mask: 0 }, image = null) {
-         super(objectNumber,pos, angle, shape, collisionFilter, image)
+         super(objectNumber,pos, angle, shape, 'red', collisionFilter, image)
         
         // body created in super MTObj
         //this.body = Matter.Bodies.fromVertices(pos.x, pos.y, this.shape, { angle: angle,render: { fillStyle: 'red' }, isStatic: true, collisionFilter: { group: 0, category: 0, mask: 0 } });
