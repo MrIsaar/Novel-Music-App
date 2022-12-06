@@ -14,7 +14,7 @@
     "matter-js": "^0.18.0",
     "merge": "^2.1.1",
     "oidc-client": "^1.11.5",
-    "pixi.js": "^6.3.0",
+    "pixi.js": "6.4",
     "react": "^17.0.2",
     "react-bootstrap": "^2.2.3",
     "react-dnd": "^15.1.2",
